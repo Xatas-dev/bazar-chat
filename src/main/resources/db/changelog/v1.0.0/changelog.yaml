@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: 20260108-00-0-create-chat-table.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 20260107-00-0-create-message-table.sql
+      relativeToChangelogFile: true

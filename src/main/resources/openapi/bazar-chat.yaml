@@ -1,0 +1,224 @@
+openapi: 3.0.3
+info:
+  title: Bazar Chat API
+  description: Service responsible for managing chats and messages.
+  version: 0.0.1
+servers:
+  - url: http://localhost:8082
+    description: Local Development
+
+tags:
+  - name: Chats
+    description: Management of chat rooms
+  - name: Messages
+    description: Sending and retrieving history
+
+paths:
+  # ==========================================
+  # 1. Create Chat
+  # ==========================================
+  /chats:
+    post:
+      tags:
+        - Chats
+      summary: Create a chat
+      description: Create a new chat linked to a Space.
+      operationId: createChat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChatRequest'
+      responses:
+        '200':
+          description: Chat created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          description: Invalid input
+    get:
+      tags:
+        - Chats
+      summary: Get chats by Space ID
+      description: Retrieve the chat id belonging to a specific Space.
+      operationId: getChatBySpace
+      parameters:
+        - name: spaceId
+          in: query
+          description: ID of the Space
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Chat id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+  # ==========================================
+  # 2. Manage Messages
+  # ==========================================
+  /chats/{chatId}/messages:
+    post:
+      tags:
+        - Messages
+      summary: Create a message
+      description: Send a new message to a specific chat.
+      operationId: createMessage
+      parameters:
+        - name: chatId
+          in: path
+          description: Chat id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMessageRequest'
+      responses:
+        '200':
+          description: Message sent successfully
+        '404':
+          description: Chat not found
+
+    get:
+      tags:
+        - Messages
+      summary: Get all messages in chat
+      description: Retrieve paginated message history.
+      operationId: getChatMessages
+      parameters:
+        - name: chatId
+          in: path
+          description: ID of the chat
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: pageable
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessagePageResponse'
+
+components:
+  schemas:
+    # --------------------------------------
+    # Chat Schemas
+    # --------------------------------------
+    CreateChatRequest:
+      type: object
+      required:
+        - spaceId
+      properties:
+        spaceId:
+          type: integer
+          format: int64
+          description: The Long ID of the Space (matches space-service)
+    ChatResponse:
+      type: object
+      required:
+        - id
+        - spaceId
+        - createdAt
+      properties:
+        id:
+          type: integer
+          format: int64
+        spaceId:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+
+    # --------------------------------------
+    # Message Schemas
+    # --------------------------------------
+    CreateMessageRequest:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: string
+          minLength: 1
+          maxLength: 1028 # Matches your entity @Size(max = 1028)
+          example: "Hello world"
+
+    MessageResponse:
+      type: object
+      required:
+        - id
+        - chatId
+        - userId
+        - content
+        - createdAt
+      properties:
+        id:
+          type: integer
+          format: int64
+        chatId:
+          type: integer
+          format: int64
+        userId:
+          type: string
+          format: uuid
+          description: The UUID of the user who sent the message
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    # --------------------------------------
+    # Pagination Wrapper
+    # --------------------------------------
+    MessagePageResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageResponse'
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+    Pageable:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Zero-based page index (0..N)
+          minimum: 0
+        size:
+          type: integer
+          description: The size of the page to be returned
+          minimum: 1
+        sort:
+          type: array
+          items:
+            type: string
+          description: Sorting criteria in the format property,(asc|desc).
