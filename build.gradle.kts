@@ -25,18 +25,27 @@ repositories {
 }
 
 dependencies {
-    implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-liquibase")
-    implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
+    //Web
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("io.swagger.core.v3:swagger-annotations:2.2.38")
+    implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("io.swagger.core.v3:swagger-models:2.2.38")
+
+    //Observability
+    implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+    //Database
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-liquibase")
     runtimeOnly("org.postgresql:postgresql")
+
+    //Security
+    implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
+
+    //Test
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
     testImplementation("org.springframework.boot:spring-boot-starter-liquibase-test")
     testImplementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server-test")
@@ -45,6 +54,9 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-websocket-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    //Other
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
 }
 
 kotlin {
