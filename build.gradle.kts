@@ -45,6 +45,10 @@ dependencies {
     //Security
     implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
 
+    //Kafka
+    implementation("org.springframework.kafka:spring-kafka:4.0.1")
+    implementation("org.springframework.boot:spring-boot-starter-kafka:4.0.0")
+
     //Test
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
     testImplementation("org.springframework.boot:spring-boot-starter-liquibase-test")
@@ -57,6 +61,8 @@ dependencies {
 
     //Other
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
 }
 
 kotlin {
