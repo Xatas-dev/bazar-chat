@@ -3,6 +3,7 @@ package org.bazar.chat.app.impl.message;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.bazar.chat.app.api.chat.ChatRepository;
+import org.bazar.chat.app.api.message.MessageEventsService;
 import org.bazar.chat.app.api.message.MessageRepository;
 import org.bazar.chat.app.api.message.MessageService;
 import org.bazar.chat.app.api.message.dto.CreateMessageDto;
@@ -12,6 +13,7 @@ import org.bazar.chat.domain.chat.Chat;
 import org.bazar.chat.domain.message.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,6 +23,7 @@ public class MessageServiceImpl implements MessageService {
     private final ChatRepository chatRepository;
     private final MessageMapper mapper;
     private final SecurityContextHelper securityContextHelper;
+    private final MessageEventsService messageEventsService;
 
     @Override
     public GetMessagePageDto getChatMessages(Long chatId, Pageable pageable) {
@@ -36,5 +39,6 @@ public class MessageServiceImpl implements MessageService {
         message.setChat(chat);
         message.setUserId(securityContextHelper.getAuthenticatedUserId());
         messageRepository.save(message);
+        messageEventsService.sendCreatedEvent(mapper.toMessageCreatedEvent(message));
     }
 }
