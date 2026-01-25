@@ -27,4 +27,7 @@ public class Message extends DomainObject {
 
     @Column(name = "user_id")
     private UUID userId;
+
+    @Column(name = "visible")
+    private Boolean visible;
 }
