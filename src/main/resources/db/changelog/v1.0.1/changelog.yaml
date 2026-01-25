@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: 20260125-00-1-add_visible_column.sql
+      relativeToChangelogFile: true
