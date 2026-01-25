@@ -2,6 +2,7 @@ package org.bazar.chat.adapter.inbound.rest;
 
 import org.bazar.chat.app.api.chat.exception.ChatByIdNotFoundException;
 import org.bazar.chat.app.api.chat.exception.ChatBySpaceIdNotFoundException;
+import org.bazar.chat.app.api.message.exception.DeleteMessageByCurrentUserException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,5 +14,10 @@ public class RestExceptionHandler {
     @ExceptionHandler({ChatByIdNotFoundException.class, ChatBySpaceIdNotFoundException.class})
     protected ResponseEntity<Object> handleNotFoundExceptions(Exception e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(DeleteMessageByCurrentUserException.class)
+    protected ResponseEntity<Object> handleDeleteMessageByCurrentUserException(DeleteMessageByCurrentUserException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 }

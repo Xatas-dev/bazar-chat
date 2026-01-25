@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class MessageJpaRepositoryAdapter implements MessageRepository {
@@ -26,5 +28,10 @@ public class MessageJpaRepositoryAdapter implements MessageRepository {
     @Override
     public void save(Message message) {
         messageJpaRepository.save(message);
+    }
+
+    @Override
+    public List<Message> findAllByChatIdAndMessageIds(Long chatId, List<Long> messageIds) {
+        return messageJpaRepository.findAllByChatIdAndIdInAndVisible(chatId, messageIds, true);
     }
 }
