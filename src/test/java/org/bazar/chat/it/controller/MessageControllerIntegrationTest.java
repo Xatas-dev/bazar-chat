@@ -22,6 +22,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     private static final TypeReference<MessagePageResponse> TYPE_REF_MESSAGE_DTO = new TypeReference<>() {};
     private static final String CONTENT1 = "content1";
     private static final String CONTENT2 = "content2";
+    private static final String CONTENT3 = "content3";
 
     @Test
     void createMessage_success() throws Exception {
@@ -58,8 +59,9 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     @Test
     void getMessagesByChatId_success() throws Exception {
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
-        testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID);
-        testDataHelper.createMessageWith(chat, CONTENT2, JwtBuilder.TEST_USER_ID);
+        testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
+        testDataHelper.createMessageWith(chat, CONTENT2, JwtBuilder.TEST_USER_ID, true);
+        testDataHelper.createMessageWith(chat, CONTENT3, JwtBuilder.TEST_USER_ID, false);
 
         List<MessageResponse> response = restTestUtil.getPerform(
                 String.format(GET_MESSAGES_BY_CHAT_ID, chat.getId()),

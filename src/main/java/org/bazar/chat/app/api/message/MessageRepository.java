@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 public interface MessageRepository {
     void deleteAllByChat(Chat chat);
 
-    Page<Message> findAllByChatId(Long chatId, Pageable pageable);
+    Page<Message> findAllVisibleByChatId(Long chatId, Pageable pageable);
 
     void save(Message message);
 }

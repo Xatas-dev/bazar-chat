@@ -170,6 +170,7 @@ components:
         - userId
         - content
         - createdAt
+        - isDeletable
       properties:
         id:
           type: integer
@@ -186,6 +187,8 @@ components:
         createdAt:
           type: string
           format: date-time
+        isDeletable:
+          type: boolean
 
     # --------------------------------------
     # Pagination Wrapper
