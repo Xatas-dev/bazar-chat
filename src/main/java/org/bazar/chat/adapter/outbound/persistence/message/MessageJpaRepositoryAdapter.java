@@ -19,8 +19,8 @@ public class MessageJpaRepositoryAdapter implements MessageRepository {
     }
 
     @Override
-    public Page<Message> findAllByChatId(Long chatId, Pageable pageable) {
-        return messageJpaRepository.findAllByChatIdOrderByCreatedAtDesc(chatId, pageable);
+    public Page<Message> findAllVisibleByChatId(Long chatId, Pageable pageable) {
+        return messageJpaRepository.findAllByChatIdAndVisibleTrueOrderByCreatedAtDesc(chatId, pageable);
     }
 
     @Override

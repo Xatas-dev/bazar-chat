@@ -8,6 +8,7 @@ public record GetMessageDto(
         Long chatId,
         UUID userId,
         String content,
-        Instant createdAt
+        Instant createdAt,
+        Boolean isDeletable
 ) {
 }

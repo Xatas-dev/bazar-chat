@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MessageJpaRepository extends JpaRepository<Message, Long> {
     void deleteAllByChat(Chat chat);
 
-    Page<Message> findAllByChatIdOrderByCreatedAtDesc(Long chatId, Pageable pageable);
+    Page<Message> findAllByChatIdAndVisibleTrueOrderByCreatedAtDesc(Long chatId, Pageable pageable);
 }
