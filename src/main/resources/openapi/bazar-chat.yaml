@@ -226,17 +226,6 @@ components:
             type: integer
             format: int64
 
-    DeleteMessageRequest:
-      type: object
-      required:
-        - messageIds
-      properties:
-        messageIds:
-          type: array
-          items:
-            type: integer
-            format: int64
-
     # --------------------------------------
     # Pagination Wrapper
     # --------------------------------------

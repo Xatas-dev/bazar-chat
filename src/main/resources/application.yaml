@@ -32,3 +32,6 @@ kafka:
   space-delete:
     topic: space-delete
     group-id: space-delete-group
+scheduler:
+  message:
+    deleteMessages: "0 0 3 * * *"

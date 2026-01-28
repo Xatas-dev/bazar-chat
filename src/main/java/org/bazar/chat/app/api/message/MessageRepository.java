@@ -5,6 +5,7 @@ import org.bazar.chat.domain.message.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.Instant;
 import java.util.List;
 
 public interface MessageRepository {
@@ -13,6 +14,8 @@ public interface MessageRepository {
     Page<Message> findAllVisibleByChatId(Long chatId, Pageable pageable);
 
     void save(Message message);
+
+    void deleteInvisibleMessagesByUpdatedAt(Instant updatedAt);
 
     List<Message> findAllByChatIdAndMessageIds(Long chatId, List<Long> messageIds);
 }
