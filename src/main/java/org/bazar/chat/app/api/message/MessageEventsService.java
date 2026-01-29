@@ -1,7 +1,7 @@
 package org.bazar.chat.app.api.message;
 
-import org.bazar.chat.app.api.message.dto.MessageCreatedEvent;
+import org.bazar.chat.app.api.message.dto.event.ChatEvent;
 
 public interface MessageEventsService {
-    void sendCreatedEvent(MessageCreatedEvent event);
+    void publishEvent(Long chatId, ChatEvent event);
 }

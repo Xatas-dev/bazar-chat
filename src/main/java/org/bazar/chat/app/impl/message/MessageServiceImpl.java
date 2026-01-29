@@ -47,7 +47,7 @@ public class MessageServiceImpl implements MessageService {
         message.setChat(chat);
         message.setUserId(securityContextHelper.getAuthenticatedUserId());
         messageRepository.save(message);
-        messageEventsService.sendCreatedEvent(mapper.toMessageCreatedEvent(message));
+        messageEventsService.publishEvent(chat.getId(), mapper.toMessageCreatedEvent(message));
     }
 
     @Override
@@ -56,6 +56,7 @@ public class MessageServiceImpl implements MessageService {
         List<Message> messagesToDelete = messageRepository.findAllByChatIdAndMessageIds(chatId, messageIds);
         checkMessagesForDeletingByCurrentUser(messagesToDelete);
         messagesToDelete.forEach(message -> message.setVisible(false));
+        messageEventsService.publishEvent(chatId, mapper.toMessageDeletedEvent(messageIds));
     }
 
     // =================================================================================================================
