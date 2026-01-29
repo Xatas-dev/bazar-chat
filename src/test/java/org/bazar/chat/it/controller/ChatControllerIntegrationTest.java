@@ -55,7 +55,7 @@ public class ChatControllerIntegrationTest extends AbstractControllerIntegration
                 status().isOk()
         );
 
-        Chat chat = chatRepository.findBySpaceId(DEFAULT_SPACE_ID).get();
+        Chat chat = chatJpaRepository.findBySpaceId(DEFAULT_SPACE_ID).get();
         assertNotNull(chatResponse);
         assertNotNull(chat);
         assertEquals(DEFAULT_SPACE_ID, chatResponse.getSpaceId());

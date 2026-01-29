@@ -117,6 +117,31 @@ paths:
               schema:
                 $ref: '#/components/schemas/MessagePageResponse'
 
+    delete:
+      tags:
+        - Messages
+      summary: Delete messages by ids
+      operationId: deleteChatMessageById
+      parameters:
+        - name: chatId
+          in: path
+          description: ID of the chat
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteMessageRequest'
+      responses:
+        '200':
+          description: Message deleted successfully
+        '403':
+          description: User can't delete this message
+
 components:
   schemas:
     # --------------------------------------
@@ -189,6 +214,28 @@ components:
           format: date-time
         isDeletable:
           type: boolean
+
+    DeleteMessageRequest:
+      type: object
+      required:
+        - messageIds
+      properties:
+        messageIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+
+    DeleteMessageRequest:
+      type: object
+      required:
+        - messageIds
+      properties:
+        messageIds:
+          type: array
+          items:
+            type: integer
+            format: int64
 
     # --------------------------------------
     # Pagination Wrapper
