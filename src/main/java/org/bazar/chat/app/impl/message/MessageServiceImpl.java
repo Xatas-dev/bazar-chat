@@ -33,8 +33,10 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public GetMessagePageDto getChatMessages(Long chatId, Pageable pageable) {
-        Page<Message> messages = messageRepository.findAllByChatId(chatId, pageable);
-        return mapper.toGetMessagePageDto(messages);
+        Page<Message> messages = messageRepository.findAllVisibleByChatId(chatId, pageable);
+        Page<GetMessageDto> dtoPage =
+                messages.map(message -> mapper.toGetMessageDto(message, isDeletableByCurrentUser(message)));
+        return pageDtoMapper.toGetMessagePageDto(dtoPage);
     }
 
     @Override
