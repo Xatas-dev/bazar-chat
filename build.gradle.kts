@@ -92,6 +92,8 @@ dependencies {
     implementation("org.mapstruct:mapstruct:1.6.3")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
+    implementation("net.javacrumbs.shedlock:shedlock-spring:5.13.0")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.13.0")
 }
 
 

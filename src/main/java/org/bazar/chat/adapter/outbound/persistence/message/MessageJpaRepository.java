@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.Instant;
 import java.util.List;
 
 public interface MessageJpaRepository extends JpaRepository<Message, Long> {
@@ -14,4 +15,6 @@ public interface MessageJpaRepository extends JpaRepository<Message, Long> {
     Page<Message> findAllByChatIdAndVisibleTrueOrderByCreatedAtDesc(Long chatId, Pageable pageable);
 
     List<Message> findAllByChatIdAndIdInAndVisible(Long chatId, List<Long> messageIds, boolean visible);
+
+    void deleteAllByVisibleFalseAndUpdatedAtLessThan(Instant updatedAt);
 }

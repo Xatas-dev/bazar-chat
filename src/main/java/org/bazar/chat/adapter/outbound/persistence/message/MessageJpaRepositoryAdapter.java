@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.List;
 
 @Component
@@ -28,6 +29,11 @@ public class MessageJpaRepositoryAdapter implements MessageRepository {
     @Override
     public void save(Message message) {
         messageJpaRepository.save(message);
+    }
+
+    @Override
+    public void deleteInvisibleMessagesByUpdatedAt(Instant updatedAt) {
+        messageJpaRepository.deleteAllByVisibleFalseAndUpdatedAtLessThan(updatedAt);
     }
 
     @Override

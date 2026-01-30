@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,6 +58,13 @@ public class MessageServiceImpl implements MessageService {
         List<Message> messagesToDelete = messageRepository.findAllByChatIdAndMessageIds(chatId, messageIds);
         checkMessagesForDeletingByCurrentUser(messagesToDelete);
         messagesToDelete.forEach(message -> message.setVisible(false));
+    }
+
+    @Override
+    @Transactional
+    public void deleteExpiredMessages() {
+        Instant threshold = Instant.now().minus(7, ChronoUnit.DAYS);
+        messageRepository.deleteInvisibleMessagesByUpdatedAt(threshold);
     }
 
     // =================================================================================================================

@@ -2,3 +2,6 @@ databaseChangeLog:
   - include:
       file: 20260125-00-1-add_visible_column.sql
       relativeToChangelogFile: true
+  - include:
+      file: 20260128-00-2-add_shedlock-table.sql
+      relativeToChangelogFile: true

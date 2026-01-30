@@ -11,5 +11,7 @@ public interface MessageService {
 
     void createMessage(CreateMessageDto dto);
 
+    void deleteExpiredMessages();
+
     void deleteMessages(Long chatId, List<Long> messageIds);
 }
