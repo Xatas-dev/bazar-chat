@@ -3,13 +3,14 @@ package org.bazar.chat.app.impl.message;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.bazar.chat.app.api.chat.ChatRepository;
+import org.bazar.chat.app.api.exception.BusinessException;
+import org.bazar.chat.app.api.exception.ErrorCode;
 import org.bazar.chat.app.api.message.MessageEventsService;
 import org.bazar.chat.app.api.message.MessageRepository;
 import org.bazar.chat.app.api.message.MessageService;
 import org.bazar.chat.app.api.message.dto.CreateMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessagePageDto;
-import org.bazar.chat.app.api.message.exception.DeleteMessageByCurrentUserException;
 import org.bazar.chat.app.impl.helpers.SecurityContextHelper;
 import org.bazar.chat.app.impl.mapper.PageDtoMapper;
 import org.bazar.chat.domain.chat.Chat;
@@ -81,7 +82,7 @@ public class MessageServiceImpl implements MessageService {
                 .filter(message -> !isDeletableByCurrentUser(message))
                 .findFirst()
                 .ifPresent(message -> {
-                    throw new DeleteMessageByCurrentUserException(message.getId());
+                    throw new BusinessException(ErrorCode.DELETE_MESSAGE_BY_CURRENT_USER_FORBIDDEN, message.getId());
                 });
     }
 }
