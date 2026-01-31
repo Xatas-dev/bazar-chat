@@ -77,11 +77,13 @@ jobs:
       with:
         languages: java
         build-mode: manual
+    - name: Build with Gradle (for CodeQL)
+      run: |
+        chmod +x gradlew
+        ./gradlew compileJava compileTestJava --no-daemon
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:java"
 
 
   # SECRETS SCAN
