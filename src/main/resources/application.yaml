@@ -11,7 +11,7 @@ spring:
         jwt:
           issuer-uri: ${KC_EXTERNAL_URL}/realms/${KC_REALM}
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:http://localhost:1212}
     consumer:
       group-id: group
       auto-offset-reset: earliest
