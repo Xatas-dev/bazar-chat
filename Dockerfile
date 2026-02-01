@@ -1,44 +1,49 @@
 # ==========================================
-# Stage 1: Build the Application
+# STAGE 1: Build the Application
 # ==========================================
-FROM gradle:9.2.1-jdk21 AS builder
+FROM gradle:9.2-jdk21-ubi AS builder
 
 WORKDIR /app
 
-# Copy gradle configuration first to cache dependencies
+# 1. Copy dependency definitions first (to cache dependencies)
 COPY build.gradle.kts settings.gradle.kts ./
 COPY gradle ./gradle
 
-# Download dependencies (this layer will be cached unless dependencies change)
-# 'no-daemon' prevents Gradle from hanging in the background
-RUN gradle clean build -x test --no-daemon --quiet || return 0
+# 2. Download dependencies.
+# This layer is cached unless you change your build.gradle.kts
+RUN gradle dependencies --no-daemon
 
-# Copy source code and build the final jar
+# 3. Copy the actual source code
 COPY src ./src
-RUN gradle bootJar -x test --no-daemon
 
-# Extract layers for optimization
-# This splits the fat jar into dependencies, loader, and application code
-RUN mv build/libs/bazar-chat-*.jar build/libs/application.jar
-WORKDIR /app/build/libs
-RUN java -Djarmode=tools -jar application.jar extract --layers --destination extracted
+# 4. Build the JAR (Skip tests to save time, assuming tests ran in CI)
+RUN gradle bootJar --no-daemon -x test
+
+# 5. Extract JAR layers (Spring Boot optimization)
+# This splits the JAR into dependencies vs your code
+RUN java -Djarmode=layertools -jar build/libs/*.jar extract
 
 # ==========================================
-# Stage 2: Create the Runtime Image
+# STAGE 2: Run the Application (The Tiny Image)
 # ==========================================
-FROM eclipse-temurin:25-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 
-WORKDIR /application
+WORKDIR /app
 
-# Optimize Java memory usage for containers
-# MaxRAMPercentage=75.0 means the JVM will use 75% of the container's available memory limit (e.g., 384MB of a 512MB container)
-ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 -XX:+UseStringDeduplication -Xmx80M"
+# 1. Create a non-root user for security (Alpine specific)
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring:spring
 
-# Copy the layers extracted in Stage 1
-# Order matters: dependencies are least likely to change, application is most likely
-COPY --from=builder /app/build/libs/extracted/dependencies/ ./
-COPY --from=builder /app/build/libs/extracted/spring-boot-loader/ ./
-COPY --from=builder /app/build/libs/extracted/snapshot-dependencies/ ./
-COPY --from=builder /app/build/libs/extracted/application/ ./
+# 2. Copy the extracted layers from the builder stage
+# This is more efficient than copying one fat JAR
+COPY --from=builder /app/dependencies/ ./
+COPY --from=builder /app/spring-boot-loader/ ./
+COPY --from=builder /app/snapshot-dependencies/ ./
+COPY --from=builder /app/application/ ./
 
-ENTRYPOINT ["java", "-jar", "application.jar"]
+# 3. Expose port (Documentation only)
+EXPOSE 8080
+
+# 4. Use Spring Boot's JarLauncher
+# Note: For Spring Boot 3.2+, the path is org.springframework.boot.loader.launch.JarLauncher
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
