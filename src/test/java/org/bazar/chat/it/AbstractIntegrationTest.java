@@ -29,9 +29,9 @@ public abstract class AbstractIntegrationTest {
     @Autowired
     protected TestDataHelper testDataHelper;
     @Autowired
-    protected ChatJpaRepository chatRepository;
+    protected ChatJpaRepository chatJpaRepository;
     @Autowired
-    protected MessageJpaRepository messageRepository;
+    protected MessageJpaRepository messageJpaRepository;
 
     @BeforeEach
     void cleanUp() {

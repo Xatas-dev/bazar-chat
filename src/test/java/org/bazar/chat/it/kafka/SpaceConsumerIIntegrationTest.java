@@ -33,7 +33,7 @@ public class SpaceConsumerIIntegrationTest extends AbstractKafkaIntegrationTest 
         await()
                 .atMost(Duration.ofSeconds(10))
                 .pollInterval(Duration.ofMillis(200))
-                .until(() -> chatRepository.findBySpaceId(SpaceDeletingDtoBuilder.SPACE_ID).isEmpty()
-                        && messageRepository.findAll().isEmpty());
+                .until(() -> chatJpaRepository.findBySpaceId(SpaceDeletingDtoBuilder.SPACE_ID).isEmpty()
+                        && messageJpaRepository.findAll().isEmpty());
     }
 }

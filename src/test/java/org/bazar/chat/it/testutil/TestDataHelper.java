@@ -25,6 +25,10 @@ public class TestDataHelper {
         return messageJpaRepository.save(MessageBuilder.buildWith(chat, content, userId));
     }
 
+    public Message createMessageWith(Chat chat, String content, UUID userId, boolean visible) {
+        return messageJpaRepository.save(MessageBuilder.buildWith(chat, content, userId, visible));
+    }
+
     public void clearTables() {
         messageJpaRepository.deleteAll();
         chatJpaRepository.deleteAll();

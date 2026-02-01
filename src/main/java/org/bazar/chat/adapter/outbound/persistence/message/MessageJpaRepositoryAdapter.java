@@ -8,6 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class MessageJpaRepositoryAdapter implements MessageRepository {
@@ -19,12 +22,22 @@ public class MessageJpaRepositoryAdapter implements MessageRepository {
     }
 
     @Override
-    public Page<Message> findAllByChatId(Long chatId, Pageable pageable) {
-        return messageJpaRepository.findAllByChatIdOrderByCreatedAtDesc(chatId, pageable);
+    public Page<Message> findAllVisibleByChatId(Long chatId, Pageable pageable) {
+        return messageJpaRepository.findAllByChatIdAndVisibleTrueOrderByCreatedAtDesc(chatId, pageable);
     }
 
     @Override
     public void save(Message message) {
         messageJpaRepository.save(message);
+    }
+
+    @Override
+    public void deleteInvisibleMessagesByUpdatedAt(Instant updatedAt) {
+        messageJpaRepository.deleteAllByVisibleFalseAndUpdatedAtLessThan(updatedAt);
+    }
+
+    @Override
+    public List<Message> findAllByChatIdAndMessageIds(Long chatId, List<Long> messageIds) {
+        return messageJpaRepository.findAllByChatIdAndIdInAndVisible(chatId, messageIds, true);
     }
 }

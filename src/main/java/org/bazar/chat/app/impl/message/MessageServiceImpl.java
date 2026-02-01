@@ -3,18 +3,26 @@ package org.bazar.chat.app.impl.message;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.bazar.chat.app.api.chat.ChatRepository;
+import org.bazar.chat.app.api.exception.BusinessException;
+import org.bazar.chat.app.api.exception.ErrorCode;
 import org.bazar.chat.app.api.message.MessageEventsService;
 import org.bazar.chat.app.api.message.MessageRepository;
 import org.bazar.chat.app.api.message.MessageService;
 import org.bazar.chat.app.api.message.dto.CreateMessageDto;
+import org.bazar.chat.app.api.message.dto.GetMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessagePageDto;
 import org.bazar.chat.app.impl.helpers.SecurityContextHelper;
+import org.bazar.chat.app.impl.mapper.PageDtoMapper;
 import org.bazar.chat.domain.chat.Chat;
 import org.bazar.chat.domain.message.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -24,11 +32,14 @@ public class MessageServiceImpl implements MessageService {
     private final MessageMapper mapper;
     private final SecurityContextHelper securityContextHelper;
     private final MessageEventsService messageEventsService;
+    private final PageDtoMapper pageDtoMapper;
 
     @Override
     public GetMessagePageDto getChatMessages(Long chatId, Pageable pageable) {
-        Page<Message> messages = messageRepository.findAllByChatId(chatId, pageable);
-        return mapper.toGetMessagePageDto(messages);
+        Page<Message> messages = messageRepository.findAllVisibleByChatId(chatId, pageable);
+        Page<GetMessageDto> dtoPage =
+                messages.map(message -> mapper.toGetMessageDto(message, isDeletableByCurrentUser(message)));
+        return pageDtoMapper.toGetMessagePageDto(dtoPage);
     }
 
     @Override
@@ -39,6 +50,40 @@ public class MessageServiceImpl implements MessageService {
         message.setChat(chat);
         message.setUserId(securityContextHelper.getAuthenticatedUserId());
         messageRepository.save(message);
-        messageEventsService.sendCreatedEvent(mapper.toMessageCreatedEvent(message));
+        messageEventsService.publishEvent(mapper.toMessageCreatedEvent(message));
+    }
+
+    @Override
+    @Transactional
+    public void deleteMessages(Long chatId, List<Long> messageIds) {
+        List<Message> messagesToDelete = messageRepository.findAllByChatIdAndMessageIds(chatId, messageIds);
+        checkMessagesForDeletingByCurrentUser(messagesToDelete);
+        messagesToDelete.forEach(message -> message.setVisible(false));
+        messageEventsService.publishEvent(mapper.toMessageDeletedEvent(chatId, messageIds));
+    }
+
+    @Override
+    @Transactional
+    public void deleteExpiredMessages() {
+        Instant threshold = Instant.now().minus(7, ChronoUnit.DAYS);
+        messageRepository.deleteInvisibleMessagesByUpdatedAt(threshold);
+    }
+
+    // =================================================================================================================
+    // = Implementation
+    // =================================================================================================================
+
+    private boolean isDeletableByCurrentUser(Message message) {
+        UUID currentUserId = securityContextHelper.getAuthenticatedUserId();
+        return currentUserId.equals(message.getUserId());
+    }
+
+    private void checkMessagesForDeletingByCurrentUser(List<Message> messages) {
+        messages.stream()
+                .filter(message -> !isDeletableByCurrentUser(message))
+                .findFirst()
+                .ifPresent(message -> {
+                    throw new BusinessException(ErrorCode.DELETE_MESSAGE_BY_CURRENT_USER_FORBIDDEN, message.getId());
+                });
     }
 }

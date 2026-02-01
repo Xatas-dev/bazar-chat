@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "org.bazar"
-version = "1.0.0"
+version = "1.0.1"
 description = "bazar-chat"
 
 java {
@@ -77,7 +77,6 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-websocket-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.testcontainers:postgresql:1.21.0")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
@@ -93,6 +92,8 @@ dependencies {
     implementation("org.mapstruct:mapstruct:1.6.3")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
+    implementation("net.javacrumbs.shedlock:shedlock-spring:5.13.0")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.13.0")
 }
 
 
