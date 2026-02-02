@@ -6,6 +6,9 @@ import org.bazar.chat.app.api.message.MessageService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+/**
+ * Планировщик по удалению сообщений
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

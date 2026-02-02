@@ -10,6 +10,7 @@ import org.bazar.chat.domain.message.Message;
 import org.bazar.chat.model.DeleteMessageRequest;
 import org.bazar.chat.model.MessagePageResponse;
 import org.bazar.chat.model.MessageResponse;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     private static final String CONTENT3 = "content3";
 
     @Test
+    @DisplayName("Успешное создание сообщения")
     void createMessage_success() throws Exception {
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
 
@@ -49,6 +51,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     }
 
     @Test
+    @DisplayName("Неуспешное создание сообщения - чат не найден")
     void createMessage_chatNotFound() throws Exception {
         restTestUtil.postPerform(
                 String.format(CREATE_MESSAGE_API_URL, "1"),
@@ -61,6 +64,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     }
 
     @Test
+    @DisplayName("Неуспешное создание сообщения - чат не найден")
     void getMessagesByChatId_success() throws Exception {
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
         testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
@@ -85,6 +89,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     }
 
     @Test
+    @DisplayName("Успешное удаление сообщений")
     void deleteMessages_success() throws Exception {
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
         Message message1 = testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
@@ -105,6 +110,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     }
 
     @Test
+    @DisplayName("Успешное удаление сообщений - запрещено текущему пользователю")
     void deleteMessage_forbidden() throws Exception {
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
         Message message = testDataHelper.createMessageWith(chat, CONTENT1, UUID.randomUUID(), true);

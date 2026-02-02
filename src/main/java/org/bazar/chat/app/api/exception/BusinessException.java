@@ -2,6 +2,9 @@ package org.bazar.chat.app.api.exception;
 
 import lombok.Getter;
 
+/**
+ * Общая бизнес-ошибка
+ */
 @Getter
 public class BusinessException extends RuntimeException {
     private final ErrorCode errorCode;

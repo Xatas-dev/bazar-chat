@@ -7,11 +7,17 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bazar.chat.domain.DomainObject;
 
+/**
+ * Jpa сущность Чат
+ */
 @Getter
 @Setter
 @Entity
 @Table(name = "chat")
 public class Chat extends DomainObject {
+    /**
+     * Идентификатор пространства
+     */
     @Column(name = "spaceId")
     private Long spaceId;
 }
