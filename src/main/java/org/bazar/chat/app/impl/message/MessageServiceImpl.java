@@ -24,6 +24,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Имплементация сервиса для работы со сценариями по сущности Сообщение
+ */
 @Component
 @RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {

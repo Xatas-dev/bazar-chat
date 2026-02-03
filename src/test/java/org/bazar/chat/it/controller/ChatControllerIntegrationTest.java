@@ -4,6 +4,7 @@ import builder.CreateChatRequestBuilder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.bazar.chat.domain.chat.Chat;
 import org.bazar.chat.model.ChatResponse;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -18,6 +19,7 @@ public class ChatControllerIntegrationTest extends AbstractControllerIntegration
     private static final TypeReference<ChatResponse> TYPE_REF_CHAT_DTO = new TypeReference<>() {};
 
     @Test
+    @DisplayName("Успешное получение чата по идентификатору пространства")
     void getChatBySpace_success() throws Exception {
         testDataHelper.createChatWith(SPACE_ID);
 
@@ -34,6 +36,7 @@ public class ChatControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
+    @DisplayName("Неуспешное получение чата по идентификатору пространства - пространство не найдено")
     void getChatBySpace_notFound() throws Exception {
         restTestUtil.getPerform(
                 GET_CHAT_BY_SPACE_API_URL,
@@ -45,6 +48,7 @@ public class ChatControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
+    @DisplayName("Успешное создание чата")
     void createChat_success() throws Exception {
         ChatResponse chatResponse = restTestUtil.postPerform(
                 CREATE_CHAT_API_URL,

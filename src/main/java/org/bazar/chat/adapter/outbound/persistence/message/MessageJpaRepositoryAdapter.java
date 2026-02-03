@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.util.List;
 
+/**
+ * Имплементация репозитория для работы с сущностью сообщения
+ */
 @Component
 @RequiredArgsConstructor
 public class MessageJpaRepositoryAdapter implements MessageRepository {
