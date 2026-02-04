@@ -2,7 +2,7 @@ name: CI/CD Pipeline - Chat
 
 permissions:
   actions: read
-  contents: read
+  contents: write
   packages: read
 
 on:
