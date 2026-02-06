@@ -4,7 +4,7 @@ import org.bazar.chat.app.api.chat.dto.GetChatDto;
 import org.bazar.chat.model.ChatResponse;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface RestChatMapper {
     ChatResponse mapToChatResponse(GetChatDto chat);
 }

@@ -3,8 +3,8 @@ package org.bazar.chat.it;
 import org.bazar.chat.adapter.outbound.persistence.chat.ChatJpaRepository;
 import org.bazar.chat.adapter.outbound.persistence.message.MessageJpaRepository;
 import org.bazar.chat.fw.BazarChatApplication;
-import org.bazar.chat.it.config.TestSecurityConfig;
 import org.bazar.chat.it.testutil.TestDataHelper;
+import org.bazar.chat.it.testutil.WireMockTestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 )
 @ActiveProfiles("test")
 @AutoConfigureMockMvc(printOnlyOnFailure = false)
-@Import(TestSecurityConfig.class)
+@Import({TestSecurityConfig.class, WireMockConfig.class})
 public abstract class AbstractIntegrationTest {
     @Autowired
     protected TestDataHelper testDataHelper;
@@ -32,10 +32,13 @@ public abstract class AbstractIntegrationTest {
     protected ChatJpaRepository chatJpaRepository;
     @Autowired
     protected MessageJpaRepository messageJpaRepository;
+    @Autowired
+    protected WireMockTestHelper wireMockTestHelper;
 
     @BeforeEach
     void cleanUp() {
         testDataHelper.clearTables();
+        wireMockTestHelper.stopWireMockServers();
     }
 
     static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16.0")

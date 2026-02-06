@@ -10,7 +10,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface WebSocketMessageMapper {
     @Mapping(target = "payload", source = "event", qualifiedByName = "mapToMessageCreatedPayload")
     WebSocketMessageCreatedChatEvent map(MessageCreatedEvent event);
