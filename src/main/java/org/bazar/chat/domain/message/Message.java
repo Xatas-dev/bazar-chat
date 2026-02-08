@@ -45,4 +45,11 @@ public class Message extends DomainObject {
      */
     @Column(name = "visible")
     private Boolean visible = true;
+
+    /**
+     * Сообщение, на которое является ответом
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reply_message_id")
+    private Message replyMessage;
 }
