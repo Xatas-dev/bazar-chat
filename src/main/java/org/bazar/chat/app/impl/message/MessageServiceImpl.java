@@ -2,8 +2,6 @@ package org.bazar.chat.app.impl.message;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.bazar.chat.app.api.persona.PersonaService;
-import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.app.api.chat.ChatRepository;
 import org.bazar.chat.app.api.exception.BusinessException;
 import org.bazar.chat.app.api.exception.ErrorCode;
@@ -14,6 +12,8 @@ import org.bazar.chat.app.api.message.dto.AuthorStatus;
 import org.bazar.chat.app.api.message.dto.CreateMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessagePageDto;
+import org.bazar.chat.app.api.persona.PersonaService;
+import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.app.impl.helpers.SecurityContextHelper;
 import org.bazar.chat.app.impl.mapper.PageDtoMapper;
 import org.bazar.chat.domain.chat.Chat;
@@ -66,11 +66,9 @@ public class MessageServiceImpl implements MessageService {
     @Override
     @Transactional
     public void createMessage(CreateMessageDto dto) {
-        Chat chat = chatRepository.findByChatId(dto.chatId());
-        Message message = mapper.toMessage(dto);
-        message.setChat(chat);
+        Chat chat = chatRepository.findByChatId(dto.chatId()).orElseThrow(() -> new BusinessException(ErrorCode.CHAT_BY_ID_NOT_FOUND, dto.chatId()));
         UUID userId = securityContextHelper.getAuthenticatedUserId();
-        message.setUserId(userId);
+        Message message = mapper.toMessage(dto, getReplyMessageIfExists(dto.chatId(), dto.replyMessageId()), chat, userId);
         messageRepository.save(message);
         UserDto user = personaService.getUsersByIds(List.of(userId)).getFirst();
         messageEventsService.publishEvent(mapper.toMessageCreatedEvent(message, user, AuthorStatus.EXIST));
@@ -123,5 +121,14 @@ public class MessageServiceImpl implements MessageService {
 
     private AuthorStatus getAuthorStatus(UserDto user) {
         return user != null ? AuthorStatus.EXIST : AuthorStatus.UNKNOWN;
+    }
+
+    private Message getReplyMessageIfExists(Long chatId, Long replyMessageId) {
+        if (replyMessageId == null) {
+            return null;
+        }
+
+        return messageRepository.findByIdAndChatId(replyMessageId, chatId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MESSAGE_NOT_FOUND, replyMessageId));
     }
 }

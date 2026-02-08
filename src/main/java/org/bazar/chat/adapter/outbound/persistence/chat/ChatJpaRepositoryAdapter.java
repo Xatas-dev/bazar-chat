@@ -2,10 +2,10 @@ package org.bazar.chat.adapter.outbound.persistence.chat;
 
 import lombok.RequiredArgsConstructor;
 import org.bazar.chat.app.api.chat.ChatRepository;
-import org.bazar.chat.app.api.exception.BusinessException;
-import org.bazar.chat.app.api.exception.ErrorCode;
 import org.bazar.chat.domain.chat.Chat;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
  * Имплементация репозитория для работы с сущностью чата
@@ -21,15 +21,13 @@ public class ChatJpaRepositoryAdapter implements ChatRepository {
     }
 
     @Override
-    public Chat findByChatId(Long chatId) {
-        return chatJpaRepository.findById(chatId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_BY_ID_NOT_FOUND, chatId));
+    public Optional<Chat> findByChatId(Long chatId) {
+        return chatJpaRepository.findById(chatId);
     }
 
     @Override
-    public Chat findBySpaceId(Long spaceId) {
-        return chatJpaRepository.findBySpaceId(spaceId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_BY_SPACE_NOT_FOUND, spaceId));
+    public Optional<Chat> findBySpaceId(Long spaceId) {
+        return chatJpaRepository.findBySpaceId(spaceId);
     }
 
     @Override

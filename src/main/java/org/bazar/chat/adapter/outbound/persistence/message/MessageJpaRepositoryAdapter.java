@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Имплементация репозитория для работы с сущностью сообщения
@@ -42,5 +43,10 @@ public class MessageJpaRepositoryAdapter implements MessageRepository {
     @Override
     public List<Message> findAllByChatIdAndMessageIds(Long chatId, List<Long> messageIds) {
         return messageJpaRepository.findAllByChatIdAndIdInAndVisible(chatId, messageIds, true);
+    }
+
+    @Override
+    public Optional<Message> findByIdAndChatId(Long messageId, Long chatId) {
+        return messageJpaRepository.findAllByChatIdAndIdInAndVisible(chatId, List.of(messageId), true).stream().findFirst();
     }
 }

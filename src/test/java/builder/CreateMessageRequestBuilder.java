@@ -10,4 +10,8 @@ public class CreateMessageRequestBuilder {
     public static CreateMessageRequest buildDefault() {
         return new CreateMessageRequest(DEFAULT_CONTENT);
     }
+
+    public static CreateMessageRequest buildWith(Long replyMessageId) {
+        return buildDefault().replyMessageId(replyMessageId);
+    }
 }
