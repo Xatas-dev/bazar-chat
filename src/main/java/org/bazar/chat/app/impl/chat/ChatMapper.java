@@ -4,7 +4,7 @@ import org.bazar.chat.app.api.chat.dto.GetChatDto;
 import org.bazar.chat.domain.chat.Chat;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface ChatMapper {
     Chat mapToChat(Long spaceId);
 

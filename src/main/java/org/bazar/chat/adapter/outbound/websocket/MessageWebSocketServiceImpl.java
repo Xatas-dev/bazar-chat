@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class MessageWebSocketClient implements MessageEventsService {
+public class MessageWebSocketServiceImpl implements MessageEventsService {
     private final MessageWebSocketSender messageWebSocketSender;
     private final WebSocketMessageMapper mapper;
 

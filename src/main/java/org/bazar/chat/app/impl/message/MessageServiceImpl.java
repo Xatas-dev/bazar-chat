@@ -2,12 +2,15 @@ package org.bazar.chat.app.impl.message;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.bazar.chat.app.api.persona.PersonaService;
+import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.app.api.chat.ChatRepository;
 import org.bazar.chat.app.api.exception.BusinessException;
 import org.bazar.chat.app.api.exception.ErrorCode;
 import org.bazar.chat.app.api.message.MessageEventsService;
 import org.bazar.chat.app.api.message.MessageRepository;
 import org.bazar.chat.app.api.message.MessageService;
+import org.bazar.chat.app.api.message.dto.AuthorStatus;
 import org.bazar.chat.app.api.message.dto.CreateMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessagePageDto;
@@ -22,7 +25,10 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Имплементация сервиса для работы со сценариями по сущности Сообщение
@@ -36,12 +42,24 @@ public class MessageServiceImpl implements MessageService {
     private final SecurityContextHelper securityContextHelper;
     private final MessageEventsService messageEventsService;
     private final PageDtoMapper pageDtoMapper;
+    private final PersonaService personaService;
 
     @Override
     public GetMessagePageDto getChatMessages(Long chatId, Pageable pageable) {
         Page<Message> messages = messageRepository.findAllVisibleByChatId(chatId, pageable);
-        Page<GetMessageDto> dtoPage =
-                messages.map(message -> mapper.toGetMessageDto(message, isDeletableByCurrentUser(message)));
+        Map<UUID, UserDto> usersMap = loadUsers(messages);
+        Page<GetMessageDto> dtoPage = messages.map(message -> {
+                    UserDto user = usersMap.get(message.getUserId());
+                    AuthorStatus authorStatus = getAuthorStatus(user);
+
+                    return mapper.toGetMessageDto(
+                            message,
+                            isDeletableByCurrentUser(message),
+                            user,
+                            authorStatus
+                    );
+                }
+        );
         return pageDtoMapper.toGetMessagePageDto(dtoPage);
     }
 
@@ -51,9 +69,11 @@ public class MessageServiceImpl implements MessageService {
         Chat chat = chatRepository.findByChatId(dto.chatId());
         Message message = mapper.toMessage(dto);
         message.setChat(chat);
-        message.setUserId(securityContextHelper.getAuthenticatedUserId());
+        UUID userId = securityContextHelper.getAuthenticatedUserId();
+        message.setUserId(userId);
         messageRepository.save(message);
-        messageEventsService.publishEvent(mapper.toMessageCreatedEvent(message));
+        UserDto user = personaService.getUsersByIds(List.of(userId)).getFirst();
+        messageEventsService.publishEvent(mapper.toMessageCreatedEvent(message, user, AuthorStatus.EXIST));
     }
 
     @Override
@@ -88,5 +108,20 @@ public class MessageServiceImpl implements MessageService {
                 .ifPresent(message -> {
                     throw new BusinessException(ErrorCode.DELETE_MESSAGE_BY_CURRENT_USER_FORBIDDEN, message.getId());
                 });
+    }
+
+    private Map<UUID, UserDto> loadUsers(Page<Message> messages) {
+        List<UUID> userIds = messages.stream()
+                .map(Message::getUserId)
+                .distinct()
+                .toList();
+        List<UserDto> usersByIds = personaService.getUsersByIds(userIds);
+
+        return usersByIds.stream()
+                .collect(Collectors.toMap(UserDto::userId, Function.identity()));
+    }
+
+    private AuthorStatus getAuthorStatus(UserDto user) {
+        return user != null ? AuthorStatus.EXIST : AuthorStatus.UNKNOWN;
     }
 }

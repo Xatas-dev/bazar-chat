@@ -192,7 +192,6 @@ components:
       required:
         - id
         - chatId
-        - userId
         - content
         - createdAt
         - isDeletable
@@ -203,10 +202,8 @@ components:
         chatId:
           type: integer
           format: int64
-        userId:
-          type: string
-          format: uuid
-          description: The UUID of the user who sent the message
+        author:
+          $ref: '#/components/schemas/AuthorMessageResponse'
         content:
           type: string
         createdAt:
@@ -225,6 +222,21 @@ components:
           items:
             type: integer
             format: int64
+
+    AuthorMessageResponse:
+      type: object
+      required:
+        - status
+      properties:
+        userId:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        status:
+          type: string
 
     # --------------------------------------
     # Pagination Wrapper

@@ -32,6 +32,8 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     @Test
     @DisplayName("Успешное создание сообщения")
     void createMessage_success() throws Exception {
+        wireMockTestHelper.startMockBazarPersonaServer();
+        wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
 
         restTestUtil.postPerform(
@@ -64,11 +66,13 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     }
 
     @Test
-    @DisplayName("Неуспешное создание сообщения - чат не найден")
+    @DisplayName("Успешное получение сообщений по идентификатору чата")
     void getMessagesByChatId_success() throws Exception {
+        wireMockTestHelper.startMockBazarPersonaServer();
+        wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
         testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
-        testDataHelper.createMessageWith(chat, CONTENT2, JwtBuilder.TEST_USER_ID, true);
+        testDataHelper.createMessageWith(chat, CONTENT2, UUID.fromString("baed9d65-046e-4616-9515-1e4237134f31"), true);
         testDataHelper.createMessageWith(chat, CONTENT3, JwtBuilder.TEST_USER_ID, false);
 
         List<MessageResponse> response = restTestUtil.getPerform(
@@ -81,11 +85,12 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
 
         assertNotNull(response);
         assertEquals(2, response.size());
-        assertTrue(response.stream().allMatch(dto -> JwtBuilder.TEST_USER_ID.equals(dto.getUserId())));
         MessageResponse first = response.getFirst();
         assertEquals(CONTENT2, first.getContent());
+        assertFalse(first.getIsDeletable());
         MessageResponse second = response.get(1);
         assertEquals(CONTENT1, second.getContent());
+        assertTrue(second.getIsDeletable());
     }
 
     @Test
@@ -110,7 +115,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     }
 
     @Test
-    @DisplayName("Успешное удаление сообщений - запрещено текущему пользователю")
+    @DisplayName("Нуспешное удаление сообщений - запрещено текущему пользователю")
     void deleteMessage_forbidden() throws Exception {
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
         Message message = testDataHelper.createMessageWith(chat, CONTENT1, UUID.randomUUID(), true);

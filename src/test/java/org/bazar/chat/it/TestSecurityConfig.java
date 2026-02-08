@@ -1,4 +1,4 @@
-package org.bazar.chat.it.config;
+package org.bazar.chat.it;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

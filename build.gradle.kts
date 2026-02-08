@@ -47,6 +47,13 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:4.0.1")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.1.1")
+    }
+}
+
 dependencies {
     //Web
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -70,20 +77,24 @@ dependencies {
     //Kafka
     implementation("org.springframework.boot:spring-boot-starter-kafka")
 
+    //Feign
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+
+    //Cache
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+
     //Test
-    testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
-    testImplementation("org.springframework.boot:spring-boot-starter-liquibase-test")
-    testImplementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server-test")
-    testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
-    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-websocket-test")
+    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:postgresql:1.21.0")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.springframework.kafka:spring-kafka-test")
     testImplementation("org.awaitility:awaitility:4.2.0")
+    testImplementation("org.wiremock:wiremock-standalone:3.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
@@ -99,6 +110,10 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-Amapstruct.defaultComponentModel=spring")
 }
 
 openApiGenerate {

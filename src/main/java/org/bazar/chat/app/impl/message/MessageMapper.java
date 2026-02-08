@@ -1,5 +1,8 @@
 package org.bazar.chat.app.impl.message;
 
+import org.bazar.chat.app.api.persona.model.UserDto;
+import org.bazar.chat.app.api.message.dto.AuthorDto;
+import org.bazar.chat.app.api.message.dto.AuthorStatus;
 import org.bazar.chat.app.api.message.dto.CreateMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessageDto;
 import org.bazar.chat.app.api.message.dto.event.MessageCreatedEvent;
@@ -10,15 +13,20 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface MessageMapper {
     @Mapping(target = "chatId", source = "message.chat.id")
-    GetMessageDto toGetMessageDto(Message message, boolean isDeletable);
+    @Mapping(target = "author", expression = "java(toAuthorDto(userDto, status, message))")
+    GetMessageDto toGetMessageDto(Message message, boolean isDeletable, UserDto userDto, AuthorStatus status);
+
+    @Mapping(target = "userId", source = "message.userId")
+    AuthorDto toAuthorDto(UserDto userDto, AuthorStatus status, Message message);
 
     Message toMessage(CreateMessageDto dto);
 
-    @Mapping(target = "chatId", source = "chat.id")
-    MessageCreatedEvent toMessageCreatedEvent(Message message);
+    @Mapping(target = "chatId", source = "message.chat.id")
+    @Mapping(target = "author", expression = "java(toAuthorDto(userDto, status, message))")
+    MessageCreatedEvent toMessageCreatedEvent(Message message, UserDto userDto, AuthorStatus status);
 
     default MessageDeletedEvent toMessageDeletedEvent(Long chatId, List<Long> messageIds) {
         return new MessageDeletedEvent(chatId, messageIds);

@@ -17,3 +17,7 @@ logging:
   level:
     org:
       bazar: ${LOGGING_LEVEL:DEBUG}
+service:
+  bazar-persona:
+    url: http://localhost:${service.bazar-persona.port}
+    port: 8081
