@@ -6,6 +6,9 @@ import org.bazar.chat.adapter.outbound.websocket.dto.WebSocketChatEvent;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+/**
+ * Отправитель событий в топик WebSocket
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j

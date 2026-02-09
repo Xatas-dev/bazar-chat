@@ -9,6 +9,9 @@ import org.bazar.chat.app.api.chat.dto.GetChatDto;
 import org.bazar.chat.domain.chat.Chat;
 import org.springframework.stereotype.Component;
 
+/**
+ * Имплементация сервиса для работы со сценариями по сущности Чат
+ */
 @Component
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {

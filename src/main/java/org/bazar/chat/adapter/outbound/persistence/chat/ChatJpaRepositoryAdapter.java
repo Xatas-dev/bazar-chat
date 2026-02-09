@@ -7,6 +7,9 @@ import org.bazar.chat.app.api.exception.ErrorCode;
 import org.bazar.chat.domain.chat.Chat;
 import org.springframework.stereotype.Component;
 
+/**
+ * Имплементация репозитория для работы с сущностью чата
+ */
 @Component
 @RequiredArgsConstructor
 public class ChatJpaRepositoryAdapter implements ChatRepository {

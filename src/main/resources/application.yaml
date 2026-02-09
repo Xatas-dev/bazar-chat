@@ -35,3 +35,6 @@ kafka:
 scheduler:
   message:
     deleteMessages: "0 0 3 * * *"
+service:
+  bazar-persona:
+    url: ${INTEGRATION_REST_BAZAR_PERSONA_API_URL}

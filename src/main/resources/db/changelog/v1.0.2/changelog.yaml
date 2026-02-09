@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: 20260802-00-1-add_reply_to_message.sql
+      relativeToChangelogFile: true

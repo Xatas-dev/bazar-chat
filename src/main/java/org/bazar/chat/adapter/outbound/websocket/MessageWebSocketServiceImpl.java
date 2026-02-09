@@ -7,9 +7,12 @@ import org.bazar.chat.app.api.message.dto.event.MessageCreatedEvent;
 import org.bazar.chat.app.api.message.dto.event.MessageDeletedEvent;
 import org.springframework.stereotype.Component;
 
+/**
+ * Имплементация (клиент) интерфейса публикации и получения событий для WebSocket
+ */
 @Component
 @RequiredArgsConstructor
-public class MessageWebSocketClient implements MessageEventsService {
+public class MessageWebSocketServiceImpl implements MessageEventsService {
     private final MessageWebSocketSender messageWebSocketSender;
     private final WebSocketMessageMapper mapper;
 

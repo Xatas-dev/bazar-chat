@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.producer.Producer;
 import org.bazar.chat.domain.chat.Chat;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
@@ -22,6 +23,7 @@ public class SpaceConsumerIIntegrationTest extends AbstractKafkaIntegrationTest 
     private EmbeddedKafkaBroker embeddedKafka;
 
     @Test
+    @DisplayName("Успешно удаление чата через Kafka")
     void deleteChat_success() throws JsonProcessingException {
         Consumer<String, String> kafkaConsumer = getKafkaConsumer(embeddedKafka, SPACE_DELETE_TOPIC);
         Producer<String, String> kafkaProducer = getKafkaProducer(embeddedKafka);

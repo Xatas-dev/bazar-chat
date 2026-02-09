@@ -10,6 +10,7 @@ import org.bazar.chat.domain.message.Message;
 import org.bazar.chat.model.DeleteMessageRequest;
 import org.bazar.chat.model.MessagePageResponse;
 import org.bazar.chat.model.MessageResponse;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -29,7 +30,10 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     private static final String CONTENT3 = "content3";
 
     @Test
+    @DisplayName("Успешное создание сообщения")
     void createMessage_success() throws Exception {
+        wireMockTestHelper.startMockBazarPersonaServer();
+        wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
 
         restTestUtil.postPerform(
@@ -49,6 +53,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     }
 
     @Test
+    @DisplayName("Неуспешное создание сообщения - чат не найден")
     void createMessage_chatNotFound() throws Exception {
         restTestUtil.postPerform(
                 String.format(CREATE_MESSAGE_API_URL, "1"),
@@ -61,10 +66,13 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     }
 
     @Test
+    @DisplayName("Успешное получение сообщений по идентификатору чата")
     void getMessagesByChatId_success() throws Exception {
+        wireMockTestHelper.startMockBazarPersonaServer();
+        wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
         testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
-        testDataHelper.createMessageWith(chat, CONTENT2, JwtBuilder.TEST_USER_ID, true);
+        testDataHelper.createMessageWith(chat, CONTENT2, UUID.fromString("baed9d65-046e-4616-9515-1e4237134f31"), true);
         testDataHelper.createMessageWith(chat, CONTENT3, JwtBuilder.TEST_USER_ID, false);
 
         List<MessageResponse> response = restTestUtil.getPerform(
@@ -77,14 +85,16 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
 
         assertNotNull(response);
         assertEquals(2, response.size());
-        assertTrue(response.stream().allMatch(dto -> JwtBuilder.TEST_USER_ID.equals(dto.getUserId())));
         MessageResponse first = response.getFirst();
         assertEquals(CONTENT2, first.getContent());
+        assertFalse(first.getIsDeletable());
         MessageResponse second = response.get(1);
         assertEquals(CONTENT1, second.getContent());
+        assertTrue(second.getIsDeletable());
     }
 
     @Test
+    @DisplayName("Успешное удаление сообщений")
     void deleteMessages_success() throws Exception {
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
         Message message1 = testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
@@ -105,6 +115,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     }
 
     @Test
+    @DisplayName("Нуспешное удаление сообщений - запрещено текущему пользователю")
     void deleteMessage_forbidden() throws Exception {
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
         Message message = testDataHelper.createMessageWith(chat, CONTENT1, UUID.randomUUID(), true);

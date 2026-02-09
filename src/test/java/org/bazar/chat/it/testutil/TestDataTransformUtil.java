@@ -8,6 +8,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.experimental.UtilityClass;
 
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 
 @UtilityClass
@@ -26,5 +29,14 @@ public class TestDataTransformUtil {
 
     public static ObjectMapper getTestObjectMapper() {
         return objectMapper;
+    }
+
+    public static String readFileWithoutThrow(String fileName) {
+        try {
+            URL resource = TestDataTransformUtil.class.getResource(fileName);
+            return Files.readString(Paths.get(resource.toURI()));
+        } catch (Exception e) {
+            return "";
+        }
     }
 }
