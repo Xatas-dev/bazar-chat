@@ -11,6 +11,7 @@ import java.time.Instant;
  * @param createdAt Дата и время создания сообщения
  * @param isDeletable Признак возможности удаления сообщения
  * @param author Автор сообщения
+ * @param reply Информация по сообщению, на которое было отправлено ответное сообщение
  */
 public record GetMessageDto(
         Long id,
@@ -18,6 +19,7 @@ public record GetMessageDto(
         String content,
         Instant createdAt,
         Boolean isDeletable,
-        AuthorDto author
+        AuthorDto author,
+        ReplyMessageDto reply
 ) {
 }

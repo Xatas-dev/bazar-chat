@@ -12,6 +12,7 @@ import org.bazar.chat.app.api.message.dto.AuthorStatus;
 import org.bazar.chat.app.api.message.dto.CreateMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessagePageDto;
+import org.bazar.chat.app.api.message.dto.ReplyMessageDto;
 import org.bazar.chat.app.api.persona.PersonaService;
 import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.app.impl.helpers.SecurityContextHelper;
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Имплементация сервиса для работы со сценариями по сущности Сообщение
@@ -47,16 +49,18 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public GetMessagePageDto getChatMessages(Long chatId, Pageable pageable) {
         Page<Message> messages = messageRepository.findAllVisibleByChatId(chatId, pageable);
-        Map<UUID, UserDto> usersMap = loadUsers(messages);
+        Map<UUID, UserDto> usersMap = loadUsers(messages.getContent());
         Page<GetMessageDto> dtoPage = messages.map(message -> {
                     UserDto user = usersMap.get(message.getUserId());
                     AuthorStatus authorStatus = getAuthorStatus(user);
+                    ReplyMessageDto reply = getReplyMessageDto(message, usersMap);
 
                     return mapper.toGetMessageDto(
                             message,
                             isDeletableByCurrentUser(message),
                             user,
-                            authorStatus
+                            authorStatus,
+                            reply
                     );
                 }
         );
@@ -70,8 +74,11 @@ public class MessageServiceImpl implements MessageService {
         UUID userId = securityContextHelper.getAuthenticatedUserId();
         Message message = mapper.toMessage(dto, getReplyMessageIfExists(dto.chatId(), dto.replyMessageId()), chat, userId);
         messageRepository.save(message);
-        UserDto user = personaService.getUsersByIds(List.of(userId)).getFirst();
-        messageEventsService.publishEvent(mapper.toMessageCreatedEvent(message, user, AuthorStatus.EXIST));
+        Map<UUID, UserDto> usersMap = loadUsers(List.of(message));
+        UserDto user = usersMap.get(message.getUserId());
+        AuthorStatus authorStatus = getAuthorStatus(user);
+        ReplyMessageDto reply = getReplyMessageDto(message, usersMap);
+        messageEventsService.publishEvent(mapper.toMessageCreatedEvent(message, user, authorStatus, reply));
     }
 
     @Override
@@ -108,9 +115,11 @@ public class MessageServiceImpl implements MessageService {
                 });
     }
 
-    private Map<UUID, UserDto> loadUsers(Page<Message> messages) {
-        List<UUID> userIds = messages.stream()
-                .map(Message::getUserId)
+    private Map<UUID, UserDto> loadUsers(List<Message> messages) {
+        List<UUID> userIds = Stream.concat(
+                        messages.stream().map(Message::getUserId),
+                        messages.stream().flatMap(m -> Stream.ofNullable(m.getReplyMessage())).map(Message::getUserId)
+                )
                 .distinct()
                 .toList();
         List<UserDto> usersByIds = personaService.getUsersByIds(userIds);
@@ -130,5 +139,18 @@ public class MessageServiceImpl implements MessageService {
 
         return messageRepository.findByIdAndChatId(replyMessageId, chatId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MESSAGE_NOT_FOUND, replyMessageId));
+    }
+
+
+    private ReplyMessageDto getReplyMessageDto(Message message, Map<UUID, UserDto> usersMap) {
+        Message replyMessage = message.getReplyMessage();
+        if (replyMessage == null || !replyMessage.getVisible()) {
+            return null;
+        }
+
+        UserDto user = usersMap.get(replyMessage.getUserId());
+        AuthorStatus authorStatus = getAuthorStatus(user);
+        String contentPreview = replyMessage.getContent().substring(0, Math.min(replyMessage.getContent().length(), 30)) + "...";
+        return mapper.toReplyMessageDto(replyMessage, user, authorStatus, contentPreview);
     }
 }

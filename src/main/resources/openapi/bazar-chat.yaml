@@ -214,6 +214,8 @@ components:
           format: date-time
         isDeletable:
           type: boolean
+        reply:
+          $ref: '#/components/schemas/ReplyMessageResponse'
 
     DeleteMessageRequest:
       type: object
@@ -239,6 +241,21 @@ components:
         lastName:
           type: string
         status:
+          type: string
+
+    ReplyMessageResponse:
+      type: object
+      required:
+        - id
+        - author
+        - contentPreview
+      properties:
+        id:
+          type: integer
+          format: int64
+        author:
+          $ref: '#/components/schemas/AuthorMessageResponse'
+        contentPreview:
           type: string
 
     # --------------------------------------
