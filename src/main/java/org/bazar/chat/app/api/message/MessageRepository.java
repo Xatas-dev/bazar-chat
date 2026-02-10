@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Репозиторий для работы с сущностью сообщения
@@ -50,4 +51,13 @@ public interface MessageRepository {
      * @return Список найденных собщений
      */
     List<Message> findAllByChatIdAndMessageIds(Long chatId, List<Long> messageIds);
+
+    /**
+     * Найти сообщение по идентификатору сообщения и идентификатору чата
+     *
+     * @param messageId Идентификатор сообщения
+     * @param chatId Идентификатор чата
+     * @return Найденное сообщение
+     */
+    Optional<Message> findByIdAndChatId(Long messageId, Long chatId);
 }

@@ -2,6 +2,8 @@ package org.bazar.chat.app.api.chat;
 
 import org.bazar.chat.domain.chat.Chat;
 
+import java.util.Optional;
+
 /**
  * Репозиторий для работы с сущностью чата
  */
@@ -20,7 +22,7 @@ public interface ChatRepository {
      * @param chatId Идентификатор чата
      * @return Найденный чат
      */
-    Chat findByChatId(Long chatId);
+    Optional<Chat> findByChatId(Long chatId);
 
     /**
      * Получить чат по идентификатору пространства
@@ -28,7 +30,7 @@ public interface ChatRepository {
      * @param spaceId Идентификатор пространства
      * @return Найденный чат
      */
-    Chat findBySpaceId(Long spaceId);
+    Optional<Chat> findBySpaceId(Long spaceId);
 
     /**
      * Удалить чат

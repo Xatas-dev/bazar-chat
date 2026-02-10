@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.bazar.chat.app.api.chat.ChatRepository;
 import org.bazar.chat.app.api.chat.ChatService;
+import org.bazar.chat.app.api.exception.BusinessException;
+import org.bazar.chat.app.api.exception.ErrorCode;
 import org.bazar.chat.app.api.message.MessageRepository;
 import org.bazar.chat.app.api.chat.dto.GetChatDto;
 import org.bazar.chat.domain.chat.Chat;
@@ -28,13 +30,15 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public GetChatDto getChatBySpaceId(Long spaceId) {
-        return chatMapper.mapToGetChatDto(chatRepository.findBySpaceId(spaceId));
+        return chatMapper.mapToGetChatDto(chatRepository.findBySpaceId(spaceId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_BY_SPACE_NOT_FOUND, spaceId)));
     }
 
     @Override
     @Transactional
     public void deleteChatBySpaceId(Long spaceId) {
-        Chat chat = chatRepository.findBySpaceId(spaceId);
+        Chat chat = chatRepository.findBySpaceId(spaceId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_BY_SPACE_NOT_FOUND, spaceId));
         messageRepository.deleteAllByChat(chat);
         chatRepository.delete(chat);
     }

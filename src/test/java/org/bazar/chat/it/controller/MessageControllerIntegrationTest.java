@@ -35,21 +35,24 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
         wireMockTestHelper.startMockBazarPersonaServer();
         wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
+        Message messageToReply = testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
 
         restTestUtil.postPerform(
                 String.format(CREATE_MESSAGE_API_URL, chat.getId()),
                 Map.of(),
-                CreateMessageRequestBuilder.buildDefault(),
+                CreateMessageRequestBuilder.buildWith(messageToReply.getId()),
                 TYPE_REFERENCE_VOID,
                 Map.of(),
                 status().isOk()
         );
 
         List<Message> messages = messageJpaRepository.findAll();
-        Message message = messages.getFirst();
-        assertEquals(1, messages.size());
-        assertEquals(chat.getId(), message.getChat().getId());
-        assertEquals(CreateMessageRequestBuilder.DEFAULT_CONTENT, message.getContent());
+        Message resultMessage = messages.stream().filter(message -> !message.getId().equals(messageToReply.getId())).findFirst().orElseThrow();
+        assertEquals(2, messages.size());
+        assertEquals(chat.getId(), resultMessage.getChat().getId());
+        assertEquals(CreateMessageRequestBuilder.DEFAULT_CONTENT, resultMessage.getContent());
+        assertNotNull(resultMessage.getReplyMessage());
+        assertEquals(CONTENT1, resultMessage.getReplyMessage().getContent());
     }
 
     @Test

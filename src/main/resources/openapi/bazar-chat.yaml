@@ -186,6 +186,9 @@ components:
           minLength: 1
           maxLength: 1028 # Matches your entity @Size(max = 1028)
           example: "Hello world"
+        replyMessageId:
+          type: integer
+          format: int64
 
     MessageResponse:
       type: object
