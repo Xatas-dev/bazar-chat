@@ -1,5 +1,6 @@
 package org.bazar.chat.app.impl.message;
 
+import org.bazar.chat.app.api.message.dto.ReplyMessageDto;
 import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.app.api.message.dto.AuthorDto;
 import org.bazar.chat.app.api.message.dto.AuthorStatus;
@@ -19,7 +20,11 @@ import java.util.UUID;
 public interface MessageMapper {
     @Mapping(target = "chatId", source = "message.chat.id")
     @Mapping(target = "author", expression = "java(toAuthorDto(userDto, status, message))")
-    GetMessageDto toGetMessageDto(Message message, boolean isDeletable, UserDto userDto, AuthorStatus status);
+    @Mapping(target = "id", source = "message.id")
+    GetMessageDto toGetMessageDto(Message message, boolean isDeletable, UserDto userDto, AuthorStatus status, ReplyMessageDto reply);
+
+    @Mapping(target = "author", expression = "java(toAuthorDto(userDto, status, message))")
+    ReplyMessageDto toReplyMessageDto(Message message, UserDto userDto, AuthorStatus status, String contentPreview);
 
     @Mapping(target = "userId", source = "message.userId")
     AuthorDto toAuthorDto(UserDto userDto, AuthorStatus status, Message message);
@@ -36,7 +41,8 @@ public interface MessageMapper {
 
     @Mapping(target = "chatId", source = "message.chat.id")
     @Mapping(target = "author", expression = "java(toAuthorDto(userDto, status, message))")
-    MessageCreatedEvent toMessageCreatedEvent(Message message, UserDto userDto, AuthorStatus status);
+    @Mapping(target = "id", source = "message.id")
+    MessageCreatedEvent toMessageCreatedEvent(Message message, UserDto userDto, AuthorStatus status, ReplyMessageDto reply);
 
     default MessageDeletedEvent toMessageDeletedEvent(Long chatId, List<Long> messageIds) {
         return new MessageDeletedEvent(chatId, messageIds);

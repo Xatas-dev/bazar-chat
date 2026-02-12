@@ -28,6 +28,16 @@ public class MessageBuilder {
         return message;
     }
 
+    public static Message buildWith(Chat chat, String content, UUID userId, boolean visible, Message replyMessage) {
+        Message message = new Message();
+        message.setUserId(userId);
+        message.setChat(chat);
+        message.setContent(content);
+        message.setVisible(visible);
+        message.setReplyMessage(replyMessage);
+        return message;
+    }
+
     public static Message buildWith(Chat chat, String content, UUID userId) {
         Message message = new Message();
         message.setUserId(userId);

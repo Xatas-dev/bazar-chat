@@ -1,6 +1,7 @@
 package org.bazar.chat.app.api.message.dto.event;
 
 import org.bazar.chat.app.api.message.dto.AuthorDto;
+import org.bazar.chat.app.api.message.dto.ReplyMessageDto;
 
 import java.time.Instant;
 
@@ -17,7 +18,8 @@ public record MessageCreatedEvent(
         Long chatId,
         String content,
         Instant createdAt,
-        AuthorDto author) implements ChatEvent {
+        AuthorDto author,
+        ReplyMessageDto reply) implements ChatEvent {
     @Override
     public ChatEventType getType() {
         return ChatEventType.CREATED;
