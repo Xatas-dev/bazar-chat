@@ -18,7 +18,11 @@ public enum ErrorCode {
     /**
      * Удаление сообщения текущим пользователем невозможно
      */
-    DELETE_MESSAGE_BY_CURRENT_USER_FORBIDDEN(HttpStatus.FORBIDDEN, "Current user can't delete message with id: %s");
+    DELETE_MESSAGE_BY_CURRENT_USER_FORBIDDEN(HttpStatus.FORBIDDEN, "Current user can't delete message with id: %s"),
+    /**
+     * Не найдено сообщение по его идентификатору
+     */
+    MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "No message with %s id");
 
     @Getter
     private final HttpStatus status;

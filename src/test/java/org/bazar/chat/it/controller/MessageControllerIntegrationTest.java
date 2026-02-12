@@ -20,14 +20,42 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class MessageControllerIntegrationTest extends AbstractControllerIntegrationTest {
     private static final TypeReference<MessagePageResponse> TYPE_REF_MESSAGE_DTO = new TypeReference<>() {};
-    private static final String CONTENT1 = "content1";
+    private static final String CONTENT1 = "content1content1content1content1content1content1content1content1content1content1";
     private static final String CONTENT2 = "content2";
     private static final String CONTENT3 = "content3";
+    private static final String CONTENT4 = "content4";
+
+    @Test
+    @DisplayName("Успешное создание сообщения c ответом")
+    void createMessage_successWithReply() throws Exception {
+        wireMockTestHelper.startMockBazarPersonaServer();
+        wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
+        Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
+        Message messageToReply = testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
+
+        restTestUtil.postPerform(
+                String.format(CREATE_MESSAGE_API_URL, chat.getId()),
+                Map.of(),
+                CreateMessageRequestBuilder.buildWith(messageToReply.getId()),
+                TYPE_REFERENCE_VOID,
+                Map.of(),
+                status().isOk()
+        );
+
+        List<Message> messages = messageJpaRepository.findAll();
+        Message resultMessage = messages.stream().filter(message -> !message.getId().equals(messageToReply.getId())).findFirst().orElseThrow();
+        assertEquals(2, messages.size());
+        assertEquals(chat.getId(), resultMessage.getChat().getId());
+        assertEquals(CreateMessageRequestBuilder.DEFAULT_CONTENT, resultMessage.getContent());
+        assertNotNull(resultMessage.getReplyMessage());
+        assertEquals(CONTENT1, resultMessage.getReplyMessage().getContent());
+    }
 
     @Test
     @DisplayName("Успешное создание сообщения")
@@ -46,10 +74,10 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
         );
 
         List<Message> messages = messageJpaRepository.findAll();
-        Message message = messages.getFirst();
+        Message resultMessage = messages.getFirst();
         assertEquals(1, messages.size());
-        assertEquals(chat.getId(), message.getChat().getId());
-        assertEquals(CreateMessageRequestBuilder.DEFAULT_CONTENT, message.getContent());
+        assertEquals(chat.getId(), resultMessage.getChat().getId());
+        assertEquals(CreateMessageRequestBuilder.DEFAULT_CONTENT, resultMessage.getContent());
     }
 
     @Test
@@ -71,9 +99,10 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
         wireMockTestHelper.startMockBazarPersonaServer();
         wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
-        testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
-        testDataHelper.createMessageWith(chat, CONTENT2, UUID.fromString("baed9d65-046e-4616-9515-1e4237134f31"), true);
-        testDataHelper.createMessageWith(chat, CONTENT3, JwtBuilder.TEST_USER_ID, false);
+        Message replyedMessage = testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
+        testDataHelper.createMessageWith(chat, CONTENT2, UUID.fromString("baed9d65-046e-4616-9515-1e4237134f31"), true, replyedMessage);
+        Message deletedMessage = testDataHelper.createMessageWith(chat, CONTENT3, JwtBuilder.TEST_USER_ID, false);
+        testDataHelper.createMessageWith(chat, CONTENT4, JwtBuilder.TEST_USER_ID, true, deletedMessage);
 
         List<MessageResponse> response = restTestUtil.getPerform(
                 String.format(GET_MESSAGES_BY_CHAT_ID, chat.getId()),
@@ -84,13 +113,18 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
         ).getContent();
 
         assertNotNull(response);
-        assertEquals(2, response.size());
+        assertEquals(3, response.size());
         MessageResponse first = response.getFirst();
-        assertEquals(CONTENT2, first.getContent());
-        assertFalse(first.getIsDeletable());
+        assertEquals(CONTENT4, first.getContent());
+        assertTrue(first.getIsDeletable());
+        assertNull(first.getReply());
         MessageResponse second = response.get(1);
-        assertEquals(CONTENT1, second.getContent());
-        assertTrue(second.getIsDeletable());
+        assertEquals(CONTENT2, second.getContent());
+        assertFalse(second.getIsDeletable());
+        assertNotNull(second.getReply());
+        MessageResponse third = response.get(2);
+        assertEquals(CONTENT1, third.getContent());
+        assertNull(third.getReply());
     }
 
     @Test
