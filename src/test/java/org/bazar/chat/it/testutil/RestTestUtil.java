@@ -4,6 +4,7 @@ import builder.JwtBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bazar.chat.model.UpdateChatMessageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import java.util.Map;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @Component
@@ -64,6 +66,19 @@ public class RestTestUtil {
             ResultMatcher httpStatus
     ) throws Exception {
         MockHttpServletRequestBuilder request = buildDeleteRequest(url, params, headers, body);
+        MockHttpServletResponse response = perform(request).andExpect(httpStatus).andReturn().getResponse();
+        return getDtoFromResponse(response, typeReference);
+    }
+
+
+    public <T> T patchPerform(
+            String url,
+            Map<String, Object> params,
+            UpdateChatMessageRequest body,
+            TypeReference<T> typeReference,
+            Map<String, List<String>> headers,
+            ResultMatcher httpStatus) throws Exception {
+        MockHttpServletRequestBuilder request = buildPatchRequest(url, params, headers, body);
         MockHttpServletResponse response = perform(request).andExpect(httpStatus).andReturn().getResponse();
         return getDtoFromResponse(response, typeReference);
     }
@@ -124,6 +139,23 @@ public class RestTestUtil {
             String url, Map<String, Object> params, Map<String, List<String>> headers, Object body
     ) throws Exception {
         MockHttpServletRequestBuilder requestMock = delete(url).contentType(MediaType.APPLICATION_JSON);
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            requestMock.param(entry.getKey(), String.valueOf(entry.getValue()));
+        }
+
+        if (!headers.isEmpty()) {
+            requestMock.headers(new HttpHeaders(new LinkedMultiValueMap<>(headers)));
+        }
+
+        requestMock.content(toJsonString(body));
+
+        return requestMock;
+    }
+
+    private MockHttpServletRequestBuilder buildPatchRequest(
+            String url, Map<String, Object> params, Map<String, List<String>> headers, Object body
+    ) throws Exception {
+        MockHttpServletRequestBuilder requestMock = patch(url).contentType(MediaType.APPLICATION_JSON);
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             requestMock.param(entry.getKey(), String.valueOf(entry.getValue()));
         }

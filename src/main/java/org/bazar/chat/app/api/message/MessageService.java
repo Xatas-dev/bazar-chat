@@ -38,4 +38,11 @@ public interface MessageService {
      * @param messageIds Идентификаторы сообщений
      */
     void deleteMessages(Long chatId, List<Long> messageIds);
+
+    /**
+     * Обновить содержимое сообщения
+     *
+     * @param updateMessageDto DTO для обновления содержимого сообщения
+     */
+    void updateMessageContent(UpdateMessageDto updateMessageDto);
 }

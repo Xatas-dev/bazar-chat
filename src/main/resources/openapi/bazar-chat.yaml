@@ -142,6 +142,46 @@ paths:
         '403':
           description: User can't delete this message
 
+  # ==========================================
+  # 3. Manage Specific Message
+  # ==========================================
+  /chats/{chatId}/messages/{messageId}:
+    patch:
+      tags:
+        - Messages
+      summary: Update message content
+      description: Update the content of a specific message in a chat.
+      operationId: updateChatMessage
+      parameters:
+        - name: chatId
+          in: path
+          description: ID of the chat
+          required: true
+          schema:
+            type: string
+        - name: messageId
+          in: path
+          description: ID of the message
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateChatMessageRequest'
+      responses:
+        '200':
+          description: Message updated successfully
+        '400':
+          description: Invalid request data
+        '403':
+          description: User can't update this message
+        '404':
+          description: Chat or message not found
+
+
 components:
   schemas:
     # --------------------------------------
@@ -256,6 +296,14 @@ components:
         author:
           $ref: '#/components/schemas/AuthorMessageResponse'
         contentPreview:
+          type: string
+
+    UpdateChatMessageRequest:
+      type: object
+      required:
+        - newContent
+      properties:
+        newContent:
           type: string
 
     # --------------------------------------

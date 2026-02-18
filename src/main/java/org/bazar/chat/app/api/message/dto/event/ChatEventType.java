@@ -11,5 +11,9 @@ public enum ChatEventType {
     /**
      * Удаление сообщения
      */
-    DELETED
+    DELETED,
+    /**
+     * Редактирование сообщения
+     */
+    EDITED
 }

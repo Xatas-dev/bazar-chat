@@ -8,6 +8,7 @@ import org.bazar.chat.app.api.exception.ErrorCode;
 import org.bazar.chat.app.api.message.MessageEventsService;
 import org.bazar.chat.app.api.message.MessageRepository;
 import org.bazar.chat.app.api.message.MessageService;
+import org.bazar.chat.app.api.message.UpdateMessageDto;
 import org.bazar.chat.app.api.message.dto.AuthorStatus;
 import org.bazar.chat.app.api.message.dto.CreateMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessageDto;
@@ -57,7 +58,7 @@ public class MessageServiceImpl implements MessageService {
 
                     return mapper.toGetMessageDto(
                             message,
-                            isDeletableByCurrentUser(message),
+                            isMessageBelongsToCurrentUser(message),
                             user,
                             authorStatus,
                             reply
@@ -92,6 +93,16 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional
+    public void updateMessageContent(UpdateMessageDto updateMessageDto) {
+        Message message = messageRepository.findByIdAndChatId(updateMessageDto.messageId(), updateMessageDto.chatId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.MESSAGE_NOT_FOUND, updateMessageDto.messageId()));
+        checkMessagesForEditingByCurrentUser(List.of(message));
+        message.setContent(updateMessageDto.newContent());
+        messageEventsService.publishEvent(mapper.toMessageEditedEvent(message, updateMessageDto.newContent()));
+    }
+
+    @Override
+    @Transactional
     public void deleteExpiredMessages() {
         Instant threshold = Instant.now().minus(7, ChronoUnit.DAYS);
         messageRepository.deleteInvisibleMessagesByUpdatedAt(threshold);
@@ -101,17 +112,27 @@ public class MessageServiceImpl implements MessageService {
     // = Implementation
     // =================================================================================================================
 
-    private boolean isDeletableByCurrentUser(Message message) {
+    private boolean isMessageBelongsToCurrentUser(Message message) {
         UUID currentUserId = securityContextHelper.getAuthenticatedUserId();
         return currentUserId.equals(message.getUserId());
     }
 
     private void checkMessagesForDeletingByCurrentUser(List<Message> messages) {
         messages.stream()
-                .filter(message -> !isDeletableByCurrentUser(message))
+                .filter(message -> !isMessageBelongsToCurrentUser(message))
                 .findFirst()
                 .ifPresent(message -> {
                     throw new BusinessException(ErrorCode.DELETE_MESSAGE_BY_CURRENT_USER_FORBIDDEN, message.getId());
+                });
+    }
+
+    // TODO: провести рефакторинг - вынести все методы, использующие securityContextHelper в отдельный сервис
+    private void checkMessagesForEditingByCurrentUser(List<Message> messages) {
+        messages.stream()
+                .filter(message -> !isMessageBelongsToCurrentUser(message))
+                .findFirst()
+                .ifPresent(message -> {
+                    throw new BusinessException(ErrorCode.EDIT_MESSAGE_BY_CURRENT_USER_FORBIDDEN, message.getId());
                 });
     }
 
