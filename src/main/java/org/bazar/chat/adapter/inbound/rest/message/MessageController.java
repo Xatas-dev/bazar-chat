@@ -8,6 +8,7 @@ import org.bazar.chat.app.api.message.dto.GetMessagePageDto;
 import org.bazar.chat.model.CreateMessageRequest;
 import org.bazar.chat.model.DeleteMessageRequest;
 import org.bazar.chat.model.MessagePageResponse;
+import org.bazar.chat.model.UpdateChatMessageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -36,5 +37,11 @@ public class MessageController implements MessagesApi {
     public ResponseEntity<MessagePageResponse> getChatMessages(Long chatId, @PageableDefault(size = 20) Pageable pageable) {
         GetMessagePageDto messagesPage = messageService.getChatMessages(chatId, pageable);
         return ResponseEntity.ok(mapper.toMessageResponse(messagesPage));
+    }
+
+    @Override
+    public ResponseEntity<Void> updateChatMessage(String chatId, String messageId, UpdateChatMessageRequest updateChatMessageRequest) {
+        messageService.updateMessageContent(mapper.toUpdateMessageDto(chatId, messageId, updateChatMessageRequest.getNewContent()));
+        return ResponseEntity.ok().build();
     }
 }

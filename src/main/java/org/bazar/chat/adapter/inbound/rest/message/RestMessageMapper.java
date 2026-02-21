@@ -1,5 +1,6 @@
 package org.bazar.chat.adapter.inbound.rest.message;
 
+import org.bazar.chat.app.api.message.UpdateMessageDto;
 import org.bazar.chat.app.api.message.dto.CreateMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessagePageDto;
 import org.bazar.chat.model.CreateMessageRequest;
@@ -12,4 +13,6 @@ public interface RestMessageMapper {
     MessagePageResponse toMessageResponse(GetMessagePageDto message);
 
     CreateMessageDto toCreateMessageDto(Long chatId, CreateMessageRequest createMessageRequest);
+
+    UpdateMessageDto toUpdateMessageDto(String chatId, String messageId, String newContent);
 }
