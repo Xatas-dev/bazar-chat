@@ -31,6 +31,7 @@ jobs:
         with:
           skip_after_successful_duplicate: 'true'
           do_not_skip: '["push", "pull_request", "workflow_dispatch", "schedule"]'
+          do_not_skip: '["push", "pull_request", "workflow_dispatch", "schedule"]'
 
   # CODE SCAN
   analyze:
@@ -152,6 +153,9 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
+          push: ${{ steps.docker_pre_job.outputs.PUSH_DOCKER_IMAGE == 'true' }}
+          load: ${{ steps.docker_pre_job.outputs.PUSH_DOCKER_IMAGE != 'true' }}
+          tags: ${{ steps.docker_pre_job.outputs.TAGS }}
           push: ${{ steps.docker_pre_job.outputs.PUSH_DOCKER_IMAGE == 'true' }}
           load: ${{ steps.docker_pre_job.outputs.PUSH_DOCKER_IMAGE != 'true' }}
           tags: ${{ steps.docker_pre_job.outputs.TAGS }}

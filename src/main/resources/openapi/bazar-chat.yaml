@@ -237,7 +237,7 @@ components:
         - chatId
         - content
         - createdAt
-        - isDeletable
+        - allowedActions
       properties:
         id:
           type: integer
@@ -252,8 +252,10 @@ components:
         createdAt:
           type: string
           format: date-time
-        isDeletable:
-          type: boolean
+        allowedActions:
+          type: array
+          items:
+            type: string
         reply:
           $ref: '#/components/schemas/ReplyMessageResponse'
 
