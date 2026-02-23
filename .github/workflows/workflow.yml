@@ -121,12 +121,13 @@ jobs:
           PUSH_DOCKER_IMAGE="false"
           TAGS=""
 
-          if [[ "${{ github.event_name }}" == "push" ]]; then
-            PUSH_DOCKER_IMAGE="true"
+          if [[ "${{ github.event_name }}" == "push" ]] || [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             if [[ "${{ github.ref_name }}" == "master" ]]; then
               TAGS="${{ env.IMAGE_NAME }}:${{ env.APP_VERSION }},${{ env.IMAGE_NAME }}:latest"
-            else
+              PUSH_DOCKER_IMAGE="true"
+            elif [[ "${{ github.ref_name }}" == "dev" ]]; then
               TAGS="${{ env.IMAGE_NAME }}-SNAPSHOT:latest"
+              PUSH_DOCKER_IMAGE="true"
             fi
           fi
           
