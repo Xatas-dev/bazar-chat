@@ -14,6 +14,7 @@ import org.bazar.chat.app.api.message.dto.CreateMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessagePageDto;
 import org.bazar.chat.app.api.message.dto.ReplyMessageDto;
+import org.bazar.chat.app.api.message.dto.AllowedActions;
 import org.bazar.chat.app.api.persona.PersonaService;
 import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.app.impl.helpers.SecurityContextHelper;
@@ -58,7 +59,7 @@ public class MessageServiceImpl implements MessageService {
 
                     return mapper.toGetMessageDto(
                             message,
-                            isMessageBelongsToCurrentUser(message),
+                            getAllowedActions(message),
                             user,
                             authorStatus,
                             reply
@@ -79,7 +80,7 @@ public class MessageServiceImpl implements MessageService {
         UserDto user = usersMap.get(message.getUserId());
         AuthorStatus authorStatus = getAuthorStatus(user);
         ReplyMessageDto reply = getReplyMessageDto(message, usersMap);
-        messageEventsService.publishEvent(mapper.toMessageCreatedEvent(message, user, authorStatus, reply));
+        messageEventsService.publishEvent(mapper.toMessageCreatedEvent(message, user, authorStatus, reply, getAllowedActions(message)));
     }
 
     @Override
@@ -115,6 +116,13 @@ public class MessageServiceImpl implements MessageService {
     private boolean isMessageBelongsToCurrentUser(Message message) {
         UUID currentUserId = securityContextHelper.getAuthenticatedUserId();
         return currentUserId.equals(message.getUserId());
+    }
+
+    private List<AllowedActions> getAllowedActions(Message message) {
+        if (isMessageBelongsToCurrentUser(message)) {
+            return List.of(AllowedActions.DELETE, AllowedActions.EDIT);
+        }
+        return List.of();
     }
 
     private void checkMessagesForDeletingByCurrentUser(List<Message> messages) {

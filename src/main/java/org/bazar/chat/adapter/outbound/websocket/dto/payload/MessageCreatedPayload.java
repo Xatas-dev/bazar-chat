@@ -1,5 +1,7 @@
 package org.bazar.chat.adapter.outbound.websocket.dto.payload;
 
+import java.util.List;
+
 /**
  * Полезная нагрузка для события создания сообщений
  *
@@ -14,6 +16,7 @@ public record MessageCreatedPayload(
         MessageAuthorPayload author,
         String content,
         String createdAt,
-        MessageReplyPayload reply
+        MessageReplyPayload reply,
+        List<String> allowedActions
 ) {
 }
