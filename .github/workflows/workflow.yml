@@ -31,7 +31,6 @@ jobs:
         with:
           skip_after_successful_duplicate: 'true'
           do_not_skip: '["push", "pull_request", "workflow_dispatch", "schedule"]'
-          do_not_skip: '["push", "pull_request", "workflow_dispatch", "schedule"]'
 
   # CODE SCAN
   analyze:
