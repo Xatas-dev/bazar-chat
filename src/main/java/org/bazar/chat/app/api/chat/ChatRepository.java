@@ -12,7 +12,7 @@ public interface ChatRepository {
      * Сохранить чат
      *
      * @param chat Чат для сохранения
-     * @return Сохраенный чат
+     * @return Сохраненный чат
      */
     Chat save(Chat chat);
 

@@ -2,7 +2,10 @@ package org.bazar.chat.adapter.inbound.rest.message;
 
 import lombok.RequiredArgsConstructor;
 import org.bazar.chat.api.MessagesApi;
-import org.bazar.chat.app.api.message.MessageService;
+import org.bazar.chat.app.api.message.CreateMessageInbound;
+import org.bazar.chat.app.api.message.DeleteMessagesInbound;
+import org.bazar.chat.app.api.message.EditMessageContentInbound;
+import org.bazar.chat.app.api.message.GetChatMessagesInbound;
 import org.bazar.chat.app.api.message.dto.CreateMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessagePageDto;
 import org.bazar.chat.model.CreateMessageRequest;
@@ -17,31 +20,34 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class MessageController implements MessagesApi {
-    private final MessageService messageService;
-    private final RestMessageMapper mapper;
+    private final RestMessageMapper restMessageMapper;
+    private final GetChatMessagesInbound getChatMessagesInbound;
+    private final CreateMessageInbound createMessageInbound;
+    private final DeleteMessagesInbound deleteMessagesInbound;
+    private final EditMessageContentInbound editMessageContentInbound;
 
     @Override
     public ResponseEntity<Void> createMessage(Long chatId, CreateMessageRequest createMessageRequest) {
-        CreateMessageDto createMessageDto = mapper.toCreateMessageDto(chatId, createMessageRequest);
-        messageService.createMessage(createMessageDto);
+        CreateMessageDto createMessageDto = restMessageMapper.toCreateMessageDto(chatId, createMessageRequest);
+        createMessageInbound.execute(createMessageDto);
         return ResponseEntity.ok().build();
     }
 
     @Override
     public ResponseEntity<Void> deleteChatMessageById(Long chatId, DeleteMessageRequest deleteMessageRequest) {
-        messageService.deleteMessages(chatId, deleteMessageRequest.getMessageIds());
+        deleteMessagesInbound.execute(chatId, deleteMessageRequest.getMessageIds());
         return ResponseEntity.ok().build();
     }
 
     @Override
     public ResponseEntity<MessagePageResponse> getChatMessages(Long chatId, @PageableDefault(size = 20) Pageable pageable) {
-        GetMessagePageDto messagesPage = messageService.getChatMessages(chatId, pageable);
-        return ResponseEntity.ok(mapper.toMessageResponse(messagesPage));
+        GetMessagePageDto messagesPage = getChatMessagesInbound.execute(chatId, pageable);
+        return ResponseEntity.ok(restMessageMapper.toMessageResponse(messagesPage));
     }
 
     @Override
     public ResponseEntity<Void> updateChatMessage(String chatId, String messageId, UpdateChatMessageRequest updateChatMessageRequest) {
-        messageService.updateMessageContent(mapper.toUpdateMessageDto(chatId, messageId, updateChatMessageRequest.getNewContent()));
+        editMessageContentInbound.execute(restMessageMapper.toUpdateMessageDto(chatId, messageId, updateChatMessageRequest.getNewContent()));
         return ResponseEntity.ok().build();
     }
 }

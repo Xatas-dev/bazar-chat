@@ -13,11 +13,20 @@ spring:
           issuer-uri: http://realms/test
   kafka:
     bootstrap-servers: localhost:9092
+
 logging:
   level:
     org:
       bazar: ${LOGGING_LEVEL:DEBUG}
+
 service:
   bazar-persona:
     url: http://localhost:${service.bazar-persona.port}
     port: 8081
+
+settings:
+  scheduler:
+    message:
+      deleteMessages: "0 0 3 * * *"
+  message:
+    replyPreviewLength: 30

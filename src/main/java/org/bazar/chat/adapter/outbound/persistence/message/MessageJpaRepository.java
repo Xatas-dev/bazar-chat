@@ -4,6 +4,7 @@ import org.bazar.chat.domain.chat.Chat;
 import org.bazar.chat.domain.message.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.Instant;
@@ -27,6 +28,7 @@ public interface MessageJpaRepository extends JpaRepository<Message, Long> {
      * @param pageable Информация для пагинации
      * @return Страница сообщений
      */
+    @EntityGraph(attributePaths = "replyMessage")
     Page<Message> findAllByChatIdAndVisibleTrueOrderByCreatedAtDesc(Long chatId, Pageable pageable);
 
     /**

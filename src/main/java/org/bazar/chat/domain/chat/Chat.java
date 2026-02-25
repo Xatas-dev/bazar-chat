@@ -18,6 +18,6 @@ public class Chat extends DomainObject {
     /**
      * Идентификатор пространства
      */
-    @Column(name = "spaceId")
+    @Column(name = "space_id")
     private Long spaceId;
 }

@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
  */
 public enum ErrorCode {
     /**
-     * Не найден чат по его идентификаору
+     * Не найден чат по его идентификатору
      */
     CHAT_BY_ID_NOT_FOUND(HttpStatus.NOT_FOUND, "No chat with %s id"),
     /**

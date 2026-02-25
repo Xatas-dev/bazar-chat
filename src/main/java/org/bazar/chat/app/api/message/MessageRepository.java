@@ -48,7 +48,7 @@ public interface MessageRepository {
      *
      * @param chatId Идентификатор чата
      * @param messageIds Идентификаторы сообщений
-     * @return Список найденных собщений
+     * @return Список найденных сообщений
      */
     List<Message> findAllByChatIdAndMessageIds(Long chatId, List<Long> messageIds);
 
