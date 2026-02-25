@@ -3,14 +3,14 @@ package org.bazar.chat.it.app.impl.message.schedule;
 import builder.ChatBuilder;
 import builder.MessageBuilder;
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
-import org.bazar.chat.app.impl.message.schedule.MessageDeletingScheduler;
+import org.bazar.chat.adapter.inbound.schedule.MessageDeletingScheduler;
 import org.bazar.chat.domain.DomainObject;
 import org.bazar.chat.domain.chat.Chat;
 import org.bazar.chat.domain.message.Message;
 import org.bazar.chat.it.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
