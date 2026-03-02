@@ -4,12 +4,15 @@ import builder.ChatBuilder;
 import builder.CreateMessageRequestBuilder;
 import builder.DeleteMessageRequestBuilder;
 import builder.JwtBuilder;
+import builder.UpdateChatMessageRequestBuilder;
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.bazar.chat.app.api.message.dto.AllowedActions;
 import org.bazar.chat.domain.chat.Chat;
 import org.bazar.chat.domain.message.Message;
 import org.bazar.chat.model.DeleteMessageRequest;
 import org.bazar.chat.model.MessagePageResponse;
 import org.bazar.chat.model.MessageResponse;
+import org.bazar.chat.model.UpdateChatMessageRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -116,11 +119,13 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
         assertEquals(3, response.size());
         MessageResponse first = response.getFirst();
         assertEquals(CONTENT4, first.getContent());
-        assertTrue(first.getIsDeletable());
+        assertTrue(first.getAllowedActions().contains(AllowedActions.DELETE.name()));
+        assertTrue(first.getAllowedActions().contains(AllowedActions.EDIT.name()));
         assertNull(first.getReply());
         MessageResponse second = response.get(1);
         assertEquals(CONTENT2, second.getContent());
-        assertFalse(second.getIsDeletable());
+        assertFalse(second.getAllowedActions().contains(AllowedActions.DELETE.name()));
+        assertFalse(second.getAllowedActions().contains(AllowedActions.EDIT.name()));
         assertNotNull(second.getReply());
         MessageResponse third = response.get(2);
         assertEquals(CONTENT1, third.getContent());
@@ -166,5 +171,25 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
 
         Message messageResult = messageJpaRepository.findById(message.getId()).get();
         assertTrue(messageResult.getVisible());
+    }
+
+    @Test
+    @DisplayName("Успешное редактирование сообщения")
+    void updateMessage_success() throws Exception {
+        Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
+        Message message = testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
+        UpdateChatMessageRequest request = UpdateChatMessageRequestBuilder.buildWith(CONTENT2);
+
+        restTestUtil.patchPerform(
+                String.format(UPDATE_MESSAGE_API_URL, chat.getId(), message.getId()),
+                Map.of(),
+                request,
+                TYPE_REFERENCE_VOID,
+                Map.of(),
+                status().isOk()
+        );
+
+        Message messageResult = messageJpaRepository.findById(message.getId()).get();
+        assertEquals(CONTENT2, messageResult.getContent());
     }
 }

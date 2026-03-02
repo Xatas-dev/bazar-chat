@@ -1,4 +1,4 @@
-package org.bazar.chat.app.impl.helpers;
+package org.bazar.chat.app.service.helper;
 
 import java.util.List;
 import java.util.UUID;

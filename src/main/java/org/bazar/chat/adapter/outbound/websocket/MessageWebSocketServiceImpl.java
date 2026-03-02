@@ -5,6 +5,7 @@ import org.bazar.chat.app.api.message.MessageEventsService;
 import org.bazar.chat.app.api.message.dto.event.ChatEvent;
 import org.bazar.chat.app.api.message.dto.event.MessageCreatedEvent;
 import org.bazar.chat.app.api.message.dto.event.MessageDeletedEvent;
+import org.bazar.chat.app.api.message.dto.event.MessageEditedEvent;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,6 +23,7 @@ public class MessageWebSocketServiceImpl implements MessageEventsService {
         switch (event.getType()) {
             case CREATED -> messageWebSocketSender.send(mapper.map((MessageCreatedEvent) event));
             case DELETED -> messageWebSocketSender.send(mapper.map((MessageDeletedEvent) event));
+            case EDITED -> messageWebSocketSender.send(mapper.map((MessageEditedEvent) event));
         }
     }
 }

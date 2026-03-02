@@ -1,40 +1,49 @@
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASS}
+    url: ${SYSTEM_DB_URL}
+    username: ${SYSTEM_DB_USERNAME}
+    password: ${SYSTEM_DB_PASSWORD}
   liquibase:
     change-log: db/changelog/changelog-master.yaml
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${KC_EXTERNAL_URL}/realms/${KC_REALM}
+          issuer-uri: ${INTEGRATION_KEYCLOAK_EXTERNAL_URL}/realms/${INTEGRATION_KEYCLOAK_REALM}
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:http://localhost:1212}
+    bootstrap-servers: ${INTEGRATION_KAFKA_BOOTSTRAP_SERVERS:http://localhost:1212}
     consumer:
       group-id: group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
 server:
   servlet:
     context-path: /api
   port: 8080
+
 logging:
   level:
     org:
-      bazar: ${LOGGING_LEVEL}
+      bazar: ${SYSTEM_LOGGING_LEVEL}
+
 management:
   server:
     port: 8090
+
 kafka:
   space-delete:
-    topic: space-delete
+    topic: space.events.delete
     group-id: space-delete-group
-scheduler:
-  message:
-    deleteMessages: "0 0 3 * * *"
+
 service:
   bazar-persona:
     url: ${INTEGRATION_REST_BAZAR_PERSONA_API_URL}
+
+settings:
+  scheduler:
+    message:
+      deleteMessages: ${SETTING_SCHEDULER_MESSAGE_DELETE_MESSAGES}
+  message:
+    replyPreviewLength: ${SETTING_MESSAGE_REPLY_PREVIEW_LENGTH}

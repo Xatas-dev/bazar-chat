@@ -1,13 +1,15 @@
 package org.bazar.chat.app.impl.message;
 
-import org.bazar.chat.app.api.message.dto.ReplyMessageDto;
-import org.bazar.chat.app.api.persona.model.UserDto;
+import org.bazar.chat.app.api.message.dto.AllowedActions;
 import org.bazar.chat.app.api.message.dto.AuthorDto;
 import org.bazar.chat.app.api.message.dto.AuthorStatus;
 import org.bazar.chat.app.api.message.dto.CreateMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessageDto;
+import org.bazar.chat.app.api.message.dto.ReplyMessageDto;
 import org.bazar.chat.app.api.message.dto.event.MessageCreatedEvent;
 import org.bazar.chat.app.api.message.dto.event.MessageDeletedEvent;
+import org.bazar.chat.app.api.message.dto.event.MessageEditedEvent;
+import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.domain.chat.Chat;
 import org.bazar.chat.domain.message.Message;
 import org.mapstruct.Mapper;
@@ -21,7 +23,7 @@ public interface MessageMapper {
     @Mapping(target = "chatId", source = "message.chat.id")
     @Mapping(target = "author", expression = "java(toAuthorDto(userDto, status, message))")
     @Mapping(target = "id", source = "message.id")
-    GetMessageDto toGetMessageDto(Message message, boolean isDeletable, UserDto userDto, AuthorStatus status, ReplyMessageDto reply);
+    GetMessageDto toGetMessageDto(Message message, List<AllowedActions> allowedActions, UserDto userDto, AuthorStatus status, ReplyMessageDto reply);
 
     @Mapping(target = "author", expression = "java(toAuthorDto(userDto, status, message))")
     ReplyMessageDto toReplyMessageDto(Message message, UserDto userDto, AuthorStatus status, String contentPreview);
@@ -42,9 +44,13 @@ public interface MessageMapper {
     @Mapping(target = "chatId", source = "message.chat.id")
     @Mapping(target = "author", expression = "java(toAuthorDto(userDto, status, message))")
     @Mapping(target = "id", source = "message.id")
-    MessageCreatedEvent toMessageCreatedEvent(Message message, UserDto userDto, AuthorStatus status, ReplyMessageDto reply);
+    MessageCreatedEvent toMessageCreatedEvent(Message message, UserDto userDto, AuthorStatus status, ReplyMessageDto reply, List<AllowedActions> allowedActions);
 
     default MessageDeletedEvent toMessageDeletedEvent(Long chatId, List<Long> messageIds) {
         return new MessageDeletedEvent(chatId, messageIds);
     }
+
+    @Mapping(target = "chatId", source = "message.chat.id")
+    @Mapping(target = "messageId", source = "message.id")
+    MessageEditedEvent toMessageEditedEvent(Message message, String newContent);
 }

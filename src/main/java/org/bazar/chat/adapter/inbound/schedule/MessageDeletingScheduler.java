@@ -1,8 +1,8 @@
-package org.bazar.chat.app.impl.message.schedule;
+package org.bazar.chat.adapter.inbound.schedule;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bazar.chat.app.api.message.MessageService;
+import org.bazar.chat.app.api.message.DeleteExpiredMessagesInbound;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class MessageDeletingScheduler {
-    private final MessageService messageService;
+    private final DeleteExpiredMessagesInbound deleteExpiredMessagesInbound;
 
-    @Scheduled(cron = "${scheduler.message.deleteMessages}")
+    @Scheduled(cron = "${settings.scheduler.message.deleteMessages}")
     public void deleteExpiredMessages() {
         log.info("DeleteMessages scheduler is starting...");
-        messageService.deleteExpiredMessages();
+        deleteExpiredMessagesInbound.execute();
     }
 }

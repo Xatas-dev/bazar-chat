@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AbstractKafkaIntegrationTest extends AbstractIntegrationTest {
-    protected final static String SPACE_DELETE_TOPIC = "space-delete";
+    protected final static String SPACE_DELETE_TOPIC = "space.events.delete";
 
     private final ObjectMapper mapper = TestDataTransformUtil.getTestObjectMapper();
 
