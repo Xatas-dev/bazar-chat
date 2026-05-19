@@ -28,6 +28,7 @@ public class Reaction extends DomainObject {
     /**
      * Тип реакции
      */
-    @Column(name = "type")
-    private String type;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private ReactionType type;
 }
