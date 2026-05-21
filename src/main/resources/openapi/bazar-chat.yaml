@@ -60,6 +60,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ChatResponse'
+
+  /chats/{chatId}/reactions:
+    get:
+      tags:
+        - Chats
+      summary: Get reactions in chat
+      description: Retrieve the list of available reactions for a chat.
+      operationId: getChatReactions
+      parameters:
+        - name: chatId
+          in: path
+          description: ID of the chat
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: List of reactions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReactionListResponse'
+        '404':
+          description: Chat not found
+
   # ==========================================
   # 2. Manage Messages
   # ==========================================
@@ -343,3 +369,31 @@ components:
           items:
             type: string
           description: Sorting criteria in the format property,(asc|desc).
+
+    ReactionListResponse:
+      type: object
+      required:
+        - reactions
+      properties:
+        reactions:
+          type: array
+          description: Array of possible reactions in the chat
+          items:
+            $ref: '#/components/schemas/ReactionResponse'
+
+    ReactionResponse:
+      type: object
+      required:
+        - reactionId
+        - value
+        - type
+      properties:
+        reactionId:
+          type: string
+          description: Reaction identifier
+        value:
+          type: string
+          description: Reaction value
+        type:
+          type: string
+          description: Reaction type
