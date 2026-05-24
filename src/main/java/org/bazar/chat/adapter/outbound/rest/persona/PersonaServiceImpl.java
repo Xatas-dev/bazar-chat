@@ -1,7 +1,9 @@
 package org.bazar.chat.adapter.outbound.rest.persona;
 
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bazar.chat.adapter.outbound.rest.persona.dto.PersonaUserResponse;
 import org.bazar.chat.app.api.persona.PersonaService;
 import org.bazar.chat.app.api.persona.model.UserDto;
@@ -22,6 +24,7 @@ import java.util.UUID;
  */
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class PersonaServiceImpl implements PersonaService {
     private final PersonaFeignClient feignClient;
     private final PersonaMapper mapper;
@@ -48,6 +51,7 @@ public class PersonaServiceImpl implements PersonaService {
 
         return userIds.stream()
                 .map(result::get)
+                .filter(Objects::nonNull)
                 .toList();
     }
 
@@ -71,10 +75,26 @@ public class PersonaServiceImpl implements PersonaService {
                 });
     }
 
+//    private List<UserDto> getMissingUsers(List<UUID> missingUserIds) {
+//        List<PersonaUserResponse> missingUsers = getUsersFromFeignClient(missingUserIds);
+//        if (missingUsers.isEmpty()) {
+//            return missingUserIds.stream().map(uuid -> new UserDto(uuid, null, null)).toList();
+//        }
+//        return missingUsers.stream().map(mapper::mapToUserDto).toList();
+//    }
+
     private List<PersonaUserResponse> getUsersFromFeignClient(List<UUID> userIds) {
-        if (!userIds.isEmpty()) {
-            return feignClient.getUsers(userIds.stream().map(UUID::toString).toList());
+        if (userIds.isEmpty()) {
+            return List.of();
         }
-        return List.of();
+        try {
+            return feignClient.getUsers(userIds.stream().map(UUID::toString).toList());
+        } catch (FeignException.NotFound e) {
+            log.warn("Users not found , userIds: {}", userIds);
+            return List.of();
+        } catch (FeignException e) {
+            log.error("Failed to fetch users from bazar-persona, userIds: {}", userIds, e);
+            return List.of();
+        }
     }
 }

@@ -1,4 +1,4 @@
-package org.bazar.chat.app.api.message;
+package org.bazar.chat.app.api.message.dto;
 
 /**
  * DTO для обновления содержимого сообщения

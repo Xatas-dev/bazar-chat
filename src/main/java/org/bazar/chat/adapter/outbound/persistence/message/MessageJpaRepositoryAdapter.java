@@ -51,6 +51,11 @@ public class MessageJpaRepositoryAdapter implements MessageRepository {
     }
 
     @Override
+    public boolean existsById(Long messageId) {
+        return messageJpaRepository.existsById(messageId);
+    }
+
+    @Override
     public Message getReference(Long messageId) {
         return messageJpaRepository.getReferenceById(messageId);
     }

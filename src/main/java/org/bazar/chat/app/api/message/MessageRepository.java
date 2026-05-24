@@ -62,6 +62,14 @@ public interface MessageRepository {
     Optional<Message> findByIdAndChatId(Long messageId, Long chatId);
 
     /**
+     * Проверить наличие сообщения по идентификатору
+     *
+     * @param messageId Идентификатор сообщения
+     * @return Статус
+     */
+    boolean existsById(Long messageId);
+
+    /**
      * Получить прокси-объект только с полем id
      *
      * @param messageId Идентификатор сообщения

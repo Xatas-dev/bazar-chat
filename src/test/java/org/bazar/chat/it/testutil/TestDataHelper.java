@@ -3,14 +3,17 @@ package org.bazar.chat.it.testutil;
 import builder.ChatBuilder;
 import builder.MessageBuilder;
 import builder.MessageReactionBuilder;
+import builder.ReactionBuilder;
 import lombok.RequiredArgsConstructor;
 import org.bazar.chat.adapter.outbound.persistence.chat.ChatJpaRepository;
 import org.bazar.chat.adapter.outbound.persistence.message.MessageJpaRepository;
 import org.bazar.chat.adapter.outbound.persistence.reaction.MessageReactionJpaRepository;
+import org.bazar.chat.adapter.outbound.persistence.reaction.ReactionJpaRepository;
 import org.bazar.chat.domain.chat.Chat;
 import org.bazar.chat.domain.message.Message;
 import org.bazar.chat.domain.reaction.MessageReaction;
 import org.bazar.chat.domain.reaction.Reaction;
+import org.bazar.chat.domain.reaction.ReactionType;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -20,6 +23,7 @@ import java.util.UUID;
 public class TestDataHelper {
     private final ChatJpaRepository chatJpaRepository;
     private final MessageJpaRepository messageJpaRepository;
+    private final ReactionJpaRepository reactionJpaRepository;
     private final MessageReactionJpaRepository messageReactionJpaRepository;
 
     public Chat createChatWith(Long spaceId) {
@@ -36,6 +40,18 @@ public class TestDataHelper {
 
     public Message createMessageWith(Chat chat, String content, UUID userId, boolean visible, Message reply) {
         return messageJpaRepository.save(MessageBuilder.buildWith(chat, content, userId, visible, reply));
+    }
+
+    public Reaction createReactionDefault() {
+        return reactionJpaRepository.save(ReactionBuilder.buildDefault());
+    }
+
+    public Reaction createReactionWith(String code, String value, String type) {
+        return reactionJpaRepository.save(ReactionBuilder.buildWith(code, value, ReactionType.valueOf(type)));
+    }
+
+    public MessageReaction createMessageReactionWith(Message message, Reaction reaction) {
+        return messageReactionJpaRepository.save(MessageReactionBuilder.buildWith(message, reaction));
     }
 
     public MessageReaction createMessageReactionWith(Message message, Reaction reaction, UUID userId) {

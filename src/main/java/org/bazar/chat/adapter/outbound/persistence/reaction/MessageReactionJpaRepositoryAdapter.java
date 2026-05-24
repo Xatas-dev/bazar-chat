@@ -5,6 +5,7 @@ import org.bazar.chat.app.api.reaction.MessageReactionRepository;
 import org.bazar.chat.domain.reaction.MessageReaction;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -39,5 +40,10 @@ public class MessageReactionJpaRepositoryAdapter implements MessageReactionRepos
     @Override
     public void save(MessageReaction messageReaction) {
         messageReactionJpaRepository.save(messageReaction);
+    }
+
+    @Override
+    public List<MessageReaction> findAllByMessageId(Long messageId) {
+        return messageReactionJpaRepository.findAllByMessageId(messageId);
     }
 }

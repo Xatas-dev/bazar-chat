@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bazar.chat.app.api.persona.PersonaService;
 import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.domain.message.Message;
+import org.bazar.chat.domain.reaction.MessageReaction;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,6 +26,19 @@ public class UserLoaderImpl implements UserLoader {
                         messages.stream().map(Message::getUserId),
                         messages.stream().flatMap(m -> Stream.ofNullable(m.getReplyMessage())).map(Message::getUserId)
                 )
+                .distinct()
+                .toList();
+        List<UserDto> usersByIds = personaService.getUsersByIds(userIds);
+
+        return usersByIds.stream()
+                .collect(Collectors.toMap(UserDto::userId, Function.identity()));
+    }
+
+    @Override
+    public Map<UUID, UserDto> loadUsersForReactions(List<MessageReaction> messageReactions) {
+        List<UUID> userIds = messageReactions
+                .stream()
+                .map(MessageReaction::getUserId)
                 .distinct()
                 .toList();
         List<UserDto> usersByIds = personaService.getUsersByIds(userIds);

@@ -44,4 +44,18 @@ public class WireMockTestHelper {
 
         bazarPersonaServer.stubFor(mapping);
     }
+
+    public void stubBazarPersonaGetUsers_404(List<UUID> userIds) {
+        MappingBuilder mapping = get(urlPathEqualTo(GET_USERS_BAZAR_PERSONA));
+
+        for (UUID id : userIds) {
+            mapping = mapping.withQueryParam("ids", equalTo(id.toString()));
+        }
+
+        mapping.willReturn(aResponse()
+                .withStatus(404)
+        );
+
+        bazarPersonaServer.stubFor(mapping);
+    }
 }

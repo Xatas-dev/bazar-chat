@@ -6,7 +6,7 @@ import org.bazar.chat.app.api.exception.ErrorCode;
 import org.bazar.chat.app.api.message.EditMessageContentInbound;
 import org.bazar.chat.app.api.message.MessageEventsService;
 import org.bazar.chat.app.api.message.MessageRepository;
-import org.bazar.chat.app.api.message.UpdateMessageDto;
+import org.bazar.chat.app.api.message.dto.UpdateMessageDto;
 import org.bazar.chat.app.service.AuthorizationService;
 import org.bazar.chat.domain.message.Message;
 import org.springframework.stereotype.Component;

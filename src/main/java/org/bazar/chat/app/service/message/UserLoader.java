@@ -2,6 +2,7 @@ package org.bazar.chat.app.service.message;
 
 import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.domain.message.Message;
+import org.bazar.chat.domain.reaction.MessageReaction;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,14 @@ public interface UserLoader {
      * @return Мапа пользователей
      */
     Map<UUID, UserDto> loadUsers(List<Message> messages);
+
+    /**
+     * Загрузить пользователей для реакций
+     *
+     * @param messageReactions Список реакций на сообщение
+     * @return Мапа пользователей
+     */
+    Map<UUID, UserDto> loadUsersForReactions(List<MessageReaction> messageReactions);
 
     /**
      * Загрузить пользователя

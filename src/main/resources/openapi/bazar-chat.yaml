@@ -256,6 +256,38 @@ paths:
         '404':
           description: Chat or message or reaction not found
 
+  /chats/{chatId}/messages/{messageId}/reactions/users:
+    get:
+      tags:
+        - Reactions
+      summary: Get list of user's reactions by message id
+      description: Retrieve a list of reactions and users that put those reactions
+      operationId: getReactionsListByMessage
+      parameters:
+        - name: chatId
+          in: path
+          description: ID of the chat
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: messageId
+          in: path
+          description: ID of the message
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: List of reactions with users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageReactionListResponse'
+        '404':
+          description: Chat or message not found
+
 components:
   schemas:
     # --------------------------------------
@@ -383,6 +415,94 @@ components:
           type: string
 
     # --------------------------------------
+    # Reaction Schemas
+    # --------------------------------------
+    ReactionListResponse:
+      type: object
+      required:
+        - reactions
+      properties:
+        reactions:
+          type: array
+          description: Array of possible reactions in the chat
+          items:
+            $ref: '#/components/schemas/ReactionResponse'
+
+    ReactionResponse:
+      type: object
+      required:
+        - reactionId
+        - value
+        - type
+      properties:
+        reactionId:
+          type: string
+          description: Reaction identifier
+        value:
+          type: string
+          description: Reaction value
+        type:
+          type: string
+          description: Reaction type
+
+    ReactionUpdateResponse:
+      type: object
+      required:
+        - messageId
+        - reactionId
+        - count
+      properties:
+        messageId:
+          type: string
+          description: Идентификатор сообщения
+        reactionId:
+          type: string
+          description: Идентификатор реакции
+        count:
+          type: integer
+          format: int64
+          description: Текущее количество реакций данного типа
+
+    MessageReactionListResponse:
+      type: object
+      required:
+        - reactions
+      properties:
+        reactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageReactionEntry'
+
+    MessageReactionEntry:
+      type: object
+      required:
+        - reactionId
+        - users
+      properties:
+        reactionId:
+          type: integer
+          format: int64
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReactionUserEntry'
+
+    ReactionUserEntry:
+      type: object
+      required:
+        - status
+      properties:
+        userId:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        status:
+          type: string
+
+    # --------------------------------------
     # Pagination Wrapper
     # --------------------------------------
     MessagePageResponse:
@@ -417,51 +537,3 @@ components:
           items:
             type: string
           description: Sorting criteria in the format property,(asc|desc).
-
-    ReactionListResponse:
-      type: object
-      required:
-        - reactions
-      properties:
-        reactions:
-          type: array
-          description: Array of possible reactions in the chat
-          items:
-            $ref: '#/components/schemas/ReactionResponse'
-
-    ReactionResponse:
-      type: object
-      required:
-        - reactionId
-        - value
-        - type
-      properties:
-        reactionId:
-          type: string
-          description: Reaction identifier
-        value:
-          type: string
-          description: Reaction value
-        type:
-          type: string
-          description: Reaction type
-
-    # New schema: response for changing reaction state on message
-    ReactionUpdateResponse:
-      type: object
-      required:
-        - messageId
-        - reactionId
-        - count
-      properties:
-        messageId:
-          type: string
-          description: Идентификатор сообщения
-        reactionId:
-          type: string
-          description: Идентификатор реакции
-        count:
-          type: integer
-          format: int64
-          description: Текущее количество реакций данного типа
-
