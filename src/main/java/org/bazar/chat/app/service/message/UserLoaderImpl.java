@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -30,5 +31,11 @@ public class UserLoaderImpl implements UserLoader {
 
         return usersByIds.stream()
                 .collect(Collectors.toMap(UserDto::userId, Function.identity()));
+    }
+
+    @Override
+    public Optional<UserDto> getUserById(UUID userId) {
+        return personaService.getUsersByIds(List.of(userId)).stream()
+                .findFirst();
     }
 }

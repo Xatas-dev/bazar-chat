@@ -49,4 +49,9 @@ public class MessageJpaRepositoryAdapter implements MessageRepository {
     public Optional<Message> findByIdAndChatId(Long messageId, Long chatId) {
         return messageJpaRepository.findAllByChatIdAndIdInAndVisible(chatId, List.of(messageId), true).stream().findFirst();
     }
+
+    @Override
+    public Message getReference(Long messageId) {
+        return messageJpaRepository.getReferenceById(messageId);
+    }
 }

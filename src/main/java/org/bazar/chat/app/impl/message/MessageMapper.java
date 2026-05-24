@@ -31,6 +31,8 @@ public interface MessageMapper {
     @Mapping(target = "userId", source = "message.userId")
     AuthorDto toAuthorDto(UserDto userDto, AuthorStatus status, Message message);
 
+    AuthorDto toAuthorDto(UserDto userDto, AuthorStatus status, UUID userId);
+
     @Mapping(target = "content", source = "dto.content")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
