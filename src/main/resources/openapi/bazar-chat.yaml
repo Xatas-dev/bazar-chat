@@ -12,6 +12,8 @@ tags:
     description: Management of chat rooms
   - name: Messages
     description: Sending and retrieving history
+  - name: Reactions
+    description: Management of message reactions
 
 paths:
   # ==========================================
@@ -207,10 +209,13 @@ paths:
         '404':
           description: Chat or message not found
 
+  # ==========================================
+  # 4. Manage Message Reactions
+  # ==========================================
   /chats/{chatId}/messages/{messageId}/reactions/{reactionId}:
     put:
       tags:
-        - Messages
+        - Reactions
       summary: Change reaction state on a message
       description: |-
         Изменение состояния реакции на сообщении
