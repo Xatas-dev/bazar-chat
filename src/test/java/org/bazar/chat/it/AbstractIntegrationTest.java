@@ -2,6 +2,8 @@ package org.bazar.chat.it;
 
 import org.bazar.chat.adapter.outbound.persistence.chat.ChatJpaRepository;
 import org.bazar.chat.adapter.outbound.persistence.message.MessageJpaRepository;
+import org.bazar.chat.adapter.outbound.persistence.reaction.MessageReactionJpaRepository;
+import org.bazar.chat.adapter.outbound.persistence.reaction.ReactionJpaRepository;
 import org.bazar.chat.fw.BazarChatApplication;
 import org.bazar.chat.it.testutil.TestDataHelper;
 import org.bazar.chat.it.testutil.WireMockTestHelper;
@@ -32,6 +34,10 @@ public abstract class AbstractIntegrationTest {
     protected ChatJpaRepository chatJpaRepository;
     @Autowired
     protected MessageJpaRepository messageJpaRepository;
+    @Autowired
+    protected MessageReactionJpaRepository messageReactionJpaRepository;
+    @Autowired
+    protected ReactionJpaRepository reactionJpaRepository;
     @Autowired
     protected WireMockTestHelper wireMockTestHelper;
 

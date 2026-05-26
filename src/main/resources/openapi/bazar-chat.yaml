@@ -12,6 +12,8 @@ tags:
     description: Management of chat rooms
   - name: Messages
     description: Sending and retrieving history
+  - name: Reactions
+    description: Management of message reactions
 
 paths:
   # ==========================================
@@ -207,6 +209,52 @@ paths:
         '404':
           description: Chat or message not found
 
+  # ==========================================
+  # 4. Manage Message Reactions
+  # ==========================================
+  /chats/{chatId}/messages/{messageId}/reactions/{reactionId}:
+    put:
+      tags:
+        - Reactions
+      summary: Change reaction state on a message
+      description: |-
+        Изменение состояния реакции на сообщении
+      operationId: updateMessageReaction
+      parameters:
+        - name: chatId
+          in: path
+          description: Идентификатор чата
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: messageId
+          in: path
+          description: Идентификатор сообщения
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: reactionId
+          in: path
+          description: Идентификатор реакции
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Reaction state changed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReactionUpdateResponse'
+        '400':
+          description: Invalid request
+        '403':
+          description: User not allowed to change reaction
+        '404':
+          description: Chat or message or reaction not found
 
 components:
   schemas:
@@ -397,3 +445,23 @@ components:
         type:
           type: string
           description: Reaction type
+
+    # New schema: response for changing reaction state on message
+    ReactionUpdateResponse:
+      type: object
+      required:
+        - messageId
+        - reactionId
+        - count
+      properties:
+        messageId:
+          type: string
+          description: Идентификатор сообщения
+        reactionId:
+          type: string
+          description: Идентификатор реакции
+        count:
+          type: integer
+          format: int64
+          description: Текущее количество реакций данного типа
+

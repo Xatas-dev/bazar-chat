@@ -14,4 +14,12 @@ public interface ReactionRepository {
      * @return Список реакций
      */
     List<Reaction> getAllReactions();
+
+    /**
+     * Получить прокси-объект только с полем id
+     *
+     * @param reactionId Идентификатор реакции
+     * @return Прокси-объект реакции
+     */
+    Reaction getReference(Long reactionId);
 }

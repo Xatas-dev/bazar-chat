@@ -51,7 +51,6 @@ public class CreateMessageUseCase implements CreateMessageInbound {
         AuthorStatus authorStatus = AuthorStatus.from(user);
         ReplyMessageDto reply = replyMessageCollector.getReplyMessageDto(message, usersMap);
         messageEventsService.publishEvent(messageMapper.toMessageCreatedEvent(message, user, authorStatus, reply, messageAllowedActionsResolver.getAllowedActions(message)));
-
     }
 
     // =================================================================================================================

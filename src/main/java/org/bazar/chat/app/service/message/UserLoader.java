@@ -5,6 +5,7 @@ import org.bazar.chat.domain.message.Message;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -18,4 +19,12 @@ public interface UserLoader {
      * @return Мапа пользователей
      */
     Map<UUID, UserDto> loadUsers(List<Message> messages);
+
+    /**
+     * Загрузить пользователя
+     *
+     * @param userId Идентификатор пользователя
+     * @return Пользователь
+     */
+    Optional<UserDto> getUserById(UUID userId);
 }

@@ -60,4 +60,12 @@ public interface MessageRepository {
      * @return Найденное сообщение
      */
     Optional<Message> findByIdAndChatId(Long messageId, Long chatId);
+
+    /**
+     * Получить прокси-объект только с полем id
+     *
+     * @param messageId Идентификатор сообщения
+     * @return Прокси-объект сообщения
+     */
+    Message getReference(Long messageId);
 }

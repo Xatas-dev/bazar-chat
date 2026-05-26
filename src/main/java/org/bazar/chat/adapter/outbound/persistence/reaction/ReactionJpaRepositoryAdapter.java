@@ -19,4 +19,9 @@ public class ReactionJpaRepositoryAdapter implements ReactionRepository {
     public List<Reaction> getAllReactions() {
         return reactionJpaRepository.findAll();
     }
+
+    @Override
+    public Reaction getReference(Long reactionId) {
+        return reactionJpaRepository.getReferenceById(reactionId);
+    }
 }

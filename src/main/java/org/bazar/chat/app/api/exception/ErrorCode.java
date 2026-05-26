@@ -26,7 +26,11 @@ public enum ErrorCode {
     /**
      * Не найдено сообщение по его идентификатору
      */
-    MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "No message with %s id");
+    MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "No message with %s id"),
+    /**
+     * Максимальное количество реакций от одного пользователя на сообщение достигнуто
+     */
+    MAX_REACTIONS_PER_USER_ON_MESSAGE(HttpStatus.BAD_REQUEST, "Maximum number of reactions for user %s on message %s has been reached");
 
     @Getter
     private final HttpStatus status;
