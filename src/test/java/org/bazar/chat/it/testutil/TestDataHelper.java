@@ -55,11 +55,6 @@ public class TestDataHelper {
     }
 
     public MessageReaction createMessageReactionWith(Message message, Reaction reaction, UUID userId) {
-        return messageReactionJpaRepository.save(MessageReactionBuilder.buildWith(message, reaction));
-    }
-
-    public MessageReaction createMessageReactionWith(Message message, Long reactionId, UUID userId) {
-        Reaction reaction = reactionJpaRepository.findById(reactionId).orElse(null);
         return messageReactionJpaRepository.save(MessageReactionBuilder.buildWith(message, reaction, userId));
     }
 
