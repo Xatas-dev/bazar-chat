@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -40,11 +41,14 @@ public abstract class AbstractIntegrationTest {
     protected ReactionJpaRepository reactionJpaRepository;
     @Autowired
     protected WireMockTestHelper wireMockTestHelper;
+    @Autowired
+    protected CacheManager cacheManager;
 
     @BeforeEach
     void cleanUp() {
         testDataHelper.clearTables();
         wireMockTestHelper.stopWireMockServers();
+        cacheManager.resetCaches();
     }
 
     static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16.0")

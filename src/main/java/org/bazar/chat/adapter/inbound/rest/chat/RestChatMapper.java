@@ -10,6 +10,5 @@ import org.mapstruct.Mapper;
 public interface RestChatMapper {
     ChatResponse mapToChatResponse(GetChatDto chat);
 
-
     ReactionResponse mapToReactionResponse(GetReactionDto reaction);
 }

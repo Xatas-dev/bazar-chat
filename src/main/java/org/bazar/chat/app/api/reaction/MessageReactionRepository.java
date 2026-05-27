@@ -2,10 +2,11 @@ package org.bazar.chat.app.api.reaction;
 
 import org.bazar.chat.domain.reaction.MessageReaction;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
- * Репозиторий для работы с сущностью реакции на сообщение
+ * Репозиторий для работы с сущностью реакция на сообщение
  */
 public interface MessageReactionRepository {
     /**
@@ -17,6 +18,21 @@ public interface MessageReactionRepository {
      * @return Результат проверки
      */
     boolean existsUserMessageReaction(Long messageId, Long reactionId, UUID userId);
+
+    /**
+     * Сохранить рекцию на сообщение
+     *
+     * @param messageReaction Реакция на сообщение
+     */
+    void save(MessageReaction messageReaction);
+
+    /**
+     * Найти реакции на сообщения по идентификатору сообщения
+     *
+     * @param messageId Идентификатор сообщения
+     * @return Список найденных реакций
+     */
+    List<MessageReaction> findAllByMessageId(Long messageId);
 
     /**
      * Удалить реакцию пользователя на сообщение
@@ -44,11 +60,4 @@ public interface MessageReactionRepository {
      * @return Количество определенных реакций на сообщение
      */
     long countMessageReactions(Long messageId, Long reactionId);
-
-    /**
-     * Сохранить рекцию на сообщение
-     *
-     * @param messageReaction Реакция на сообщение
-     */
-    void save(MessageReaction messageReaction);
 }

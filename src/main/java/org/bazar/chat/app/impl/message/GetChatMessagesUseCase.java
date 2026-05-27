@@ -11,7 +11,7 @@ import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.app.impl.mapper.PageDtoMapper;
 import org.bazar.chat.app.service.message.MessageAllowedActionsResolver;
 import org.bazar.chat.app.service.message.ReplyMessageCollector;
-import org.bazar.chat.app.service.message.UserLoader;
+import org.bazar.chat.app.service.user.UserLoader;
 import org.bazar.chat.domain.message.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +36,7 @@ public class GetChatMessagesUseCase implements GetChatMessagesInbound {
     @Override
     public GetMessagePageDto execute(Long chatId, Pageable pageable) {
         Page<Message> messages = messageRepository.findAllVisibleByChatId(chatId, pageable);
-        Map<UUID, UserDto> usersMap = userLoader.loadUsers(messages.getContent());
+        Map<UUID, UserDto> usersMap = userLoader.loadUsersForMessages(messages.getContent());
         Page<GetMessageDto> dtoPage = messages.map(message -> {
                     UserDto user = usersMap.get(message.getUserId());
                     AuthorStatus authorStatus = AuthorStatus.from(user);

@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
- * Jpa репозиторий для работы с сущностью реакции на сообщение
+ * Jpa репозиторий для работы с сущностью реакция на сообщение
  */
 public interface MessageReactionJpaRepository extends JpaRepository<MessageReaction, Long> {
     boolean existsMessageReactionByMessageIdAndReactionIdAndUserId(Long messageId, Long reactionId, UUID userId);
@@ -23,4 +24,6 @@ public interface MessageReactionJpaRepository extends JpaRepository<MessageReact
     long countMessageReactionsByMessageIdAndUserId(Long messageId, UUID userId);
 
     long countMessageReactionsByMessageIdAndReactionId(Long messageId, Long reactionId);
+
+    List<MessageReaction> findByMessageId(Long messageId);
 }
