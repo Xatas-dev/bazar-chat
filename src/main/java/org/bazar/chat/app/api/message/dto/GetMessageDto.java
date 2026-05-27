@@ -21,6 +21,7 @@ public record GetMessageDto(
         Instant createdAt,
         List<AllowedActions> allowedActions,
         AuthorDto author,
-        ReplyMessageDto reply
+        ReplyMessageDto reply,
+        List<MessageReactionDto> reactions
 ) {
 }
