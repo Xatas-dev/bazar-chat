@@ -45,7 +45,7 @@ public class WireMockTestHelper {
         bazarPersonaServer.stubFor(mapping);
     }
 
-    public void stubBazarPersonaGetUsers_404(List<UUID> userIds) {
+    public void stubBazarPersonaGetUsers_notFound(List<UUID> userIds) {
         MappingBuilder mapping = get(urlPathEqualTo(GET_USERS_BAZAR_PERSONA));
 
         for (UUID id : userIds) {
@@ -53,7 +53,7 @@ public class WireMockTestHelper {
         }
 
         mapping.willReturn(aResponse()
-                .withStatus(404)
+                .withBody(List.of().toString())
         );
 
         bazarPersonaServer.stubFor(mapping);

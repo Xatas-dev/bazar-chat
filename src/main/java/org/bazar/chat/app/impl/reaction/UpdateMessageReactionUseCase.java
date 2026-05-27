@@ -16,7 +16,7 @@ import org.bazar.chat.app.api.reaction.UpdateMessageReactionInbound;
 import org.bazar.chat.app.api.reaction.dto.UpdateReactionDto;
 import org.bazar.chat.app.impl.message.MessageMapper;
 import org.bazar.chat.app.service.AuthorizationService;
-import org.bazar.chat.app.service.message.UserLoader;
+import org.bazar.chat.app.service.user.UserLoader;
 import org.bazar.chat.domain.reaction.MessageReaction;
 import org.springframework.stereotype.Component;
 

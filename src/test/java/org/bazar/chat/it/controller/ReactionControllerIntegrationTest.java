@@ -21,18 +21,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ReactionControllerIntegrationTest extends AbstractControllerIntegrationTest {
     private static final String TEST_CONTENT = "test";
+    private static final Long REACTION_1ID = 1L;
     private static final TypeReference<MessageReactionListResponse> TYPE_REF_REACTIONS_LIST_DTO = new TypeReference<>() {};
 
     @Test
-    @DisplayName("Успешное получение всех реакций + пользователей по сообщению")
+    @DisplayName("Успешное получение всех реакций и пользователей по сообщению")
     void getReactionsListByMessage_success() throws Exception {
         wireMockTestHelper.startMockBazarPersonaServer();
         wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
-
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
         Message message = testDataHelper.createMessageWith(chat, TEST_CONTENT, JwtBuilder.TEST_USER_ID, true);
-        Reaction reaction = testDataHelper.createReactionWith("ок", "👍", "UNICODE");
-
+        Reaction reaction = reactionJpaRepository.findById(REACTION_1ID).get();
         testDataHelper.createMessageReactionWith(message, reaction, JwtBuilder.TEST_USER_ID);
 
         MessageReactionListResponse response = restTestUtil.getPerform(
@@ -46,29 +45,23 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         assertNotNull(response);
         assertNotNull(response.getReactions());
         assertEquals(1, response.getReactions().size());
-
         MessageReactionEntry reactionEntry = response.getReactions().getFirst();
-        assertEquals(reaction.getId(), reactionEntry.getReactionId());
+        assertEquals(REACTION_1ID, reactionEntry.getReactionId());
         assertEquals(1, reactionEntry.getUsers().size());
-
         ReactionUserEntry user = reactionEntry.getUsers().getFirst();
         assertEquals(JwtBuilder.TEST_USER_ID, user.getUserId());
         assertEquals("Jane", user.getFirstName());
         assertEquals(UserStatus.EXIST.name(), user.getStatus());
-
-        testDataHelper.clearTables();
     }
 
     @Test
     @DisplayName("Получение реакций по сообщению когда пользователь не найден в bazar-persona")
     void getReactionsListByMessage_userNotFound() throws Exception {
         wireMockTestHelper.startMockBazarPersonaServer();
-        wireMockTestHelper.stubBazarPersonaGetUsers_404(List.of(JwtBuilder.TEST_USER_ID));
-
+        wireMockTestHelper.stubBazarPersonaGetUsers_notFound(List.of(JwtBuilder.TEST_USER_ID));
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
         Message message = testDataHelper.createMessageWith(chat, TEST_CONTENT, JwtBuilder.TEST_USER_ID, true);
-        Reaction reaction = testDataHelper.createReactionWith("likes", "👍", "UNICODE");
-
+        Reaction reaction = reactionJpaRepository.findById(REACTION_1ID).get();
         testDataHelper.createMessageReactionWith(message, reaction, JwtBuilder.TEST_USER_ID);
 
         MessageReactionListResponse response = restTestUtil.getPerform(
@@ -82,17 +75,13 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         assertNotNull(response);
         assertNotNull(response.getReactions());
         assertEquals(1, response.getReactions().size());
-
         MessageReactionEntry reactionEntry = response.getReactions().getFirst();
-        assertEquals(reaction.getId(), reactionEntry.getReactionId());
+        assertEquals(REACTION_1ID, reactionEntry.getReactionId());
         assertEquals(1, reactionEntry.getUsers().size());
-
         ReactionUserEntry user = reactionEntry.getUsers().getFirst();
         assertEquals(JwtBuilder.TEST_USER_ID, user.getUserId());
         assertEquals(UserStatus.UNKNOWN.name(), user.getStatus());
         assertNull(user.getFirstName());
         assertNull(user.getLastName());
-
-        testDataHelper.clearTables();
     }
 }

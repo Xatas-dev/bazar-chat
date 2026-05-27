@@ -11,7 +11,7 @@ import org.bazar.chat.app.api.reaction.dto.MessageReactionDto;
 import org.bazar.chat.app.api.reaction.dto.MessageReactionListDto;
 import org.bazar.chat.app.api.reaction.dto.ReactionUserDto;
 import org.bazar.chat.app.api.reaction.dto.UserStatus;
-import org.bazar.chat.app.service.message.UserLoader;
+import org.bazar.chat.app.service.user.UserLoader;
 import org.bazar.chat.domain.reaction.MessageReaction;
 import org.springframework.stereotype.Component;
 
@@ -39,21 +39,30 @@ class GetMessageReactionListUseCase implements GetMessageReactionListInbound {
 
         List<MessageReaction> messageReactions = messageReactionRepository.findAllByMessageId(messageId);
         Map<UUID, UserDto> usersMap = userLoader.loadUsersForReactions(messageReactions);
+        List<MessageReactionDto> reactions = mapMessageReactions(messageReactions, usersMap);
 
-        List<MessageReactionDto> reactions = messageReactions
+        return new MessageReactionListDto(reactions);
+    }
+
+    // =================================================================================================================
+    // = Implementation
+    // =================================================================================================================
+
+    private List<MessageReactionDto> mapMessageReactions(List<MessageReaction> messageReactions, Map<UUID, UserDto> usersMap) {
+        return messageReactions
                 .stream()
-                .collect(Collectors.groupingBy(mr -> mr.getReaction().getId()))
+                .collect(Collectors.groupingBy(messageReaction -> messageReaction.getReaction().getId()))
                 .entrySet()
                 .stream()
                 .map(entry -> {
                     List<ReactionUserDto> users = entry.getValue()
                             .stream()
                             .map(
-                                    mr -> {
-                                        UserDto userDto = usersMap.get(mr.getUserId());
+                                    messageReaction -> {
+                                        UserDto userDto = usersMap.get(messageReaction.getUserId());
                                         UserStatus status = UserStatus.from(userDto);
                                         if (userDto == null) {
-                                            userDto = new UserDto(mr.getUserId(), null, null);
+                                            userDto = new UserDto(messageReaction.getUserId(), null, null);
                                         }
                                         return reactionMapper.toReactionUserDto(userDto, status);
                                     }
@@ -63,7 +72,5 @@ class GetMessageReactionListUseCase implements GetMessageReactionListInbound {
                     return new MessageReactionDto(entry.getKey(), users);
                 })
                 .toList();
-
-        return new MessageReactionListDto(reactions);
     }
 }

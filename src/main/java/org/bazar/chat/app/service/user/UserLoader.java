@@ -1,4 +1,4 @@
-package org.bazar.chat.app.service.message;
+package org.bazar.chat.app.service.user;
 
 import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.domain.message.Message;
@@ -19,7 +19,7 @@ public interface UserLoader {
      * @param messages Список сообщений
      * @return Мапа пользователей
      */
-    Map<UUID, UserDto> loadUsers(List<Message> messages);
+    Map<UUID, UserDto> loadUsersForMessages(List<Message> messages);
 
     /**
      * Загрузить пользователей для реакций

@@ -14,7 +14,7 @@ import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.app.service.AuthorizationService;
 import org.bazar.chat.app.service.message.MessageAllowedActionsResolver;
 import org.bazar.chat.app.service.message.ReplyMessageCollector;
-import org.bazar.chat.app.service.message.UserLoader;
+import org.bazar.chat.app.service.user.UserLoader;
 import org.bazar.chat.domain.chat.Chat;
 import org.bazar.chat.domain.message.Message;
 import org.springframework.stereotype.Component;
@@ -46,7 +46,7 @@ public class CreateMessageUseCase implements CreateMessageInbound {
         UUID userId = authorizationService.getAuthenticatedUserId();
         Message message = messageMapper.toMessage(dto, getReplyMessageIfExists(dto.chatId(), dto.replyMessageId()), chat, userId);
         messageRepository.save(message);
-        Map<UUID, UserDto> usersMap = userLoader.loadUsers(List.of(message));
+        Map<UUID, UserDto> usersMap = userLoader.loadUsersForMessages(List.of(message));
         UserDto user = usersMap.get(message.getUserId());
         AuthorStatus authorStatus = AuthorStatus.from(user);
         ReplyMessageDto reply = replyMessageCollector.getReplyMessageDto(message, usersMap);

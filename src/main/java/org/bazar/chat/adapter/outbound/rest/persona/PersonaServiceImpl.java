@@ -75,23 +75,12 @@ public class PersonaServiceImpl implements PersonaService {
                 });
     }
 
-//    private List<UserDto> getMissingUsers(List<UUID> missingUserIds) {
-//        List<PersonaUserResponse> missingUsers = getUsersFromFeignClient(missingUserIds);
-//        if (missingUsers.isEmpty()) {
-//            return missingUserIds.stream().map(uuid -> new UserDto(uuid, null, null)).toList();
-//        }
-//        return missingUsers.stream().map(mapper::mapToUserDto).toList();
-//    }
-
     private List<PersonaUserResponse> getUsersFromFeignClient(List<UUID> userIds) {
         if (userIds.isEmpty()) {
             return List.of();
         }
         try {
             return feignClient.getUsers(userIds.stream().map(UUID::toString).toList());
-        } catch (FeignException.NotFound e) {
-            log.warn("Users not found , userIds: {}", userIds);
-            return List.of();
         } catch (FeignException e) {
             log.error("Failed to fetch users from bazar-persona, userIds: {}", userIds, e);
             return List.of();

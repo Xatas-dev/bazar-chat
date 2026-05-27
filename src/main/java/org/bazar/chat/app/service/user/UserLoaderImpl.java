@@ -1,4 +1,4 @@
-package org.bazar.chat.app.service.message;
+package org.bazar.chat.app.service.user;
 
 import lombok.RequiredArgsConstructor;
 import org.bazar.chat.app.api.persona.PersonaService;
@@ -21,7 +21,7 @@ public class UserLoaderImpl implements UserLoader {
     private final PersonaService personaService;
 
     @Override
-    public Map<UUID, UserDto> loadUsers(List<Message> messages) {
+    public Map<UUID, UserDto> loadUsersForMessages(List<Message> messages) {
         List<UUID> userIds = Stream.concat(
                         messages.stream().map(Message::getUserId),
                         messages.stream().flatMap(m -> Stream.ofNullable(m.getReplyMessage())).map(Message::getUserId)

@@ -44,6 +44,6 @@ public class MessageReactionJpaRepositoryAdapter implements MessageReactionRepos
 
     @Override
     public List<MessageReaction> findAllByMessageId(Long messageId) {
-        return messageReactionJpaRepository.findAllByMessageId(messageId);
+        return messageReactionJpaRepository.findByMessageId(messageId);
     }
 }

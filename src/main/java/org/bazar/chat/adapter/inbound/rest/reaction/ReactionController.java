@@ -19,7 +19,7 @@ public class ReactionController implements ReactionsApi {
     private final GetMessageReactionListInbound getMessageReactionListInbound;
 
     @Override
-    public ResponseEntity<MessageReactionListResponse> getReactionsListByMessage(Long chatId, Long messageId) {
+    public ResponseEntity<MessageReactionListResponse> getMessageReactions(Long chatId, Long messageId) {
         MessageReactionListDto messageReactionList = getMessageReactionListInbound.execute(chatId, messageId);
         return ResponseEntity.ok(restReactionMapper.toMessageReactionListResponse(messageReactionList));
     }

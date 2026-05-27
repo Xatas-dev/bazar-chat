@@ -262,7 +262,7 @@ paths:
         - Reactions
       summary: Get list of user's reactions by message id
       description: Retrieve a list of reactions and users that put those reactions
-      operationId: getReactionsListByMessage
+      operationId: getMessageReactions
       parameters:
         - name: chatId
           in: path

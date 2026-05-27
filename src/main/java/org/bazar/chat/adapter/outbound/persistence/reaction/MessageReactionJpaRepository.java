@@ -26,6 +26,5 @@ public interface MessageReactionJpaRepository extends JpaRepository<MessageReact
 
     long countMessageReactionsByMessageIdAndReactionId(Long messageId, Long reactionId);
 
-    @Query("SELECT mr FROM MessageReaction mr JOIN FETCH mr.reaction WHERE mr.message.id = :message_id")
-    List<MessageReaction> findAllByMessageId(@Param("message_id")Long messageId);
+    List<MessageReaction> findByMessageId(Long messageId);
 }
