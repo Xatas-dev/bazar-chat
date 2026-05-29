@@ -364,6 +364,11 @@ components:
             type: string
         reply:
           $ref: '#/components/schemas/ReplyMessageResponse'
+        reactions:
+          type: array
+          description: Reactions aggregated for the message
+          items:
+            $ref: '#/components/schemas/ReactionSummary'
 
     DeleteMessageRequest:
       type: object
@@ -413,6 +418,25 @@ components:
       properties:
         newContent:
           type: string
+
+    # Summarized reaction info for a specific message
+    ReactionSummary:
+      type: object
+      required:
+        - reactionId
+        - count
+        - reactedByMe
+      properties:
+        reactionId:
+          type: string
+          description: Reaction identifier
+        count:
+          type: integer
+          format: int64
+          description: Number of reactions of this type
+        reactedByMe:
+          type: boolean
+          description: Whether the current user reacted with this reaction
 
     # --------------------------------------
     # Reaction Schemas
