@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @Component
 public class RestTestUtil {
@@ -79,6 +80,18 @@ public class RestTestUtil {
             Map<String, List<String>> headers,
             ResultMatcher httpStatus) throws Exception {
         MockHttpServletRequestBuilder request = buildPatchRequest(url, params, headers, body);
+        MockHttpServletResponse response = perform(request).andExpect(httpStatus).andReturn().getResponse();
+        return getDtoFromResponse(response, typeReference);
+    }
+
+    public <T> T putPerform(
+            String url,
+            Map<String, Object> params,
+            UpdateChatMessageRequest body,
+            TypeReference<T> typeReference,
+            Map<String, List<String>> headers,
+            ResultMatcher httpStatus) throws Exception {
+        MockHttpServletRequestBuilder request = buildPutRequest(url, params, headers, body);
         MockHttpServletResponse response = perform(request).andExpect(httpStatus).andReturn().getResponse();
         return getDtoFromResponse(response, typeReference);
     }
@@ -156,6 +169,23 @@ public class RestTestUtil {
             String url, Map<String, Object> params, Map<String, List<String>> headers, Object body
     ) throws Exception {
         MockHttpServletRequestBuilder requestMock = patch(url).contentType(MediaType.APPLICATION_JSON);
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            requestMock.param(entry.getKey(), String.valueOf(entry.getValue()));
+        }
+
+        if (!headers.isEmpty()) {
+            requestMock.headers(new HttpHeaders(new LinkedMultiValueMap<>(headers)));
+        }
+
+        requestMock.content(toJsonString(body));
+
+        return requestMock;
+    }
+
+    private MockHttpServletRequestBuilder buildPutRequest(
+            String url, Map<String, Object> params, Map<String, List<String>> headers, Object body
+    ) throws Exception {
+        MockHttpServletRequestBuilder requestMock = put(url).contentType(MediaType.APPLICATION_JSON);
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             requestMock.param(entry.getKey(), String.valueOf(entry.getValue()));
         }

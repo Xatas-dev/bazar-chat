@@ -5,6 +5,7 @@ import org.bazar.chat.app.api.message.dto.AuthorDto;
 import org.bazar.chat.app.api.message.dto.AuthorStatus;
 import org.bazar.chat.app.api.message.dto.CreateMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessageDto;
+import org.bazar.chat.app.api.message.dto.MessageReactionDto;
 import org.bazar.chat.app.api.message.dto.ReplyMessageDto;
 import org.bazar.chat.app.api.message.dto.event.MessageCreatedEvent;
 import org.bazar.chat.app.api.message.dto.event.MessageDeletedEvent;
@@ -23,13 +24,17 @@ public interface MessageMapper {
     @Mapping(target = "chatId", source = "message.chat.id")
     @Mapping(target = "author", expression = "java(toAuthorDto(userDto, status, message))")
     @Mapping(target = "id", source = "message.id")
-    GetMessageDto toGetMessageDto(Message message, List<AllowedActions> allowedActions, UserDto userDto, AuthorStatus status, ReplyMessageDto reply);
+    GetMessageDto toGetMessageDto(Message message, List<AllowedActions> allowedActions,
+                                  UserDto userDto, AuthorStatus status, ReplyMessageDto reply,
+                                  List<MessageReactionDto> reactions);
 
     @Mapping(target = "author", expression = "java(toAuthorDto(userDto, status, message))")
     ReplyMessageDto toReplyMessageDto(Message message, UserDto userDto, AuthorStatus status, String contentPreview);
 
     @Mapping(target = "userId", source = "message.userId")
     AuthorDto toAuthorDto(UserDto userDto, AuthorStatus status, Message message);
+
+    AuthorDto toAuthorDto(UserDto userDto, AuthorStatus status, UUID userId);
 
     @Mapping(target = "content", source = "dto.content")
     @Mapping(target = "id", ignore = true)

@@ -15,5 +15,9 @@ public enum ChatEventType {
     /**
      * Редактирование сообщения
      */
-    EDITED
+    EDITED,
+    /**
+     * Изменение реакции на сообщение
+     */
+    REACTION_CHANGED
 }

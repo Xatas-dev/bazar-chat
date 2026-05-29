@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.bazar.chat.app.api.message.dto.AllowedActions;
 import org.bazar.chat.domain.chat.Chat;
 import org.bazar.chat.domain.message.Message;
+import org.bazar.chat.domain.reaction.Reaction;
 import org.bazar.chat.model.DeleteMessageRequest;
 import org.bazar.chat.model.MessagePageResponse;
 import org.bazar.chat.model.MessageResponse;
@@ -33,6 +34,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     private static final String CONTENT2 = "content2";
     private static final String CONTENT3 = "content3";
     private static final String CONTENT4 = "content4";
+    private static final Long REACTION_1ID = 1L;
 
     @Test
     @DisplayName("Успешное создание сообщения c ответом")
@@ -103,9 +105,13 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
         wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
         Message replyedMessage = testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
-        testDataHelper.createMessageWith(chat, CONTENT2, UUID.fromString("baed9d65-046e-4616-9515-1e4237134f31"), true, replyedMessage);
+        Message commonMessage = testDataHelper.createMessageWith(chat, CONTENT2, UUID.fromString("baed9d65-046e-4616-9515-1e4237134f31"), true, replyedMessage);
         Message deletedMessage = testDataHelper.createMessageWith(chat, CONTENT3, JwtBuilder.TEST_USER_ID, false);
         testDataHelper.createMessageWith(chat, CONTENT4, JwtBuilder.TEST_USER_ID, true, deletedMessage);
+        Reaction reaction = reactionJpaRepository.findById(REACTION_1ID).get();
+        testDataHelper.createMessageReactionWith(commonMessage, reaction, UUID.randomUUID());
+        testDataHelper.createMessageReactionWith(commonMessage, reaction, JwtBuilder.TEST_USER_ID);
+        testDataHelper.createMessageReactionWith(replyedMessage, reaction, UUID.randomUUID());
 
         List<MessageResponse> response = restTestUtil.getPerform(
                 String.format(GET_MESSAGES_BY_CHAT_ID, chat.getId()),
@@ -122,14 +128,21 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
         assertTrue(first.getAllowedActions().contains(AllowedActions.DELETE.name()));
         assertTrue(first.getAllowedActions().contains(AllowedActions.EDIT.name()));
         assertNull(first.getReply());
+        assertEquals(0, first.getReactions().size());
         MessageResponse second = response.get(1);
         assertEquals(CONTENT2, second.getContent());
         assertFalse(second.getAllowedActions().contains(AllowedActions.DELETE.name()));
         assertFalse(second.getAllowedActions().contains(AllowedActions.EDIT.name()));
+        assertEquals(1, second.getReactions().size());
+        assertEquals(2, second.getReactions().getFirst().getCount());
+        assertTrue(second.getReactions().getFirst().getReactedByMe());
         assertNotNull(second.getReply());
         MessageResponse third = response.get(2);
         assertEquals(CONTENT1, third.getContent());
         assertNull(third.getReply());
+        assertEquals(1, third.getReactions().size());
+        assertEquals(1, third.getReactions().getFirst().getCount());
+        assertFalse(third.getReactions().getFirst().getReactedByMe());
     }
 
     @Test
@@ -154,7 +167,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     }
 
     @Test
-    @DisplayName("Нуспешное удаление сообщений - запрещено текущему пользователю")
+    @DisplayName("Неуспешное удаление сообщений - запрещено текущему пользователю")
     void deleteMessage_forbidden() throws Exception {
         Chat chat = testDataHelper.createChatWith(ChatBuilder.DEFAULT_SPACE_ID);
         Message message = testDataHelper.createMessageWith(chat, CONTENT1, UUID.randomUUID(), true);

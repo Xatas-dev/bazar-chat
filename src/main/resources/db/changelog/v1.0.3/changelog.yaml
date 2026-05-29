@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: 20260519-00-1-add_reaction_table.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 20260519-00-2-add_message_reaction_table.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 20260520-00-3-add_default_reactions.sql
+      relativeToChangelogFile: true

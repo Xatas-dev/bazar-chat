@@ -2,6 +2,8 @@ package org.bazar.chat.it;
 
 import org.bazar.chat.adapter.outbound.persistence.chat.ChatJpaRepository;
 import org.bazar.chat.adapter.outbound.persistence.message.MessageJpaRepository;
+import org.bazar.chat.adapter.outbound.persistence.reaction.MessageReactionJpaRepository;
+import org.bazar.chat.adapter.outbound.persistence.reaction.ReactionJpaRepository;
 import org.bazar.chat.fw.BazarChatApplication;
 import org.bazar.chat.it.testutil.TestDataHelper;
 import org.bazar.chat.it.testutil.WireMockTestHelper;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -33,12 +36,19 @@ public abstract class AbstractIntegrationTest {
     @Autowired
     protected MessageJpaRepository messageJpaRepository;
     @Autowired
+    protected MessageReactionJpaRepository messageReactionJpaRepository;
+    @Autowired
+    protected ReactionJpaRepository reactionJpaRepository;
+    @Autowired
     protected WireMockTestHelper wireMockTestHelper;
+    @Autowired
+    protected CacheManager cacheManager;
 
     @BeforeEach
     void cleanUp() {
         testDataHelper.clearTables();
         wireMockTestHelper.stopWireMockServers();
+        cacheManager.resetCaches();
     }
 
     static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16.0")

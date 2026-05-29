@@ -1,6 +1,6 @@
 package org.bazar.chat.adapter.inbound.rest.message;
 
-import org.bazar.chat.app.api.message.UpdateMessageDto;
+import org.bazar.chat.app.api.message.dto.UpdateMessageDto;
 import org.bazar.chat.app.api.message.dto.CreateMessageDto;
 import org.bazar.chat.app.api.message.dto.GetMessagePageDto;
 import org.bazar.chat.model.CreateMessageRequest;

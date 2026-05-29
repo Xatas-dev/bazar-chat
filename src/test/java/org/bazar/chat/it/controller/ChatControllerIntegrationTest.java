@@ -4,6 +4,7 @@ import builder.CreateChatRequestBuilder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.bazar.chat.domain.chat.Chat;
 import org.bazar.chat.model.ChatResponse;
+import org.bazar.chat.model.ReactionListResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -11,12 +12,14 @@ import java.util.Map;
 
 import static builder.CreateChatRequestBuilder.DEFAULT_SPACE_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ChatControllerIntegrationTest extends AbstractControllerIntegrationTest {
     private static final Long SPACE_ID = 10L;
     private static final TypeReference<ChatResponse> TYPE_REF_CHAT_DTO = new TypeReference<>() {};
+    private static final TypeReference<ReactionListResponse> TYPE_REF_REACTION_LIST_RESPONSE = new TypeReference<>() {};
 
     @Test
     @DisplayName("Успешное получение чата по идентификатору пространства")
@@ -64,5 +67,22 @@ public class ChatControllerIntegrationTest extends AbstractControllerIntegration
         assertNotNull(chat);
         assertEquals(DEFAULT_SPACE_ID, chatResponse.getSpaceId());
         assertEquals(DEFAULT_SPACE_ID, chat.getSpaceId());
+    }
+
+    @Test
+    @DisplayName("Успешное получение реакций чата")
+    void getChatReactions_success() throws Exception {
+        Chat chat = testDataHelper.createChatWith(SPACE_ID);
+
+        ReactionListResponse result = restTestUtil.getPerform(
+                String.format(GET_CHAT_REACTIONS_API_URL, chat.getId()),
+                Map.of(),
+                TYPE_REF_REACTION_LIST_RESPONSE,
+                Map.of(),
+                status().isOk()
+        );
+
+        assertNotNull(result);
+        assertFalse(result.getReactions().isEmpty());
     }
 }
