@@ -2,8 +2,6 @@ package org.bazar.chat.app.impl.reaction;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.bazar.chat.app.api.exception.BusinessException;
-import org.bazar.chat.app.api.exception.ErrorCode;
 import org.bazar.chat.app.api.message.MessageEventsService;
 import org.bazar.chat.app.api.message.MessageRepository;
 import org.bazar.chat.app.api.message.dto.AuthorDto;
@@ -52,7 +50,7 @@ public class UpdateMessageReactionUseCase implements UpdateMessageReactionInboun
         } else {
             long userReactionCount = messageReactionRepository.countUserMessageReactions(messageId, userId);
             if (userReactionCount >= 3) {
-                throw new BusinessException(ErrorCode.MAX_REACTIONS_PER_USER_ON_MESSAGE, userId, messageId);
+                messageReactionRepository.deleteOldestUserMessageReaction(messageId, userId);
             }
 
             messageReactionRepository.save(createMessageReaction(messageId, reactionId, userId));

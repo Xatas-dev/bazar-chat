@@ -46,4 +46,9 @@ public class MessageReactionJpaRepositoryAdapter implements MessageReactionRepos
     public List<MessageReaction> findAllByMessageId(Long messageId) {
         return messageReactionJpaRepository.findByMessageId(messageId);
     }
+
+    @Override
+    public void deleteOldestUserMessageReaction(Long messageId, UUID userId) {
+        messageReactionJpaRepository.deleteOldestUserMessageReaction(messageId, userId);
+    }
 }

@@ -26,4 +26,18 @@ public interface MessageReactionJpaRepository extends JpaRepository<MessageReact
     long countMessageReactionsByMessageIdAndReactionId(Long messageId, Long reactionId);
 
     List<MessageReaction> findByMessageId(Long messageId);
+
+    @Modifying
+    @Query(value = """
+    DELETE FROM message_reaction
+    WHERE id = (
+        SELECT id
+        FROM message_reaction
+        WHERE message_id = :messageId
+          AND user_id = :userId
+        ORDER BY created_at ASC
+        LIMIT 1
+    )
+    """, nativeQuery = true)
+    void deleteOldestUserMessageReaction(Long messageId, UUID userId);
 }

@@ -60,4 +60,12 @@ public interface MessageReactionRepository {
      * @return Количество определенных реакций на сообщение
      */
     long countMessageReactions(Long messageId, Long reactionId);
+
+    /**
+     * Удалить самую старую реакцию на сообщение
+     *
+     * @param messageId Идентификатор сообщения
+     * @param userId Идентификатор пользователя
+     */
+    void deleteOldestUserMessageReaction(Long messageId, UUID userId);
 }

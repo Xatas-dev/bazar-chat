@@ -148,7 +148,7 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
     }
 
     @Test
-    @DisplayName("Неуспешное добавление реакции, слишком много реакций у пользователя")
+    @DisplayName("Удаление самой старой реакции при добавлении четвертой")
     void addMessageReaction_failure_maxReactionsPerUser() throws Exception {
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
         Message message = testDataHelper.createMessageWith(chat, TEST_CONTENT, JwtBuilder.TEST_USER_ID, true);
@@ -159,16 +159,20 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         testDataHelper.createMessageReactionWith(message, reaction2, JwtBuilder.TEST_USER_ID);
         testDataHelper.createMessageReactionWith(message, reaction3, JwtBuilder.TEST_USER_ID);
 
-        String errorText = restTestUtil.putPerform(
-                String.format(UPDATE_REACTION_API_URL, DEFAULT_SPACE_ID, chat.getId(), message.getId(), REACTION_4ID),
+        ReactionUpdateResponse reactionUpdateResponse = restTestUtil.putPerform(
+                String.format(UPDATE_REACTION_API_URL, chat.getId(), message.getId(), REACTION_4ID),
                 Map.of(),
                 null,
-                TYPE_REFERENCE_STRING,
+                TYPE_REFERENCE_REACTION_UPDATE_DTO,
                 Map.of(),
-                status().isBadRequest()
+                status().isOk()
         );
 
-        assertEquals(String.format(ErrorCode.MAX_REACTIONS_PER_USER_ON_MESSAGE.formatMessage(JwtBuilder.TEST_USER_ID, message.getId())),
-                errorText);
+        assertNotNull(reactionUpdateResponse);
+        assertEquals(REACTION_4ID, Long.valueOf(reactionUpdateResponse.getReactionId()));
+        assertEquals(message.getId(), Long.valueOf(reactionUpdateResponse.getMessageId()));
+        assertEquals(1L, reactionUpdateResponse.getCount());
+        List<MessageReaction> messageReactions = messageReactionJpaRepository.findAll();
+        assertEquals(3, messageReactions.size());
     }
 }
