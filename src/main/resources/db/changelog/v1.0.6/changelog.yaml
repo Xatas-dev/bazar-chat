@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: 20260531-00-1-create_push_subscription_table.sql
+      relativeToChangelogFile: true

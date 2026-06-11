@@ -14,6 +14,8 @@ tags:
     description: Sending and retrieving history
   - name: Reactions
     description: Management of message reactions
+  - name: Push Notifications
+    description: Management of web push subscriptions
 
 paths:
   # ==========================================
@@ -288,6 +290,57 @@ paths:
         '404':
           description: Chat or message not found
 
+  # ==========================================
+  # 5. Manage Push Subscriptions
+  # ==========================================
+  /push/subscriptions:
+    post:
+      tags:
+        - Push Notifications
+      summary: Register web push subscription
+      description: Register or update current user's web push subscription.
+      operationId: subscribeToPushNotifications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushSubscriptionRequest'
+      responses:
+        '200':
+          description: Subscription registered successfully
+
+    delete:
+      tags:
+        - Push Notifications
+      summary: Remove web push subscription
+      description: Remove current user's web push subscription.
+      operationId: unsubscribeFromPushNotifications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushUnsubscribeRequest'
+      responses:
+        '200':
+          description: Subscription removed successfully
+
+  /push/public-key:
+    get:
+      tags:
+        - Push Notifications
+      summary: Get VAPID public key
+      description: Returns VAPID public key used for web push subscriptions.
+      operationId: getPushPublicKey
+      responses:
+        '200':
+          description: Public VAPID key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PushPublicKeyResponse'
+
 components:
   schemas:
     # --------------------------------------
@@ -561,3 +614,36 @@ components:
           items:
             type: string
           description: Sorting criteria in the format property,(asc|desc).
+    PushSubscriptionRequest:
+      type: object
+      required:
+        - endpoint
+        - p256dh
+        - auth
+      properties:
+        endpoint:
+          type: string
+          description: Browser push endpoint URL
+        p256dh:
+          type: string
+          description: Public encryption key
+        auth:
+          type: string
+          description: Authentication secret
+
+    PushUnsubscribeRequest:
+      type: object
+      required:
+        - endpoint
+      properties:
+        endpoint:
+          type: string
+          description: Browser push endpoint URL
+
+    PushPublicKeyResponse:
+      type: object
+      required:
+        - publicKey
+      properties:
+        publicKey:
+          type: string
