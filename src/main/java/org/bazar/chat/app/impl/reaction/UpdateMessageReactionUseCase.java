@@ -1,5 +1,6 @@
 package org.bazar.chat.app.impl.reaction;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,8 @@ public class UpdateMessageReactionUseCase implements UpdateMessageReactionInboun
 
             long userReactionCount = messageReactionRepository.countUserMessageReactions(messageId, userId);
             if (userReactionCount > 3) {
-                MessageReaction oldestMessageReaction = messageReactionRepository.findOldestUserMessageReaction(messageId, userId).get();
+                MessageReaction oldestMessageReaction = messageReactionRepository.findOldestUserMessageReaction(messageId, userId)
+                        .orElseThrow(() -> new EntityNotFoundException("Reaction not found"));
                 log.info("User reached reaction limit. Deleting oldest reaction: {}", oldestMessageReaction.getReaction().getId());
                 UpdatedReactionDto removedReaction = removeMessageReaction(chatId, messageId, oldestMessageReaction.getReaction().getId(), userId);
                 updatedReactions.add(removedReaction);
