@@ -17,16 +17,25 @@ import static org.bazar.chat.it.testutil.TestDataTransformUtil.readFileWithoutTh
 @Component
 public class WireMockTestHelper {
     private static final String GET_USERS_BAZAR_PERSONA = "/users";
+    private static final String GET_USERS_BAZAR_SPACE = "/spaces/%s/users";
 
     @Autowired
     protected WireMockServer bazarPersonaServer;
+
+    @Autowired
+    protected WireMockServer bazarSpaceServer;
 
     public void startMockBazarPersonaServer() {
         bazarPersonaServer.start();
     }
 
+    public void startMockBazarSpaceServer() {
+        bazarSpaceServer.start();
+    }
+
     public void stopWireMockServers() {
         bazarPersonaServer.stop();
+        bazarSpaceServer.stop();
     }
 
     public void stubBazarPersonaGetUsers_200(List<UUID> userIds, String bodyPath) {
@@ -57,5 +66,13 @@ public class WireMockTestHelper {
         );
 
         bazarPersonaServer.stubFor(mapping);
+    }
+
+    public void stubBazarSpaceGetUsers_200(String spaceId, String bodyPath) {
+        bazarSpaceServer.stubFor(get(urlPathEqualTo(String.format(GET_USERS_BAZAR_SPACE, spaceId)))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(readFileWithoutThrow(bodyPath))));
     }
 }

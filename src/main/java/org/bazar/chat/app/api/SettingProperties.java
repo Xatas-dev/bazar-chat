@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class SettingProperties {
     private Scheduler scheduler;
     private Message message;
+    private PushSubscription pushSubscription;
 
     @Data
     public static class Scheduler {
@@ -19,5 +20,12 @@ public class SettingProperties {
     @Data
     public static class Message {
         private Integer replyPreviewLength;
+    }
+
+    @Data
+    public static class PushSubscription {
+        private String publicKey;
+        private String privateKey;
+        private String subject;
     }
 }

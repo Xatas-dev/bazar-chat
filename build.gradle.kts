@@ -82,6 +82,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 
+    //Web Push
+    implementation("nl.martijndwars:web-push:5.1.1")
+    implementation("org.bouncycastle:bcprov-jdk18on:1.82")
+    implementation("org.bouncycastle:bcpkix-jdk18on:1.82")
+
     //Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-websocket-test")
