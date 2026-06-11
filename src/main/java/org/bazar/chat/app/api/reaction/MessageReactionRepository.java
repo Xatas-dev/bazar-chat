@@ -3,6 +3,7 @@ package org.bazar.chat.app.api.reaction;
 import org.bazar.chat.domain.reaction.MessageReaction;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -62,10 +63,10 @@ public interface MessageReactionRepository {
     long countMessageReactions(Long messageId, Long reactionId);
 
     /**
-     * Удалить самую старую реакцию на сообщение
+     * Получить самую старую реакцию на сообщение
      *
      * @param messageId Идентификатор сообщения
      * @param userId Идентификатор пользователя
      */
-    void deleteOldestUserMessageReaction(Long messageId, UUID userId);
+    Optional<MessageReaction> findOldestUserMessageReaction(Long messageId, UUID userId);
 }

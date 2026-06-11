@@ -2,6 +2,7 @@ package org.bazar.chat.app.impl.reaction;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bazar.chat.app.api.message.MessageEventsService;
 import org.bazar.chat.app.api.message.MessageRepository;
 import org.bazar.chat.app.api.message.dto.AuthorDto;
@@ -11,18 +12,22 @@ import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.app.api.reaction.MessageReactionRepository;
 import org.bazar.chat.app.api.reaction.ReactionRepository;
 import org.bazar.chat.app.api.reaction.UpdateMessageReactionInbound;
-import org.bazar.chat.app.api.reaction.dto.UpdateReactionDto;
+import org.bazar.chat.app.api.reaction.dto.UpdatedReactionDto;
+import org.bazar.chat.app.api.reaction.dto.UpdatedReactionsDto;
 import org.bazar.chat.app.impl.message.MessageMapper;
 import org.bazar.chat.app.service.AuthorizationService;
 import org.bazar.chat.app.service.user.UserLoader;
 import org.bazar.chat.domain.reaction.MessageReaction;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * Реализация интерфейса для изменения реакции на сообщение
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class UpdateMessageReactionUseCase implements UpdateMessageReactionInbound {
@@ -39,34 +44,54 @@ public class UpdateMessageReactionUseCase implements UpdateMessageReactionInboun
     // TODO: добавить валидации на постановку реакций через auth (для этого тут как раз временно неиспользуемый chatId): https://grinbog015.atlassian.net/browse/BZR-142
     @Override
     @Transactional
-    public UpdateReactionDto execute(Long chatId, Long messageId, Long reactionId) {
+    public UpdatedReactionsDto execute(Long chatId, Long messageId, Long reactionId) {
         UUID userId = authorizationService.getAuthenticatedUserId();
-        boolean exists = messageReactionRepository.existsUserMessageReaction(messageId, reactionId, userId);
 
-        boolean added;
-        if (exists) {
-            messageReactionRepository.deleteUserMessageReaction(messageId, reactionId, userId);
-            added = false;
+        boolean alreadyExists = messageReactionRepository.existsUserMessageReaction(messageId, reactionId, userId);
+
+        List<UpdatedReactionDto> updatedReactions = new ArrayList<>();
+        if (alreadyExists) {
+            UpdatedReactionDto removedReaction = removeMessageReaction(chatId, messageId,  reactionId, userId);
+            updatedReactions.add(removedReaction);
         } else {
-            long userReactionCount = messageReactionRepository.countUserMessageReactions(messageId, userId);
-            if (userReactionCount >= 3) {
-                messageReactionRepository.deleteOldestUserMessageReaction(messageId, userId);
-            }
+            UpdatedReactionDto addedReaction = addMessageReaction(chatId, messageId, reactionId, userId);
+            updatedReactions.add(addedReaction);
 
-            messageReactionRepository.save(createMessageReaction(messageId, reactionId, userId));
-            added = true;
+            long userReactionCount = messageReactionRepository.countUserMessageReactions(messageId, userId);
+            if (userReactionCount > 3) {
+                MessageReaction oldestMessageReaction = messageReactionRepository.findOldestUserMessageReaction(messageId, userId).get();
+                log.info("User reached reaction limit. Deleting oldest reaction: {}", oldestMessageReaction.getReaction().getId());
+                UpdatedReactionDto removedReaction = removeMessageReaction(chatId, messageId, oldestMessageReaction.getReaction().getId(), userId);
+                updatedReactions.add(removedReaction);
+            }
         }
 
-        long reactionCount = messageReactionRepository.countMessageReactions(messageId, reactionId);
-        messageEventsService.publishEvent(createReactionEvent(
-                chatId, messageId, reactionId, reactionCount, added, userId
-        ));
-        return new UpdateReactionDto(String.valueOf(messageId), String.valueOf(reactionId), reactionCount);
+        return new UpdatedReactionsDto(messageId, updatedReactions);
     }
 
     // =================================================================================================================
     // = Implementation
     // =================================================================================================================
+
+    private UpdatedReactionDto addMessageReaction(Long chatId, Long messageId, Long reactionId, UUID userId) {
+        messageReactionRepository.save(createMessageReaction(messageId, reactionId, userId));
+        log.info("Added reaction {} to message {}", reactionId, messageId);
+        return updateReaction(messageId, reactionId, chatId, true, userId);
+    }
+
+    private UpdatedReactionDto removeMessageReaction(Long chatId, Long messageId, Long reactionId, UUID userId) {
+        messageReactionRepository.deleteUserMessageReaction(messageId, reactionId, userId);
+        log.info("Removed reaction {} from message {}", reactionId, messageId);
+        return updateReaction(messageId, reactionId, chatId, false, userId);
+    }
+
+    private UpdatedReactionDto updateReaction(Long messageId, Long reactionId, Long chatId, boolean added, UUID userId) {
+        long reactionCount = messageReactionRepository.countMessageReactions(messageId, reactionId);
+        messageEventsService.publishEvent(
+                createReactionEvent(chatId, messageId, reactionId, reactionCount, added, userId)
+        );
+        return new  UpdatedReactionDto(reactionId, reactionCount);
+    }
 
     private MessageReaction createMessageReaction(Long messageId, Long reactionId, UUID userId) {
         MessageReaction messageReaction = new MessageReaction();

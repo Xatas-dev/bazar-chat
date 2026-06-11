@@ -35,7 +35,7 @@ public class ReactionController implements ReactionControllerSwagger {
                                                                           @PathVariable Long chatId,
                                                                           @PathVariable Long messageId,
                                                                           @PathVariable Long reactionId) {
-        UpdateReactionDto result = updateMessageReactionInbound.execute(chatId, messageId, reactionId);
-        return ResponseEntity.ok(restReactionMapper.toV1ReactionUpdateResponse(result));
+        UpdatedReactionsDto updatedReactions = updateMessageReactionInbound.execute(chatId, messageId, reactionId);
+        return ResponseEntity.ok().body(restReactionMapper.toReactionUpdateResponse(updatedReactions));
     }
 }

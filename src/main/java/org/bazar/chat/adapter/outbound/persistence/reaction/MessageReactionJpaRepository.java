@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -27,17 +28,5 @@ public interface MessageReactionJpaRepository extends JpaRepository<MessageReact
 
     List<MessageReaction> findByMessageId(Long messageId);
 
-    @Modifying
-    @Query(value = """
-    DELETE FROM message_reaction
-    WHERE id = (
-        SELECT id
-        FROM message_reaction
-        WHERE message_id = :messageId
-          AND user_id = :userId
-        ORDER BY created_at ASC
-        LIMIT 1
-    )
-    """, nativeQuery = true)
-    void deleteOldestUserMessageReaction(Long messageId, UUID userId);
+    Optional<MessageReaction> findFirstByMessageIdAndUserIdOrderByCreatedAtAsc(Long messageId, UUID userId);
 }

@@ -114,6 +114,9 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         assertEquals(REACTION_1ID, Long.valueOf(reactionUpdateResponse.reactionId()));
         assertEquals(message.getId(), Long.valueOf(reactionUpdateResponse.messageId()));
         assertEquals(1L, reactionUpdateResponse.count());
+        assertEquals(REACTION_1ID, Long.valueOf(reactionUpdateResponse.getUpdatedReactions().getFirst().getReactionId()));
+        assertEquals(message.getId(), Long.valueOf(reactionUpdateResponse.getMessageId()));
+        assertEquals(1L, reactionUpdateResponse.getUpdatedReactions().getFirst().getCount());
         MessageReaction messageReaction = messageReactionJpaRepository.findAll().getFirst();
         assertEquals(message.getId(), messageReaction.getMessage().getId());
         assertEquals(REACTION_1ID, messageReaction.getReaction().getId());
@@ -169,9 +172,10 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         );
 
         assertNotNull(reactionUpdateResponse);
-        assertEquals(REACTION_4ID, Long.valueOf(reactionUpdateResponse.getReactionId()));
         assertEquals(message.getId(), Long.valueOf(reactionUpdateResponse.getMessageId()));
-        assertEquals(1L, reactionUpdateResponse.getCount());
+        assertEquals(REACTION_4ID, Long.valueOf(reactionUpdateResponse.getUpdatedReactions().get(0).getReactionId()));
+        assertEquals(1L, reactionUpdateResponse.getUpdatedReactions().get(0).getCount());
+        assertEquals(0L, reactionUpdateResponse.getUpdatedReactions().get(1).getCount());
         List<MessageReaction> messageReactions = messageReactionJpaRepository.findAll();
         assertEquals(3, messageReactions.size());
     }

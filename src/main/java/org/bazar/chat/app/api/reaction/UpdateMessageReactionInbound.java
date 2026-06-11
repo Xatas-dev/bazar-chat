@@ -1,6 +1,6 @@
 package org.bazar.chat.app.api.reaction;
 
-import org.bazar.chat.app.api.reaction.dto.UpdateReactionDto;
+import org.bazar.chat.app.api.reaction.dto.UpdatedReactionsDto;
 
 /**
  * Входной интерфейс для изменения реакции на сообщение
@@ -14,5 +14,5 @@ public interface UpdateMessageReactionInbound {
      * @param reactionId Идентификатор реакции
      * @return DTO измененной реакции
      */
-    UpdateReactionDto execute(Long chatId, Long messageId, Long reactionId);
+    UpdatedReactionsDto execute(Long chatId, Long messageId, Long reactionId);
 }
