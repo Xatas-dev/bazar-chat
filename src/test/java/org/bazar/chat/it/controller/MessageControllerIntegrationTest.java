@@ -42,7 +42,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
         wireMockTestHelper.startMockBazarPersonaServer();
         wireMockTestHelper.startMockBazarSpaceServer();
         wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
-        wireMockTestHelper.stubBazarSpaceGetUsers_200(ChatBuilder.DEFAULT_SPACE_ID.toString(), "/MessageControllerIntegrationTest/SpaceGetUsersResponse.json");
+        wireMockTestHelper.stubBazarSpaceGetUsers_200(DEFAULT_SPACE_ID.toString(), "/MessageControllerIntegrationTest/SpaceGetUsersResponse.json");
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
         Message messageToReply = testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
 
@@ -70,7 +70,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
         wireMockTestHelper.startMockBazarPersonaServer();
         wireMockTestHelper.startMockBazarSpaceServer();
         wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
-        wireMockTestHelper.stubBazarSpaceGetUsers_200(ChatBuilder.DEFAULT_SPACE_ID.toString(), "/MessageControllerIntegrationTest/SpaceGetUsersResponse.json");
+        wireMockTestHelper.stubBazarSpaceGetUsers_200(DEFAULT_SPACE_ID.toString(), "/MessageControllerIntegrationTest/SpaceGetUsersResponse.json");
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
 
         restTestUtil.postPerform(
