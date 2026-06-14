@@ -12,11 +12,13 @@ import java.security.Security;
 @Configuration
 @RequiredArgsConstructor
 public class WebPushConfiguration {
+    private static final String BC = "BC";
+
     private final SettingProperties properties;
 
     @Bean
     public PushService pushService() throws Exception {
-        if (Security.getProvider("BC") == null) {
+        if (Security.getProvider(BC) == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
         PushService service = new PushService();
