@@ -4,7 +4,6 @@ import builder.JwtBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.bazar.chat.model.UpdateChatMessageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -75,7 +74,7 @@ public class RestTestUtil {
     public <T> T patchPerform(
             String url,
             Map<String, Object> params,
-            UpdateChatMessageRequest body,
+            Object body,
             TypeReference<T> typeReference,
             Map<String, List<String>> headers,
             ResultMatcher httpStatus) throws Exception {
@@ -87,7 +86,7 @@ public class RestTestUtil {
     public <T> T putPerform(
             String url,
             Map<String, Object> params,
-            UpdateChatMessageRequest body,
+            Object body,
             TypeReference<T> typeReference,
             Map<String, List<String>> headers,
             ResultMatcher httpStatus) throws Exception {

@@ -5,12 +5,10 @@ import org.bazar.chat.app.api.message.GetChatMessagesInbound;
 import org.bazar.chat.app.api.message.MessageRepository;
 import org.bazar.chat.app.api.message.dto.AuthorStatus;
 import org.bazar.chat.app.api.message.dto.GetMessageDto;
-import org.bazar.chat.app.api.message.dto.GetMessagePageDto;
 import org.bazar.chat.app.api.message.dto.MessageReactionDto;
 import org.bazar.chat.app.api.message.dto.ReplyMessageDto;
 import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.app.api.reaction.MessageReactionRepository;
-import org.bazar.chat.app.impl.mapper.PageDtoMapper;
 import org.bazar.chat.app.service.AuthorizationService;
 import org.bazar.chat.app.service.message.MessageAllowedActionsResolver;
 import org.bazar.chat.app.service.message.ReplyMessageCollector;
@@ -35,17 +33,16 @@ public class GetChatMessagesUseCase implements GetChatMessagesInbound {
     private final MessageRepository messageRepository;
     private final MessageReactionRepository messageReactionRepository;
     private final MessageMapper messageMapper;
-    private final PageDtoMapper pageDtoMapper;
     private final UserLoader userLoader;
     private final ReplyMessageCollector replyMessageCollector;
     private final MessageAllowedActionsResolver messageAllowedActionsResolver;
     private final AuthorizationService authorizationService;
 
     @Override
-    public GetMessagePageDto execute(Long chatId, Pageable pageable) {
+    public Page<GetMessageDto> execute(Long chatId, Pageable pageable) {
         Page<Message> messages = messageRepository.findAllVisibleByChatId(chatId, pageable);
         Map<UUID, UserDto> usersMap = userLoader.loadUsersForMessages(messages.getContent());
-        Page<GetMessageDto> dtoPage = messages.map(message -> {
+        return messages.map(message -> {
                     UserDto user = usersMap.get(message.getUserId());
                     AuthorStatus authorStatus = AuthorStatus.from(user);
                     ReplyMessageDto reply = replyMessageCollector.getReplyMessageDto(message, usersMap);
@@ -61,7 +58,6 @@ public class GetChatMessagesUseCase implements GetChatMessagesInbound {
                     );
                 }
         );
-        return pageDtoMapper.toGetMessagePageDto(dtoPage);
     }
 
     // =================================================================================================================

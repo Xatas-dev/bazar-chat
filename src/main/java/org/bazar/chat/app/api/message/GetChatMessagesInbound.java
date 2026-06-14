@@ -1,6 +1,7 @@
 package org.bazar.chat.app.api.message;
 
-import org.bazar.chat.app.api.message.dto.GetMessagePageDto;
+import org.bazar.chat.app.api.message.dto.GetMessageDto;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
@@ -14,5 +15,5 @@ public interface GetChatMessagesInbound {
      * @param pageable Информация по пагинации
      * @return Список сообщений чата
      */
-    GetMessagePageDto execute(Long chatId, Pageable pageable);
+    Page<GetMessageDto> execute(Long chatId, Pageable pageable);
 }
