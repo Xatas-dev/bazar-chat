@@ -90,8 +90,7 @@ public class UpdateMessageReactionUseCase implements UpdateMessageReactionInboun
     private UpdatedReactionDto updateReaction(Long messageId, Long reactionId, Long chatId, boolean added, UUID userId) {
         long reactionCount = messageReactionRepository.countMessageReactions(messageId, reactionId);
         messageEventsService.publishEvent(
-                createReactionEvent(chatId, messageId, reactionId, reactionCount, added, userId)
-        );
+                createReactionEvent(chatId, messageId, reactionId, reactionCount, added, userId));
         return new  UpdatedReactionDto(reactionId, reactionCount);
     }
 
