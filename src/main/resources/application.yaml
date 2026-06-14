@@ -19,8 +19,6 @@ spring:
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 server:
-  servlet:
-    context-path: /api
   port: 8080
 
 logging:
