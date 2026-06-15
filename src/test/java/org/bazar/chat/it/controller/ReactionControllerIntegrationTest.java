@@ -4,7 +4,6 @@ import builder.JwtBuilder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.bazar.chat.adapter.inbound.rest.reaction.dto.V1MessageReactionListResponse;
 import org.bazar.chat.adapter.inbound.rest.reaction.dto.V1ReactionUpdateResponse;
-import org.bazar.chat.app.api.exception.ErrorCode;
 import org.bazar.chat.app.api.reaction.dto.UserStatus;
 import org.bazar.chat.domain.chat.Chat;
 import org.bazar.chat.domain.message.Message;
@@ -111,9 +110,12 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         );
 
         assertNotNull(reactionUpdateResponse);
-        assertEquals(REACTION_1ID, Long.valueOf(reactionUpdateResponse.reactionId()));
+        assertEquals(REACTION_1ID, Long.valueOf(reactionUpdateResponse.reactions().getFirst().reactionId()));
         assertEquals(message.getId(), Long.valueOf(reactionUpdateResponse.messageId()));
-        assertEquals(1L, reactionUpdateResponse.count());
+        assertEquals(1L, reactionUpdateResponse.reactions().getFirst().count());
+        assertEquals(REACTION_1ID, Long.valueOf(reactionUpdateResponse.reactions().getFirst().reactionId()));
+        assertEquals(message.getId(), Long.valueOf(reactionUpdateResponse.messageId()));
+        assertEquals(1L, reactionUpdateResponse.reactions().getFirst().count());
         MessageReaction messageReaction = messageReactionJpaRepository.findAll().getFirst();
         assertEquals(message.getId(), messageReaction.getMessage().getId());
         assertEquals(REACTION_1ID, messageReaction.getReaction().getId());
@@ -140,15 +142,15 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         );
 
         assertNotNull(reactionUpdateResponse);
-        assertEquals(REACTION_1ID, Long.valueOf(reactionUpdateResponse.reactionId()));
+        assertEquals(REACTION_1ID, Long.valueOf(reactionUpdateResponse.reactions().getFirst().reactionId()));
         assertEquals(message.getId(), Long.valueOf(reactionUpdateResponse.messageId()));
-        assertEquals(0L, reactionUpdateResponse.count());
+        assertEquals(0L, reactionUpdateResponse.reactions().getFirst().count());
         List<MessageReaction> messageReactions = messageReactionJpaRepository.findAll();
         assertTrue(messageReactions.isEmpty());
     }
 
     @Test
-    @DisplayName("Неуспешное добавление реакции, слишком много реакций у пользователя")
+    @DisplayName("Удаление самой старой реакции при добавлении четвертой")
     void addMessageReaction_failure_maxReactionsPerUser() throws Exception {
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
         Message message = testDataHelper.createMessageWith(chat, TEST_CONTENT, JwtBuilder.TEST_USER_ID, true);
@@ -159,16 +161,21 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         testDataHelper.createMessageReactionWith(message, reaction2, JwtBuilder.TEST_USER_ID);
         testDataHelper.createMessageReactionWith(message, reaction3, JwtBuilder.TEST_USER_ID);
 
-        String errorText = restTestUtil.putPerform(
+        V1ReactionUpdateResponse reactionUpdateResponse = restTestUtil.putPerform(
                 String.format(UPDATE_REACTION_API_URL, DEFAULT_SPACE_ID, chat.getId(), message.getId(), REACTION_4ID),
                 Map.of(),
                 null,
-                TYPE_REFERENCE_STRING,
+                TYPE_REF_V1_REACTION_UPDATE_RESPONSE,
                 Map.of(),
-                status().isBadRequest()
+                status().isOk()
         );
 
-        assertEquals(String.format(ErrorCode.MAX_REACTIONS_PER_USER_ON_MESSAGE.formatMessage(JwtBuilder.TEST_USER_ID, message.getId())),
-                errorText);
+        assertNotNull(reactionUpdateResponse);
+        assertEquals(message.getId(), Long.valueOf(reactionUpdateResponse.messageId()));
+        assertEquals(REACTION_4ID, Long.valueOf(reactionUpdateResponse.reactions().get(0).reactionId()));
+        assertEquals(1L, reactionUpdateResponse.reactions().get(0).count());
+        assertEquals(0L, reactionUpdateResponse.reactions().get(1).count());
+        List<MessageReaction> messageReactions = messageReactionJpaRepository.findAll();
+        assertEquals(3, messageReactions.size());
     }
 }

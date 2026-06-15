@@ -6,7 +6,7 @@ import org.bazar.chat.adapter.inbound.rest.reaction.dto.V1ReactionUpdateResponse
 import org.bazar.chat.app.api.reaction.GetMessageReactionListInbound;
 import org.bazar.chat.app.api.reaction.UpdateMessageReactionInbound;
 import org.bazar.chat.app.api.reaction.dto.MessageReactionListDto;
-import org.bazar.chat.app.api.reaction.dto.UpdateReactionDto;
+import org.bazar.chat.app.api.reaction.dto.UpdatedReactionsDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +35,7 @@ public class ReactionController implements ReactionControllerSwagger {
                                                                           @PathVariable Long chatId,
                                                                           @PathVariable Long messageId,
                                                                           @PathVariable Long reactionId) {
-        UpdateReactionDto result = updateMessageReactionInbound.execute(chatId, messageId, reactionId);
-        return ResponseEntity.ok(restReactionMapper.toV1ReactionUpdateResponse(result));
+        UpdatedReactionsDto updatedReactions = updateMessageReactionInbound.execute(chatId, messageId, reactionId);
+        return ResponseEntity.ok().body(restReactionMapper.toV1ReactionUpdateResponse(updatedReactions));
     }
 }
