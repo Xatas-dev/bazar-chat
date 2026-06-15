@@ -1,6 +1,5 @@
 package org.bazar.chat.app.impl.reaction;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -60,14 +60,17 @@ public class UpdateMessageReactionUseCase implements UpdateMessageReactionInboun
 
             long userReactionCount = messageReactionRepository.countUserMessageReactions(messageId, userId);
             if (userReactionCount > 3) {
-                MessageReaction oldestMessageReaction = messageReactionRepository.findOldestUserMessageReaction(messageId, userId)
-                        .orElseThrow(() -> new EntityNotFoundException("Reaction not found"));
-                log.info("User reached reaction limit. Deleting oldest reaction: {}", oldestMessageReaction.getReaction().getId());
+                Optional<MessageReaction> optional = messageReactionRepository.findOldestUserMessageReaction(messageId, userId);
+                if (optional.isEmpty()) {
+                    log.error("Oldest message reaction not found for messageId {}, userId {}", messageId, userId);
+                    return new UpdatedReactionsDto(messageId, updatedReactions);
+                }
+                MessageReaction oldestMessageReaction = optional.get();
+                log.debug("User reached reaction limit. Deleting oldest reaction: {}", oldestMessageReaction.getReaction().getId());
                 UpdatedReactionDto removedReaction = removeMessageReaction(chatId, messageId, oldestMessageReaction.getReaction().getId(), userId);
                 updatedReactions.add(removedReaction);
             }
         }
-
         return new UpdatedReactionsDto(messageId, updatedReactions);
     }
 
@@ -77,13 +80,13 @@ public class UpdateMessageReactionUseCase implements UpdateMessageReactionInboun
 
     private UpdatedReactionDto addMessageReaction(Long chatId, Long messageId, Long reactionId, UUID userId) {
         messageReactionRepository.save(createMessageReaction(messageId, reactionId, userId));
-        log.info("Added reaction {} to message {}", reactionId, messageId);
+        log.debug("Added reaction {} to message {}", reactionId, messageId);
         return updateReaction(messageId, reactionId, chatId, true, userId);
     }
 
     private UpdatedReactionDto removeMessageReaction(Long chatId, Long messageId, Long reactionId, UUID userId) {
         messageReactionRepository.deleteUserMessageReaction(messageId, reactionId, userId);
-        log.info("Removed reaction {} from message {}", reactionId, messageId);
+        log.debug("Removed reaction {} from message {}", reactionId, messageId);
         return updateReaction(messageId, reactionId, chatId, false, userId);
     }
 
