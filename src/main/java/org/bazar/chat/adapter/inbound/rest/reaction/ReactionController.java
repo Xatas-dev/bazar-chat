@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/spaces/{spaceId}/chats/{chatId}/messages/{messageId}/reactions")
+@RequestMapping("/v1/spaces/{spaceId}/chats/{chatId}/messages/{messageId}/reactions")
 public class ReactionController implements ReactionControllerSwagger {
     private final UpdateMessageReactionInbound updateMessageReactionInbound;
     private final RestReactionMapper restReactionMapper;

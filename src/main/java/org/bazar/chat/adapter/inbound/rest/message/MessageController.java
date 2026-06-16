@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/spaces/{spaceId}/chats/{chatId}/messages")
+@RequestMapping("/v1/spaces/{spaceId}/chats/{chatId}/messages")
 public class MessageController implements MessageControllerSwagger {
     private final RestMessageMapper restMessageMapper;
     private final GetChatMessagesInbound getChatMessagesInbound;
