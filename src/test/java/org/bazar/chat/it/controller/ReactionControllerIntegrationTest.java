@@ -172,9 +172,9 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
 
         assertNotNull(reactionUpdateResponse);
         assertEquals(message.getId(), Long.valueOf(reactionUpdateResponse.messageId()));
-        assertEquals(REACTION_4ID, Long.valueOf(reactionUpdateResponse.reactions().get(0).reactionId()));
-        assertEquals(1L, reactionUpdateResponse.reactions().get(0).count());
-        assertEquals(0L, reactionUpdateResponse.reactions().get(1).count());
+        assertEquals(REACTION_4ID, Long.valueOf(reactionUpdateResponse.reactions().get(1).reactionId()));
+        assertEquals(0L, reactionUpdateResponse.reactions().get(0).count());
+        assertEquals(1L, reactionUpdateResponse.reactions().get(1).count());
         List<MessageReaction> messageReactions = messageReactionJpaRepository.findAll();
         assertEquals(3, messageReactions.size());
     }

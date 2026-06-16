@@ -55,11 +55,8 @@ public class UpdateMessageReactionUseCase implements UpdateMessageReactionInboun
             UpdatedReactionDto removedReaction = removeMessageReaction(chatId, messageId,  reactionId, userId);
             updatedReactions.add(removedReaction);
         } else {
-            UpdatedReactionDto addedReaction = addMessageReaction(chatId, messageId, reactionId, userId);
-            updatedReactions.add(addedReaction);
-
             long userReactionCount = messageReactionRepository.countUserMessageReactions(messageId, userId);
-            if (userReactionCount > 3) {
+            if (userReactionCount >= 3) {
                 Optional<MessageReaction> optional = messageReactionRepository.findOldestUserMessageReaction(messageId, userId);
                 if (optional.isEmpty()) {
                     log.error("Oldest message reaction not found for messageId {}, userId {}", messageId, userId);
@@ -70,6 +67,9 @@ public class UpdateMessageReactionUseCase implements UpdateMessageReactionInboun
                 UpdatedReactionDto removedReaction = removeMessageReaction(chatId, messageId, oldestMessageReaction.getReaction().getId(), userId);
                 updatedReactions.add(removedReaction);
             }
+
+            UpdatedReactionDto addedReaction = addMessageReaction(chatId, messageId, reactionId, userId);
+            updatedReactions.add(addedReaction);
         }
         return new UpdatedReactionsDto(messageId, updatedReactions);
     }
