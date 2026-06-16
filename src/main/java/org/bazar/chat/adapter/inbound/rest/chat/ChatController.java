@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/spaces/{spaceId}/chats")
+@RequestMapping("/api/v1/spaces/{spaceId}/chats")
 public class ChatController implements ChatControllerSwagger {
     private final RestChatMapper chatMapper;
     private final CreateChatInbound createChatInbound;
