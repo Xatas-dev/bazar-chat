@@ -27,7 +27,7 @@ public class ReplyMessageCollectorImpl implements ReplyMessageCollector {
 
         UserDto user = usersMap.get(replyMessage.getUserId());
         AuthorStatus authorStatus = AuthorStatus.from(user);
-        String contentPreview = replyMessage.getContent().substring(0, Math.min(replyMessage.getContent().length(), settingProperties.getMessage().getReplyPreviewLength())) + "...";
+        String contentPreview = replyMessage.getContent().substring(0, Math.min(replyMessage.getContent().length(), settingProperties.getMessage().getReplyPreviewLength()));
         return messageMapper.toReplyMessageDto(replyMessage, user, authorStatus, contentPreview);
     }
 }
