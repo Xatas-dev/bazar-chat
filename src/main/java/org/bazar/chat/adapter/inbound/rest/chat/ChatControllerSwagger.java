@@ -7,7 +7,7 @@ import org.bazar.chat.adapter.inbound.rest.chat.dto.V1ReactionListResponse;
 import org.springframework.http.ResponseEntity;
 
 public interface ChatControllerSwagger {
-    @Operation(summary = "Create a chat",description = "Create a new chat linked to a Space")
+    @Operation(summary = "Create a chat", description = "Create a new chat linked to a Space")
     ResponseEntity<V1CreateChatResponse> createChat(String spaceId);
 
     @Operation(summary = "Get chats by Space ID", description = "Retrieve the chat id belonging to a specific Space")
