@@ -1,4 +1,4 @@
-CREATE TABLE push_subscription
+CREATE TABLE IF NOT EXISTS push_subscription
 (
     id          BIGSERIAL PRIMARY KEY,
     user_id     UUID NOT NULL,

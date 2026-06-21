@@ -26,7 +26,15 @@ public enum ErrorCode {
     /**
      * Не найдено сообщение по его идентификатору
      */
-    MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "No message with %s id");
+    MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "No message with %s id"),
+    /**
+     * Пользователь не авторизован
+     */
+    NOT_AUTH(HttpStatus.UNAUTHORIZED, "Not authorized"),
+    /**
+     * Ошибка в рамках авторизации
+     */
+    AUTH_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Authorization error");
 
     @Getter
     private final HttpStatus status;

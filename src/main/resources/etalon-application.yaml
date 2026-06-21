@@ -20,6 +20,9 @@ service:
   bazar-persona:
     url: http://localhost:${service.bazar-persona.port}
     port: 8081
+  authorization:
+    port: 9090
+    host: localhost
   bazar-space:
     url: http://localhost:${service.bazar-space.port}
     port: 8082
