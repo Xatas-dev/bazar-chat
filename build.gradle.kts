@@ -3,8 +3,8 @@ import org.gradle.kotlin.dsl.withType
 
 plugins {
     id("java")
-    id("org.springframework.boot") version "4.0.1"
     id("io.spring.dependency-management") version "1.1.7"
+    id("org.springframework.boot") version "4.0.3"
     id("io.freefair.lombok") version "9.2.0"
     jacoco
 }
@@ -44,6 +44,16 @@ tasks.jacocoTestCoverageVerification {
 
 repositories {
     mavenCentral()
+    mavenLocal()
+    maven {
+        url = uri("https://maven.pkg.github.com/Xatas-dev/bazar-authorization-sdk")
+        credentials {
+            password = System.getenv("GITHUB_TOKEN")
+                ?: project.findProperty("gpr.token") as String?
+            username = System.getenv("GITHUB_ACTOR")
+                ?: project.findProperty("gpr.user") as String?
+        }
+    }
 }
 
 dependencyManagement {
@@ -71,6 +81,7 @@ dependencies {
 
     //Security
     implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
+    implementation("org.bazar:bazar-authorization-sdk:1.0.0")
 
     //Kafka
     implementation("org.springframework.boot:spring-boot-starter-kafka")
@@ -86,6 +97,9 @@ dependencies {
     implementation("nl.martijndwars:web-push:5.1.1")
     implementation("org.bouncycastle:bcprov-jdk18on:1.82")
     implementation("org.bouncycastle:bcpkix-jdk18on:1.82")
+
+    //AOP
+    implementation("org.springframework.boot:spring-boot-starter-aop:3.5.15")
 
     //Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -21,4 +21,11 @@ public interface AuthorizationService {
      * @return true, если сообщение принадлежит аутентифицированному пользователю, иначе false
      */
     boolean isMessageBelongsToCurrentUser(Message message);
+
+    /**
+     * Получить текущий токен JWT
+     *
+     * @return Токен JWT
+     */
+    String getCurrentJwtToken();
 }

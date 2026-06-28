@@ -26,6 +26,9 @@ service:
   bazar-space:
     url: http://localhost:${service.bazar-space.port}
     port: 8083
+  authorization:
+    port: 9090
+    host: localhost
 
 settings:
   scheduler:

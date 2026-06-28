@@ -26,6 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class MessageControllerIntegrationTest extends AbstractControllerIntegrationTest {
@@ -39,6 +41,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     @Test
     @DisplayName("Успешное создание сообщения c ответом")
     void createMessage_successWithReply() throws Exception {
+        when(bazarAuthorizationClient.authorize(any())).thenReturn(true);
         wireMockTestHelper.startMockBazarPersonaServer();
         wireMockTestHelper.startMockBazarSpaceServer();
         wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
@@ -67,6 +70,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     @Test
     @DisplayName("Успешное создание сообщения")
     void createMessage_success() throws Exception {
+        when(bazarAuthorizationClient.authorize(any())).thenReturn(true);
         wireMockTestHelper.startMockBazarPersonaServer();
         wireMockTestHelper.startMockBazarSpaceServer();
         wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
@@ -92,6 +96,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     @Test
     @DisplayName("Неуспешное создание сообщения - чат не найден")
     void createMessage_chatNotFound() throws Exception {
+        when(bazarAuthorizationClient.authorize(any())).thenReturn(true);
         restTestUtil.postPerform(
                 String.format(CREATE_MESSAGE_API_URL, DEFAULT_SPACE_ID, "1"),
                 Map.of(),
@@ -105,6 +110,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     @Test
     @DisplayName("Успешное получение сообщений по идентификатору чата")
     void getMessagesByChatId_success() throws Exception {
+        when(bazarAuthorizationClient.authorize(any())).thenReturn(true);
         wireMockTestHelper.startMockBazarPersonaServer();
         wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
@@ -152,6 +158,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     @Test
     @DisplayName("Успешное удаление сообщений")
     void deleteMessages_success() throws Exception {
+        when(bazarAuthorizationClient.authorize(any())).thenReturn(true);
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
         Message message1 = testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
         Message message2 = testDataHelper.createMessageWith(chat, CONTENT2, JwtBuilder.TEST_USER_ID, false);
@@ -173,6 +180,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     @Test
     @DisplayName("Неуспешное удаление сообщений - запрещено текущему пользователю")
     void deleteMessage_forbidden() throws Exception {
+        when(bazarAuthorizationClient.authorize(any())).thenReturn(true);
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
         Message message = testDataHelper.createMessageWith(chat, CONTENT1, UUID.randomUUID(), true);
         V1DeleteMessageRequest request = V1DeleteMessageRequestBuilder.buildWith(List.of(message.getId()));

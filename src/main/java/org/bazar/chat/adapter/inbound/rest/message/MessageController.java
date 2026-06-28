@@ -1,6 +1,8 @@
 package org.bazar.chat.adapter.inbound.rest.message;
 
 import lombok.RequiredArgsConstructor;
+import org.bazar.authorization.sdk.Permission;
+import org.bazar.chat.adapter.inbound.rest.Authorize;
 import org.bazar.chat.adapter.inbound.rest.message.dto.V1CreateMessageRequest;
 import org.bazar.chat.adapter.inbound.rest.message.dto.V1DeleteMessageRequest;
 import org.bazar.chat.adapter.inbound.rest.message.dto.V1GetMessageResponse;
@@ -35,6 +37,7 @@ public class MessageController implements MessageControllerSwagger {
     private final EditMessageContentInbound editMessageContentInbound;
 
     @PostMapping
+    @Authorize(permission = Permission.CHAT_MESSAGES_WRITE)
     public ResponseEntity<Void> createMessage(@PathVariable Long spaceId, @PathVariable Long chatId,
                                               @RequestBody V1CreateMessageRequest createMessageRequest) {
         CreateMessageDto createMessageDto = restMessageMapper.toCreateMessageDto(chatId, createMessageRequest);
@@ -43,6 +46,7 @@ public class MessageController implements MessageControllerSwagger {
     }
 
     @DeleteMapping
+    @Authorize(permission = Permission.CHAT_MESSAGES_DELETE)
     public ResponseEntity<Void> deleteChatMessageById(@PathVariable Long spaceId, @PathVariable Long chatId,
                                                       @RequestBody V1DeleteMessageRequest deleteMessageRequest) {
         deleteMessagesInbound.execute(chatId, deleteMessageRequest.messageIds());
@@ -50,6 +54,7 @@ public class MessageController implements MessageControllerSwagger {
     }
 
     @GetMapping
+    @Authorize(permission = Permission.CHAT_MESSAGES_READ)
     public Page<V1GetMessageResponse> getChatMessages(@PathVariable Long spaceId, @PathVariable Long chatId,
                                                       @PageableDefault(size = 20) Pageable pageable) {
         Page<GetMessageDto> messages = getChatMessagesInbound.execute(chatId, pageable);
