@@ -34,7 +34,11 @@ public enum ErrorCode {
     /**
      * Ошибка в рамках авторизации
      */
-    AUTH_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Authorization error");
+    AUTH_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Authorization error"),
+    /**
+     * Действие запрещено текущему пользователю
+     */
+    FORBIDDEN(HttpStatus.FORBIDDEN, "Action %s not allowed for current user %s");
 
     @Getter
     private final HttpStatus status;

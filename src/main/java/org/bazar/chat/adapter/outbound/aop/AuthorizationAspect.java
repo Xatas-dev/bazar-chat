@@ -14,6 +14,7 @@ import org.bazar.chat.app.service.AuthorizationService;
 import org.springframework.stereotype.Component;
 
 import static org.bazar.chat.app.api.exception.ErrorCode.AUTH_ERROR;
+import static org.bazar.chat.app.api.exception.ErrorCode.FORBIDDEN;
 
 @Aspect
 @Component
@@ -44,6 +45,7 @@ public class AuthorizationAspect {
             log.error("Auth denied: permission {}, user {}, space {}", authorize.permission(),
                     authorizationService.getAuthenticatedUserId(),
                     spaceId);
+            throw new BusinessException(FORBIDDEN, authorize.permission(), authorizationService.getAuthenticatedUserId());
         }
     }
 
