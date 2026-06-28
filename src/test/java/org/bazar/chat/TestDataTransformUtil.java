@@ -1,11 +1,13 @@
-package org.bazar.chat.it.testutil;
+package org.bazar.chat;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 import java.net.URL;
@@ -38,5 +40,16 @@ public class TestDataTransformUtil {
         } catch (Exception e) {
             return "";
         }
+    }
+
+    @SneakyThrows
+    public static <T> T readObjectFromFile(String fileName, Class<T> clazz) {
+        String valueAsString = readFileWithoutThrow(fileName);
+        return objectMapper.readValue(valueAsString, clazz);
+    }
+
+    @SneakyThrows
+    public static String writeValueAsString(Object value) {
+        return objectMapper.writeValueAsString(value);
     }
 }
