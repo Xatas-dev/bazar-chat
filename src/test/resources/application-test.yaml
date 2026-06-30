@@ -17,7 +17,7 @@ spring:
 logging:
   level:
     org:
-      bazar: ${LOGGING_LEVEL:DEBUG}
+      bazar: DEBUG
 
 service:
   bazar-persona:

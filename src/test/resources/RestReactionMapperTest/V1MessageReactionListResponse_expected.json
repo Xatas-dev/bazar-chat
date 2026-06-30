@@ -1,0 +1,55 @@
+{
+  "reactions": [
+    {
+      "reactionId": 1,
+      "users": [
+        {
+          "firstName": "Иван",
+          "lastName": "Петров",
+          "status": "EXIST",
+          "userId": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        {
+          "firstName": "Мария",
+          "lastName": "Иванова",
+          "status": "EXIST",
+          "userId": "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+        },
+        {
+          "firstName": "Алексей",
+          "lastName": "Сидоров",
+          "status": "EXIST",
+          "userId": "123e4567-e89b-12d3-a456-426614174000"
+        }
+      ]
+    },
+    {
+      "reactionId": 2,
+      "users": [
+        {
+          "firstName": "Елена",
+          "lastName": "Козлова",
+          "status": "EXIST",
+          "userId": "987fcdeb-51a2-43d7-9a5c-6b8f3e2d1a0b"
+        },
+        {
+          "firstName": "Неизвестный",
+          "lastName": "Пользователь",
+          "status": "UNKNOWN",
+          "userId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        }
+      ]
+    },
+    {
+      "reactionId": 3,
+      "users": [
+        {
+          "firstName": "Дмитрий",
+          "lastName": "Смирнов",
+          "status": "EXIST",
+          "userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        }
+      ]
+    }
+  ]
+}
