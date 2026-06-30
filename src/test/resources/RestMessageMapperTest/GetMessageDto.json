@@ -1,0 +1,35 @@
+{
+  "id": 12345,
+  "chatId": 67890,
+  "content": "Привет! Как дела?",
+  "createdAt": "2026-06-30T15:30:45Z",
+  "allowedActions": ["DELETE", "EDIT"],
+  "author": {
+    "userId": "550e8400-e29b-41d4-a716-446655440000",
+    "firstName": "Иван",
+    "lastName": "Петров",
+    "status": "EXIST"
+  },
+  "reply": {
+    "id": 12340,
+    "author": {
+      "userId": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+      "firstName": "Мария",
+      "lastName": "Иванова",
+      "status": "EXIST"
+    },
+    "contentPreview": "Да, согласен!"
+  },
+  "reactions": [
+    {
+      "reactionId": "1",
+      "count": 5,
+      "reactedByMe": true
+    },
+    {
+      "reactionId": "2️",
+      "count": 3,
+      "reactedByMe": false
+    }
+  ]
+}

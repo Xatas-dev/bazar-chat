@@ -1,5 +1,6 @@
 package org.bazar.chat.it;
 
+import org.bazar.chat.AbstractTest;
 import org.bazar.authorization.sdk.BazarAuthorizationClient;
 import org.bazar.chat.adapter.outbound.persistence.chat.ChatJpaRepository;
 import org.bazar.chat.adapter.outbound.persistence.message.MessageJpaRepository;
@@ -30,7 +31,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @ActiveProfiles("test")
 @AutoConfigureMockMvc(printOnlyOnFailure = false)
 @Import({TestSecurityConfig.class, WireMockConfig.class})
-public abstract class AbstractIntegrationTest {
+public abstract class AbstractIntegrationTest extends AbstractTest {
     @Autowired
     protected TestDataHelper testDataHelper;
     @Autowired

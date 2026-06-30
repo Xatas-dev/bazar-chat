@@ -1,0 +1,17 @@
+{
+  "messageId": "12345",
+  "reactions": [
+    {
+      "count": 5,
+      "reactionId": "1"
+    },
+    {
+      "count": 3,
+      "reactionId": "2"
+    },
+    {
+      "count": 8,
+      "reactionId": "3"
+    }
+  ]
+}
