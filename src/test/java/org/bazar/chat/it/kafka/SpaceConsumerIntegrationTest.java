@@ -18,7 +18,7 @@ import static org.awaitility.Awaitility.await;
 import static org.bazar.chat.it.kafka.AbstractKafkaIntegrationTest.SPACE_DELETE_TOPIC;
 
 @EmbeddedKafka(partitions = 1, topics = {SPACE_DELETE_TOPIC})
-public class SpaceConsumerIIntegrationTest extends AbstractKafkaIntegrationTest {
+public class SpaceConsumerIntegrationTest extends AbstractKafkaIntegrationTest {
     @Autowired
     private EmbeddedKafkaBroker embeddedKafka;
 

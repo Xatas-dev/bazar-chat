@@ -1,0 +1,5 @@
+{
+  "endpoint": "endpoint",
+  "p256dh": "p256dh",
+  "auth": "auth"
+}

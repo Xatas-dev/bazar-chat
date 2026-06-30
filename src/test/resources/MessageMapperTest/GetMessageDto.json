@@ -1,0 +1,42 @@
+{
+  "allowedActions": [
+    "DELETE",
+    "EDIT"
+  ],
+  "author": {
+    "firstName": "SENY",
+    "lastName": "ARSIKOV",
+    "status": "EXIST",
+    "userId": "e84351fa-4024-44bc-9e93-c968284db9fa"
+  },
+  "chatId": 2,
+  "content": "content",
+  "id": 1,
+  "reactions": [
+    {
+      "count": 5,
+      "reactedByMe": false,
+      "reactionId": "1"
+    },
+    {
+      "count": 11,
+      "reactedByMe": true,
+      "reactionId": "2"
+    },
+    {
+      "count": 2,
+      "reactedByMe": false,
+      "reactionId": "3"
+    }
+  ],
+  "reply": {
+    "author": {
+      "firstName": "Test",
+      "lastName": "Testov",
+      "status": "EXIST",
+      "userId": "6e82eb7b-a6fe-492b-9072-9f9b331be9ed"
+    },
+    "contentPreview": "contentPreview",
+    "id": 5
+  }
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "reactionId": 1,
+    "count": 5,
+    "reactedByMe": false
+  },
+  {
+    "reactionId": 2,
+    "count": 11,
+    "reactedByMe": true
+  },
+  {
+    "reactionId": 3,
+    "count": 2,
+    "reactedByMe": false
+  }
+]
