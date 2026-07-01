@@ -8,11 +8,7 @@ import org.bazar.chat.app.api.pushsubscription.GetPushPublicKeyInbound;
 import org.bazar.chat.app.api.pushsubscription.SubscribeToPushNotificationsInbound;
 import org.bazar.chat.app.api.pushsubscription.UnsubscribeToPushNotificationInbound;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,13 +26,13 @@ public class PushSubscriptionController implements PushSubscriptionControllerSwa
     }
 
     @PostMapping("/subscriptions")
-    public ResponseEntity<Void> subscribeToPushNotifications(V1PushSubscriptionRequest pushSubscriptionRequest) {
+    public ResponseEntity<Void> subscribeToPushNotifications(@RequestBody V1PushSubscriptionRequest pushSubscriptionRequest) {
         subscribeToPushNotificationsInbound.execute(restPushSubscriptionMapper.toSubscribeToPushNotificationDto(pushSubscriptionRequest));
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/subscriptions")
-    public ResponseEntity<Void> unsubscribeFromPushNotifications(V1PushUnsubscribeRequest pushUnsubscribeRequest) {
+    public ResponseEntity<Void> unsubscribeFromPushNotifications(@RequestBody V1PushUnsubscribeRequest pushUnsubscribeRequest) {
         unsubscribeToPushNotificationInbound.execute(pushUnsubscribeRequest.endpoint());
         return ResponseEntity.ok().build();
     }
