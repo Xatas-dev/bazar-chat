@@ -1,4 +1,4 @@
-package org.bazar.chat.app.service.user;
+package org.bazar.chat.app.impl.service.user;
 
 import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.domain.message.Message;

@@ -1,4 +1,4 @@
-package org.bazar.chat.adapter.inbound.rest;
+package org.bazar.chat.app.api.auth;
 
 import org.bazar.authorization.sdk.Permission;
 
@@ -21,5 +21,5 @@ public @interface Authorize {
     /**
      * Идентификатор пространства
      */
-    String spaceIdParam() default "spaceId";
+    String spaceIdParam() default "#spaceId";
 }

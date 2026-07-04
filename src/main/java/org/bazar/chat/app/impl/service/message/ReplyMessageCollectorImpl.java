@@ -1,4 +1,4 @@
-package org.bazar.chat.app.service.message;
+package org.bazar.chat.app.impl.service.message;
 
 import lombok.RequiredArgsConstructor;
 import org.bazar.chat.app.api.SettingProperties;

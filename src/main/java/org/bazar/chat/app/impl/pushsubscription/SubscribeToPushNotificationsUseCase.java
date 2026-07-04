@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.bazar.chat.app.api.pushsubscription.PushSubscriptionRepository;
 import org.bazar.chat.app.api.pushsubscription.SubscribeToPushNotificationsInbound;
 import org.bazar.chat.app.api.pushsubscription.dto.SubscribeToPushNotificationDto;
-import org.bazar.chat.app.service.AuthorizationService;
+import org.bazar.chat.app.api.auth.AuthenticationService;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -17,13 +17,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SubscribeToPushNotificationsUseCase implements SubscribeToPushNotificationsInbound {
     private final PushSubscriptionRepository pushSubscriptionRepository;
-    private final AuthorizationService authorizationService;
+    private final AuthenticationService authenticationService;
     private final PushSubscriptionMapper pushSubscriptionMapper;
 
     @Override
     @Transactional
     public void execute(SubscribeToPushNotificationDto dto) {
-        UUID userId = authorizationService.getAuthenticatedUserId();
+        UUID userId = authenticationService.getAuthenticatedUserId();
 
         if (pushSubscriptionRepository.existsByUserIdAndEndpoint(userId, dto.endpoint())) {
             return;

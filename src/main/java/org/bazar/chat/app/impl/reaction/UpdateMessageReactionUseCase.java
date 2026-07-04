@@ -15,8 +15,8 @@ import org.bazar.chat.app.api.reaction.UpdateMessageReactionInbound;
 import org.bazar.chat.app.api.reaction.dto.UpdatedReactionDto;
 import org.bazar.chat.app.api.reaction.dto.UpdatedReactionsDto;
 import org.bazar.chat.app.impl.message.MessageMapper;
-import org.bazar.chat.app.service.AuthorizationService;
-import org.bazar.chat.app.service.user.UserLoader;
+import org.bazar.chat.app.api.auth.AuthenticationService;
+import org.bazar.chat.app.impl.service.user.UserLoader;
 import org.bazar.chat.domain.reaction.MessageReaction;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +38,7 @@ public class UpdateMessageReactionUseCase implements UpdateMessageReactionInboun
     private final MessageEventsService messageEventsService;
     private final UserLoader userLoader;
     private final MessageMapper messageMapper;
-    private final AuthorizationService authorizationService;
+    private final AuthenticationService authenticationService;
 
     // Возможен race condition при параллельной постановке реакций, из-за чего пользователь в редких случаях может превысить лимит реакций.
     // Сознательно не используем pessimistic locking или подобное, так как реакции не являются критичной частью системы
@@ -46,7 +46,7 @@ public class UpdateMessageReactionUseCase implements UpdateMessageReactionInboun
     @Override
     @Transactional
     public UpdatedReactionsDto execute(Long chatId, Long messageId, Long reactionId) {
-        UUID userId = authorizationService.getAuthenticatedUserId();
+        UUID userId = authenticationService.getAuthenticatedUserId();
 
         boolean alreadyExists = messageReactionRepository.existsUserMessageReaction(messageId, reactionId, userId);
 

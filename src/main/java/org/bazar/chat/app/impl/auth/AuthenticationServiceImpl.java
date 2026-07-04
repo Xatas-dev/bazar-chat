@@ -1,6 +1,7 @@
-package org.bazar.chat.app.service;
+package org.bazar.chat.app.impl.auth;
 
 import lombok.RequiredArgsConstructor;
+import org.bazar.chat.app.api.auth.AuthenticationService;
 import org.bazar.chat.app.api.exception.BusinessException;
 import org.bazar.chat.app.api.exception.ErrorCode;
 import org.bazar.chat.domain.message.Message;
@@ -18,7 +19,7 @@ import java.util.UUID;
  */
 @Component
 @RequiredArgsConstructor
-public class AuthorizationServiceImpl implements AuthorizationService {
+public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public UUID getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

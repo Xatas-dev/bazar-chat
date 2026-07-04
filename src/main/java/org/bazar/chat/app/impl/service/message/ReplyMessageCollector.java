@@ -1,4 +1,4 @@
-package org.bazar.chat.app.service.message;
+package org.bazar.chat.app.impl.service.message;
 
 import org.bazar.chat.app.api.message.dto.ReplyMessageDto;
 import org.bazar.chat.app.api.persona.model.UserDto;

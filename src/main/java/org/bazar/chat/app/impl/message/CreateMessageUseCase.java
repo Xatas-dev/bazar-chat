@@ -1,6 +1,7 @@
 package org.bazar.chat.app.impl.message;
 
 import lombok.RequiredArgsConstructor;
+import org.bazar.chat.app.api.auth.AuthenticationService;
 import org.bazar.chat.app.api.chat.ChatRepository;
 import org.bazar.chat.app.api.exception.BusinessException;
 import org.bazar.chat.app.api.exception.ErrorCode;
@@ -14,10 +15,9 @@ import org.bazar.chat.app.api.message.dto.event.MessageCreatedEvent;
 import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.app.api.space.SpaceService;
 import org.bazar.chat.app.api.space.dto.SpaceUserDto;
-import org.bazar.chat.app.service.AuthorizationService;
-import org.bazar.chat.app.service.message.MessageAllowedActionsResolver;
-import org.bazar.chat.app.service.message.ReplyMessageCollector;
-import org.bazar.chat.app.service.user.UserLoader;
+import org.bazar.chat.app.impl.service.message.MessageAllowedActionsResolver;
+import org.bazar.chat.app.impl.service.message.ReplyMessageCollector;
+import org.bazar.chat.app.impl.service.user.UserLoader;
 import org.bazar.chat.domain.chat.Chat;
 import org.bazar.chat.domain.message.Message;
 import org.springframework.stereotype.Component;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CreateMessageUseCase implements CreateMessageInbound {
     private final ChatRepository chatRepository;
-    private final AuthorizationService authorizationService;
+    private final AuthenticationService authenticationService;
     private final MessageMapper messageMapper;
     private final UserLoader userLoader;
     private final MessageRepository messageRepository;
@@ -49,7 +49,7 @@ public class CreateMessageUseCase implements CreateMessageInbound {
     @Transactional
     public void execute(CreateMessageDto dto) {
         Chat chat = chatRepository.findByChatId(dto.chatId()).orElseThrow(() -> new BusinessException(ErrorCode.CHAT_BY_ID_NOT_FOUND, dto.chatId()));
-        UUID userId = authorizationService.getAuthenticatedUserId();
+        UUID userId = authenticationService.getAuthenticatedUserId();
         Message message = messageMapper.toMessage(dto, getReplyMessageIfExists(dto.chatId(), dto.replyMessageId()), chat, userId);
         messageRepository.save(message);
         Map<UUID, UserDto> usersMap = userLoader.loadUsersForMessages(List.of(message));
@@ -85,7 +85,7 @@ public class CreateMessageUseCase implements CreateMessageInbound {
         Set<UUID> chatUserIds = spaceService.getUsersBySpaceId(chat.getSpaceId()).stream()
                 .map(SpaceUserDto::userId)
                 .collect(Collectors.toSet());
-        chatUserIds.remove(authorizationService.getAuthenticatedUserId());
+        chatUserIds.remove(authenticationService.getAuthenticatedUserId());
 
         return chatUserIds;
     }

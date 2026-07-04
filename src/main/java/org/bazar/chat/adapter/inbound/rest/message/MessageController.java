@@ -2,11 +2,11 @@ package org.bazar.chat.adapter.inbound.rest.message;
 
 import lombok.RequiredArgsConstructor;
 import org.bazar.authorization.sdk.Permission;
-import org.bazar.chat.adapter.inbound.rest.Authorize;
 import org.bazar.chat.adapter.inbound.rest.message.dto.V1CreateMessageRequest;
 import org.bazar.chat.adapter.inbound.rest.message.dto.V1DeleteMessageRequest;
 import org.bazar.chat.adapter.inbound.rest.message.dto.V1GetMessageResponse;
 import org.bazar.chat.adapter.inbound.rest.message.dto.V1UpdateChatMessageRequest;
+import org.bazar.chat.app.api.auth.Authorize;
 import org.bazar.chat.app.api.message.CreateMessageInbound;
 import org.bazar.chat.app.api.message.DeleteMessagesInbound;
 import org.bazar.chat.app.api.message.EditMessageContentInbound;

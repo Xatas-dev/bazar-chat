@@ -7,7 +7,7 @@ import org.bazar.chat.app.api.message.EditMessageContentInbound;
 import org.bazar.chat.app.api.message.MessageEventsService;
 import org.bazar.chat.app.api.message.MessageRepository;
 import org.bazar.chat.app.api.message.dto.UpdateMessageDto;
-import org.bazar.chat.app.service.AuthorizationService;
+import org.bazar.chat.app.api.auth.AuthenticationService;
 import org.bazar.chat.domain.message.Message;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,7 @@ import java.util.List;
 public class EditMessageContentUseCase implements EditMessageContentInbound {
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
-    private final AuthorizationService authorizationService;
+    private final AuthenticationService authenticationService;
     private final MessageEventsService messageEventsService;
 
     @Override
@@ -41,7 +41,7 @@ public class EditMessageContentUseCase implements EditMessageContentInbound {
 
     private void checkMessagesForEditingByCurrentUser(List<Message> messages) {
         messages.stream()
-                .filter(message -> !authorizationService.isMessageBelongsToCurrentUser(message))
+                .filter(message -> !authenticationService.isMessageBelongsToCurrentUser(message))
                 .findFirst()
                 .ifPresent(message -> {
                     throw new BusinessException(ErrorCode.EDIT_MESSAGE_BY_CURRENT_USER_FORBIDDEN, message.getId());

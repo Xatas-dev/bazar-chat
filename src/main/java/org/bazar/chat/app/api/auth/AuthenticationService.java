@@ -1,13 +1,13 @@
-package org.bazar.chat.app.service;
+package org.bazar.chat.app.api.auth;
 
 import org.bazar.chat.domain.message.Message;
 
 import java.util.UUID;
 
 /**
- * Сервис для работы с авторизацией пользователя
+ * Сервис для работы с аунтификацией пользователя
  */
-public interface AuthorizationService {
+public interface AuthenticationService {
     /**
      * Получить идентификатор аутентифицированного пользователя
      *

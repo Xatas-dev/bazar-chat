@@ -1,4 +1,4 @@
-package org.bazar.chat.app.service.user;
+package org.bazar.chat.app.impl.service.user;
 
 import lombok.RequiredArgsConstructor;
 import org.bazar.chat.app.api.persona.PersonaService;

@@ -81,7 +81,7 @@ dependencies {
 
     //Security
     implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
-    implementation("org.bazar:bazar-authorization-sdk:1.0.0")
+    implementation("org.bazar:bazar-authorization-sdk:1.0.1")
 
     //Kafka
     implementation("org.springframework.boot:spring-boot-starter-kafka")
@@ -112,6 +112,7 @@ dependencies {
     testImplementation("org.springframework.kafka:spring-kafka-test")
     testImplementation("org.awaitility:awaitility:4.2.0")
     testImplementation("org.wiremock:wiremock-standalone:3.10.0")
+    testImplementation("com.tngtech.archunit:archunit-junit5:1.2.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
