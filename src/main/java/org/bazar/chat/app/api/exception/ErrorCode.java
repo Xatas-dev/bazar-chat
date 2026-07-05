@@ -28,9 +28,17 @@ public enum ErrorCode {
      */
     MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "No message with %s id"),
     /**
-     * Максимальное количество реакций от одного пользователя на сообщение достигнуто
+     * Пользователь не авторизован
      */
-    MAX_REACTIONS_PER_USER_ON_MESSAGE(HttpStatus.BAD_REQUEST, "Maximum number of reactions for user %s on message %s has been reached");
+    NOT_AUTH(HttpStatus.UNAUTHORIZED, "Not authorized"),
+    /**
+     * Ошибка в рамках авторизации
+     */
+    AUTH_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Authorization error"),
+    /**
+     * Действие запрещено текущему пользователю
+     */
+    FORBIDDEN(HttpStatus.FORBIDDEN, "Action %s not allowed for current user %s");
 
     @Getter
     private final HttpStatus status;

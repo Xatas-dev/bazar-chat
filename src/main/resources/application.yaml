@@ -19,8 +19,6 @@ spring:
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 server:
-  servlet:
-    context-path: /api
   port: 8080
 
 logging:
@@ -40,6 +38,11 @@ kafka:
 service:
   bazar-persona:
     url: ${INTEGRATION_REST_BAZAR_PERSONA_API_URL}
+  bazar-space:
+    url: ${INTEGRATION_REST_BAZAR_SPACE_API_URL}
+  authorization:
+    port: ${INTEGRATION_REST_AUTHORIZATION_PORT}
+    host: ${INTEGRATION_REST_AUTHORIZATION_HOST}
 
 settings:
   scheduler:
@@ -47,3 +50,7 @@ settings:
       deleteMessages: ${SETTING_SCHEDULER_MESSAGE_DELETE_MESSAGES}
   message:
     replyPreviewLength: ${SETTING_MESSAGE_REPLY_PREVIEW_LENGTH}
+  push-subscription:
+    public-key: ${SETTING_PUSH_SUBSCRIPTION_PUBLIC_KEY}
+    private-key: ${SETTING_PUSH_SUBSCRIPTION_PRIVATE_KEY}
+    subject: ${SETTING_PUSH_SUBSCRIPTION_SUBJECT}

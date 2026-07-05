@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -26,4 +27,6 @@ public interface MessageReactionJpaRepository extends JpaRepository<MessageReact
     long countMessageReactionsByMessageIdAndReactionId(Long messageId, Long reactionId);
 
     List<MessageReaction> findByMessageId(Long messageId);
+
+    Optional<MessageReaction> findFirstByMessageIdAndUserIdOrderByCreatedAtAsc(Long messageId, UUID userId);
 }

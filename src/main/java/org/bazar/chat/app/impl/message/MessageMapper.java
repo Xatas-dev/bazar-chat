@@ -17,6 +17,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Mapper
@@ -49,7 +50,8 @@ public interface MessageMapper {
     @Mapping(target = "chatId", source = "message.chat.id")
     @Mapping(target = "author", expression = "java(toAuthorDto(userDto, status, message))")
     @Mapping(target = "id", source = "message.id")
-    MessageCreatedEvent toMessageCreatedEvent(Message message, UserDto userDto, AuthorStatus status, ReplyMessageDto reply, List<AllowedActions> allowedActions);
+    @Mapping(target = "spaceId", source = "message.chat.spaceId")
+    MessageCreatedEvent toMessageCreatedEvent(Message message, UserDto userDto, AuthorStatus status, ReplyMessageDto reply, List<AllowedActions> allowedActions, Set<UUID> chatMembersUuids);
 
     default MessageDeletedEvent toMessageDeletedEvent(Long chatId, List<Long> messageIds) {
         return new MessageDeletedEvent(chatId, messageIds);

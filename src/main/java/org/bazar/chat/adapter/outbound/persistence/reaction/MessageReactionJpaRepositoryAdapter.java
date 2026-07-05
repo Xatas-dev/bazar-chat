@@ -6,6 +6,7 @@ import org.bazar.chat.domain.reaction.MessageReaction;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -45,5 +46,10 @@ public class MessageReactionJpaRepositoryAdapter implements MessageReactionRepos
     @Override
     public List<MessageReaction> findAllByMessageId(Long messageId) {
         return messageReactionJpaRepository.findByMessageId(messageId);
+    }
+
+    @Override
+    public Optional<MessageReaction> findOldestUserMessageReaction(Long messageId, UUID userId) {
+        return messageReactionJpaRepository.findFirstByMessageIdAndUserIdOrderByCreatedAtAsc(messageId, userId);
     }
 }

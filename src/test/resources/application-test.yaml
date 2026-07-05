@@ -17,12 +17,18 @@ spring:
 logging:
   level:
     org:
-      bazar: ${LOGGING_LEVEL:DEBUG}
+      bazar: DEBUG
 
 service:
   bazar-persona:
     url: http://localhost:${service.bazar-persona.port}
-    port: 8081
+    port: 8082
+  bazar-space:
+    url: http://localhost:${service.bazar-space.port}
+    port: 8083
+  authorization:
+    port: 9090
+    host: localhost
 
 settings:
   scheduler:
@@ -30,3 +36,7 @@ settings:
       deleteMessages: "0 0 3 * * *"
   message:
     replyPreviewLength: 30
+  push-subscription:
+    public-key: "BD7Ly3KFruY0cndkBkmJ8pjeThxCKVrD3h6krbEqRTeLjDwi0XBa9t4BLXmZ6xvjrxaR5z2u2RDUEI4ru05CXsA"
+    private-key: "ynLO-fKZ-3p8zO3XLFHMf_PW03Y-BjR2n2ginAJXl_M"
+    subject: mailto:bazar@bazar.mail.ru

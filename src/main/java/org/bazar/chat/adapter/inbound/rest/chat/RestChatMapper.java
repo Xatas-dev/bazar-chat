@@ -1,14 +1,17 @@
 package org.bazar.chat.adapter.inbound.rest.chat;
 
+import org.bazar.chat.adapter.inbound.rest.chat.dto.V1CreateChatResponse;
+import org.bazar.chat.adapter.inbound.rest.chat.dto.V1GetChatResponse;
+import org.bazar.chat.adapter.inbound.rest.chat.dto.V1ReactionResponse;
 import org.bazar.chat.app.api.chat.dto.GetChatDto;
 import org.bazar.chat.app.api.reaction.dto.GetReactionDto;
-import org.bazar.chat.model.ChatResponse;
-import org.bazar.chat.model.ReactionResponse;
 import org.mapstruct.Mapper;
 
 @Mapper
 public interface RestChatMapper {
-    ChatResponse mapToChatResponse(GetChatDto chat);
+    V1CreateChatResponse mapToV1CreateChatResponse(GetChatDto chat);
 
-    ReactionResponse mapToReactionResponse(GetReactionDto reaction);
+    V1GetChatResponse mapToV1GetChatResponse(GetChatDto chat);
+
+    V1ReactionResponse mapToV1ReactionResponse(GetReactionDto reaction);
 }

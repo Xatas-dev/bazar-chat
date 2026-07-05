@@ -1,5 +1,7 @@
 package org.bazar.chat.it;
 
+import org.bazar.chat.AbstractTest;
+import org.bazar.authorization.sdk.BazarAuthorizationClient;
 import org.bazar.chat.adapter.outbound.persistence.chat.ChatJpaRepository;
 import org.bazar.chat.adapter.outbound.persistence.message.MessageJpaRepository;
 import org.bazar.chat.adapter.outbound.persistence.reaction.MessageReactionJpaRepository;
@@ -16,6 +18,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -28,7 +31,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @ActiveProfiles("test")
 @AutoConfigureMockMvc(printOnlyOnFailure = false)
 @Import({TestSecurityConfig.class, WireMockConfig.class})
-public abstract class AbstractIntegrationTest {
+public abstract class AbstractIntegrationTest extends AbstractTest {
     @Autowired
     protected TestDataHelper testDataHelper;
     @Autowired
@@ -43,6 +46,8 @@ public abstract class AbstractIntegrationTest {
     protected WireMockTestHelper wireMockTestHelper;
     @Autowired
     protected CacheManager cacheManager;
+    @MockitoBean
+    protected BazarAuthorizationClient bazarAuthorizationClient;
 
     @BeforeEach
     void cleanUp() {

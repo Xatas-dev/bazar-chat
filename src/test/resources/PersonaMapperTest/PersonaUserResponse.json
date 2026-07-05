@@ -1,0 +1,10 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "createdAt": "2026-01-15T10:30:00Z",
+  "updatedAt": "2026-06-30T14:25:30Z",
+  "userName": "ivan.petrov",
+  "email": "ivan.petrov@example.com",
+  "firstName": "Иван",
+  "lastName": "Петров",
+  "userPic": "https://storage.example.com/avatars/550e8400-e29b-41d4-a716-446655440000.jpg"
+}

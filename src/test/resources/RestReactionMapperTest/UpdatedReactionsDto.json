@@ -1,0 +1,17 @@
+{
+  "messageId": 12345,
+  "updatedReactions": [
+    {
+      "reactionId": 1,
+      "count": 5
+    },
+    {
+      "reactionId": 2,
+      "count": 3
+    },
+    {
+      "reactionId": 3,
+      "count": 8
+    }
+  ]
+}

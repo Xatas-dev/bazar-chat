@@ -3,15 +3,14 @@ import org.gradle.kotlin.dsl.withType
 
 plugins {
     id("java")
-    id("org.springframework.boot") version "4.0.1"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.openapi.generator") version "7.2.0"
+    id("org.springframework.boot") version "4.0.3"
     id("io.freefair.lombok") version "9.2.0"
     jacoco
 }
 
 group = "org.bazar"
-version = "1.0.5"
+version = "1.0.6"
 description = "bazar-chat"
 
 java {
@@ -45,6 +44,16 @@ tasks.jacocoTestCoverageVerification {
 
 repositories {
     mavenCentral()
+    mavenLocal()
+    maven {
+        url = uri("https://maven.pkg.github.com/Xatas-dev/bazar-authorization-sdk")
+        credentials {
+            password = System.getenv("GITHUB_TOKEN")
+                ?: project.findProperty("gpr.token") as String?
+            username = System.getenv("GITHUB_ACTOR")
+                ?: project.findProperty("gpr.user") as String?
+        }
+    }
 }
 
 dependencyManagement {
@@ -61,7 +70,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("io.swagger.core.v3:swagger-annotations:2.2.38")
     implementation("io.swagger.core.v3:swagger-models:2.2.38")
-    implementation("org.openapitools:jackson-databind-nullable:0.2.4")
 
     //Observability
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -73,6 +81,7 @@ dependencies {
 
     //Security
     implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
+    implementation("org.bazar:bazar-authorization-sdk:1.0.1")
 
     //Kafka
     implementation("org.springframework.boot:spring-boot-starter-kafka")
@@ -83,6 +92,14 @@ dependencies {
     //Cache
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+
+    //Web Push
+    implementation("nl.martijndwars:web-push:5.1.1")
+    implementation("org.bouncycastle:bcprov-jdk18on:1.82")
+    implementation("org.bouncycastle:bcpkix-jdk18on:1.82")
+
+    //AOP
+    implementation("org.springframework.boot:spring-boot-starter-aop:3.5.15")
 
     //Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -95,6 +112,7 @@ dependencies {
     testImplementation("org.springframework.kafka:spring-kafka-test")
     testImplementation("org.awaitility:awaitility:4.2.0")
     testImplementation("org.wiremock:wiremock-standalone:3.10.0")
+    testImplementation("com.tngtech.archunit:archunit-junit5:1.2.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
@@ -114,74 +132,4 @@ tasks.withType<Test> {
 
 tasks.withType<JavaCompile> {
     options.compilerArgs.add("-Amapstruct.defaultComponentModel=spring")
-}
-
-openApiGenerate {
-    generatorName.set("spring")
-    inputSpec.set("$rootDir/src/main/resources/openapi/bazar-chat.yaml")
-    outputDir.set("${layout.buildDirectory.locationOnly.get()}/generated/openapi")
-
-    apiPackage.set("org.bazar.chat.api")
-    modelPackage.set("org.bazar.chat.model")
-
-    typeMappings.set(
-        mapOf(
-            "DateTime" to "java.time.Instant"
-        )
-    )
-
-    importMappings.set(
-        mapOf(
-            "Pageable" to "org.springframework.data.domain.Pageable"
-        )
-    )
-
-    schemaMappings.set(
-        mapOf(
-            "Pageable" to "org.springframework.data.domain.Pageable"
-        )
-    )
-
-    configOptions.set(
-        mapOf(
-            // Jakarta namespace (Boot 4)
-            "useSpringBoot3" to "true",
-
-            // Только интерфейсы API
-            "interfaceOnly" to "true",
-            "useTags" to "true",
-            "skipDefaultInterface" to "true",
-
-            // Не генерировать exception handler
-            "exceptionHandler" to "false",
-
-            // java.time.*
-            "dateLibrary" to "java8",
-
-            // Validation + OpenAPI docs
-            "useBeanValidation" to "true",
-            "documentationProvider" to "springdoc",
-
-            // Генерируем IMMUTABLE Java DTO
-            "modelMutable" to "true",
-
-            // Не генерировать gradle файлы
-            "gradleBuildFile" to "false"
-        )
-    )
-}
-
-
-// 4. TELL Java WHERE TO FIND THE GENERATED CODE
-sourceSets {
-    main {
-        java {
-            srcDir("${buildDir}/generated/openapi/src/main/java")
-        }
-    }
-}
-
-// 5. ENSURE CODE IS GENERATED BEFORE COMPILING
-tasks.compileJava {
-    dependsOn("openApiGenerate")
 }

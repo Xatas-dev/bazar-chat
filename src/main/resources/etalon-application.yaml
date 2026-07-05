@@ -20,3 +20,20 @@ service:
   bazar-persona:
     url: http://localhost:${service.bazar-persona.port}
     port: 8081
+  authorization:
+    port: 9090
+    host: localhost
+  bazar-space:
+    url: http://localhost:${service.bazar-space.port}
+    port: 8082
+
+settings:
+  scheduler:
+    message:
+      deleteMessages: "0 */5 * * * *"
+  message:
+    replyPreviewLength: 100
+  push-subscription:
+    public-key: <to generate>
+    private-key: <to generate>
+    subject: mailto:bazar@bazar.mail.ru
