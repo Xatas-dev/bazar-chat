@@ -62,6 +62,7 @@ public class MessageController implements MessageControllerSwagger {
     }
 
     @PatchMapping("/{messageId}")
+    @Authorize(permission = Permission.CHAT_MESSAGES_WRITE)
     public ResponseEntity<Void> updateChatMessage(@PathVariable Long spaceId, @PathVariable Long chatId,
                                                   @PathVariable Long messageId,
                                                   @RequestBody V1UpdateChatMessageRequest updateChatMessageRequest) {

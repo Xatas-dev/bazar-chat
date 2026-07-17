@@ -94,6 +94,52 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     }
 
     @Test
+    @DisplayName("Неуспешное создание сообщения - пользователь не имеет прав на отправку сообщений")
+    void createMessage_unauthorized() throws Exception {
+        when(bazarAuthorizationClient.authorize(any())).thenReturn(false);
+        wireMockTestHelper.startMockBazarPersonaServer();
+        wireMockTestHelper.startMockBazarSpaceServer();
+        wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
+        wireMockTestHelper.stubBazarSpaceGetUsers_200(DEFAULT_SPACE_ID.toString(), "/MessageControllerIntegrationTest/SpaceGetUsersResponse.json");
+        Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
+
+        restTestUtil.postPerform(
+                String.format(CREATE_MESSAGE_API_URL, DEFAULT_SPACE_ID, chat.getId()),
+                Map.of(),
+                V1CreateMessageRequestBuilder.buildDefault(),
+                TYPE_REFERENCE_STRING,
+                Map.of(),
+                status().isForbidden()
+        );
+
+        List<Message> messages = messageJpaRepository.findAll();
+        assertEquals(0, messages.size());
+    }
+
+    @Test
+    @DisplayName("Неуспешное создание сообщения - внутренняя ошибка")
+    void createMessage_internalException() throws Exception {
+        when(bazarAuthorizationClient.authorize(any())).thenThrow(new RuntimeException("Authorization client internal server error"));
+        wireMockTestHelper.startMockBazarPersonaServer();
+        wireMockTestHelper.startMockBazarSpaceServer();
+        wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
+        wireMockTestHelper.stubBazarSpaceGetUsers_200(DEFAULT_SPACE_ID.toString(), "/MessageControllerIntegrationTest/SpaceGetUsersResponse.json");
+        Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
+
+        restTestUtil.postPerform(
+                String.format(CREATE_MESSAGE_API_URL, DEFAULT_SPACE_ID, chat.getId()),
+                Map.of(),
+                V1CreateMessageRequestBuilder.buildDefault(),
+                TYPE_REFERENCE_STRING,
+                Map.of(),
+                status().isInternalServerError()
+        );
+
+        List<Message> messages = messageJpaRepository.findAll();
+        assertEquals(0, messages.size());
+    }
+
+    @Test
     @DisplayName("Неуспешное создание сообщения - чат не найден")
     void createMessage_chatNotFound() throws Exception {
         when(bazarAuthorizationClient.authorize(any())).thenReturn(true);
@@ -178,7 +224,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     }
 
     @Test
-    @DisplayName("Неуспешное удаление сообщений - запрещено текущему пользователю")
+    @DisplayName("Неуспешное удаление сообщений - сообщение не принадлежит пользователю")
     void deleteMessage_forbidden() throws Exception {
         when(bazarAuthorizationClient.authorize(any())).thenReturn(true);
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
@@ -201,6 +247,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     @Test
     @DisplayName("Успешное редактирование сообщения")
     void updateMessage_success() throws Exception {
+        when(bazarAuthorizationClient.authorize(any())).thenReturn(true);
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
         Message message = testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
         V1UpdateChatMessageRequest request = V1UpdateChatMessageRequestBuilder.buildWith(CONTENT2);
