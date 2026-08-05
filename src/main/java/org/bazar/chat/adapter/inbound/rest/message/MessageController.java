@@ -61,6 +61,7 @@ public class MessageController implements MessageControllerSwagger {
         return messages.map(restMessageMapper::toV1GetMessageResponse);
     }
 
+    // TODO: Добавить пермишен CHAT_MESSAGES_UPDATE в рамках задачи https://grinbog015.atlassian.net/browse/BZR-178
     @PatchMapping("/{messageId}")
     @Authorize(permission = Permission.CHAT_MESSAGES_WRITE)
     public ResponseEntity<Void> updateChatMessage(@PathVariable Long spaceId, @PathVariable Long chatId,
