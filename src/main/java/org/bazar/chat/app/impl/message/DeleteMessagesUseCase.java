@@ -37,6 +37,7 @@ public class DeleteMessagesUseCase implements DeleteMessagesInbound {
     // = Implementation
     // =================================================================================================================
 
+    // TODO: Перенести проверку в bazar-authorization в рамках задачи https://grinbog015.atlassian.net/browse/BZR-177
     private void checkMessagesForDeletingByCurrentUser(List<Message> messages) {
         messages.stream()
                 .filter(message -> !authenticationService.isMessageBelongsToCurrentUser(message))

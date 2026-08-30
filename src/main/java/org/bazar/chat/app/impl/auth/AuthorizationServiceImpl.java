@@ -34,7 +34,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                     request.getSpaceId(),
                     request.getPermission().getResource(),
                     request.getPermission().getAction());
-            throw new BusinessException(FORBIDDEN);
+            throw new BusinessException(FORBIDDEN, request.getPermission().getAction(), authenticationService.getAuthenticatedUserId());
         }
 
         log.debug("Authorization granted for user={}, space={}, resource={}, action={}",
