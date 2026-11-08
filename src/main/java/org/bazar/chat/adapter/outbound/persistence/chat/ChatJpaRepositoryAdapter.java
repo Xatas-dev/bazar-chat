@@ -16,8 +16,8 @@ public class ChatJpaRepositoryAdapter implements ChatRepository {
     private final ChatJpaRepository chatJpaRepository;
 
     @Override
-    public Chat save(Chat chat) {
-        return chatJpaRepository.save(chat);
+    public Chat saveAndFlush(Chat chat) {
+        return chatJpaRepository.saveAndFlush(chat);
     }
 
     @Override

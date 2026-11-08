@@ -31,8 +31,8 @@ public class MessageJpaRepositoryAdapter implements MessageRepository {
     }
 
     @Override
-    public void save(Message message) {
-        messageJpaRepository.save(message);
+    public Message saveAndFlush(Message message) {
+        return messageJpaRepository.saveAndFlush(message);
     }
 
     @Override

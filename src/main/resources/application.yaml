@@ -54,3 +54,10 @@ settings:
     public-key: ${SETTING_PUSH_SUBSCRIPTION_PUBLIC_KEY}
     private-key: ${SETTING_PUSH_SUBSCRIPTION_PRIVATE_KEY}
     subject: ${SETTING_PUSH_SUBSCRIPTION_SUBJECT}
+  encryption:
+    chat:
+      current-version: ${SETTING_ENCRYPTION_CHAT_CURRENT_VERSION}
+      keys:
+        v1: ${SETTING_ENCRYPTION_CHAT_KEYS_V1}
+    message:
+      current-version: ${SETTING_ENCRYPTION_MESSAGE_CURRENT_VERSION}

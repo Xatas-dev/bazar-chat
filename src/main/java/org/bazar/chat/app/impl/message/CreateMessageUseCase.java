@@ -15,6 +15,8 @@ import org.bazar.chat.app.api.message.dto.event.MessageCreatedEvent;
 import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.app.api.space.SpaceService;
 import org.bazar.chat.app.api.space.dto.SpaceUserDto;
+import org.bazar.chat.app.impl.service.encryption.ChatEncryptionService;
+import org.bazar.chat.app.impl.service.encryption.data.EncryptedMessage;
 import org.bazar.chat.app.impl.service.message.MessageAllowedActionsResolver;
 import org.bazar.chat.app.impl.service.message.ReplyMessageCollector;
 import org.bazar.chat.app.impl.service.user.UserLoader;
@@ -44,6 +46,7 @@ public class CreateMessageUseCase implements CreateMessageInbound {
     private final MessageEventsService messageEventsService;
     private final MessageAllowedActionsResolver messageAllowedActionsResolver;
     private final SpaceService spaceService;
+    private final ChatEncryptionService chatEncryptionService;
 
     @Override
     @Transactional
@@ -51,7 +54,7 @@ public class CreateMessageUseCase implements CreateMessageInbound {
         Chat chat = chatRepository.findByChatId(dto.chatId()).orElseThrow(() -> new BusinessException(ErrorCode.CHAT_BY_ID_NOT_FOUND, dto.chatId()));
         UUID userId = authenticationService.getAuthenticatedUserId();
         Message message = messageMapper.toMessage(dto, getReplyMessageIfExists(dto.chatId(), dto.replyMessageId()), chat, userId);
-        messageRepository.save(message);
+        saveMessageWithEncryption(message);
         Map<UUID, UserDto> usersMap = userLoader.loadUsersForMessages(List.of(message));
         UserDto user = usersMap.get(message.getUserId());
         AuthorStatus authorStatus = AuthorStatus.from(user);
@@ -88,5 +91,16 @@ public class CreateMessageUseCase implements CreateMessageInbound {
         chatUserIds.remove(authenticationService.getAuthenticatedUserId());
 
         return chatUserIds;
+    }
+
+    private void saveMessageWithEncryption(Message message) {
+        String content = message.getContent();
+        message.setContent(null);
+        Message savedMessage = messageRepository.saveAndFlush(message);
+        EncryptedMessage encryptedMessage = chatEncryptionService.encrypt(savedMessage, content);
+
+        savedMessage.setEncryptedContent(encryptedMessage.ciphertext());
+        savedMessage.setIv(encryptedMessage.iv());
+        savedMessage.setEncryptionVersion(encryptedMessage.encryptionVersion());
     }
 }

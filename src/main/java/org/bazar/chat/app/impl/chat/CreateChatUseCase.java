@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.bazar.chat.app.api.chat.ChatRepository;
 import org.bazar.chat.app.api.chat.CreateChatInbound;
 import org.bazar.chat.app.api.chat.dto.GetChatDto;
+import org.bazar.chat.app.impl.service.encryption.ChatKeyService;
+import org.bazar.chat.app.impl.service.encryption.data.WrappedDek;
 import org.bazar.chat.domain.chat.Chat;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,12 +17,27 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CreateChatUseCase implements CreateChatInbound {
     private final ChatRepository chatRepository;
+    private final ChatKeyService chatKeyService;
     private final ChatMapper chatMapper;
 
     @Override
     @Transactional
     public GetChatDto execute(Long spaceId) {
         Chat chat = chatMapper.mapToChat(spaceId);
-        return chatMapper.mapToGetChatDto(chatRepository.save(chat));
+        Chat savedChat = chatRepository.saveAndFlush(chat);
+
+        encryptChat(savedChat);
+        return chatMapper.mapToGetChatDto(savedChat);
+    }
+
+    // =================================================================================================================
+    // = Implementation
+    // =================================================================================================================
+
+    private void encryptChat(Chat chat) {
+        WrappedDek wrappedDek = chatKeyService.createDek(chat.getId());
+        chat.setEncryptedDek(wrappedDek.encryptedDek());
+        chat.setDekIv(wrappedDek.iv());
+        chat.setKekVersion(wrappedDek.kekVersion());
     }
 }

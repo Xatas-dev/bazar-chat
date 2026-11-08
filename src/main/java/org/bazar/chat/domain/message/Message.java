@@ -35,6 +35,24 @@ public class Message extends DomainObject {
     private String content;
 
     /**
+     * Зашифрованный текст сообщения
+     */
+    @Column(name = "encrypted_content")
+    private byte[] encryptedContent;
+
+    /**
+     * Вектор инициализации
+     */
+    @Column(name = "iv")
+    private byte[] iv;
+
+    /**
+     * Версия шифрования
+     */
+    @Column(name = "encryption_version")
+    private Short encryptionVersion;
+
+    /**
      * Идентификатор пользователя
      */
     @Column(name = "user_id")

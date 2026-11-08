@@ -14,7 +14,7 @@ public interface ChatRepository {
      * @param chat Чат для сохранения
      * @return Сохраненный чат
      */
-    Chat save(Chat chat);
+    Chat saveAndFlush(Chat chat);
 
     /**
      * Получить чат по его идентификатору

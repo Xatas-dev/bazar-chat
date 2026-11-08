@@ -34,7 +34,7 @@ public interface MessageRepository {
      *
      * @param message Сообщение для сохранения
      */
-    void save(Message message);
+    Message saveAndFlush(Message message);
 
     /**
      * Удалить все невидимые сообщения по их последней дате обновления

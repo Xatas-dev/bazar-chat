@@ -37,3 +37,10 @@ settings:
     public-key: <to generate>
     private-key: <to generate>
     subject: mailto:bazar@bazar.mail.ru
+  encryption:
+    chat:
+      current-version: v1
+      keys:
+        v1: <to generate>
+    message:
+      current-version: 1
