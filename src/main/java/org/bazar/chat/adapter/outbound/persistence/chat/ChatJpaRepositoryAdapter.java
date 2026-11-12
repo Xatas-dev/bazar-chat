@@ -5,6 +5,7 @@ import org.bazar.chat.app.api.chat.ChatRepository;
 import org.bazar.chat.domain.chat.Chat;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -33,5 +34,10 @@ public class ChatJpaRepositoryAdapter implements ChatRepository {
     @Override
     public void delete(Chat chat) {
         chatJpaRepository.delete(chat);
+    }
+
+    @Override
+    public List<Chat> findChatsForMigration() {
+        return chatJpaRepository.findAllByEncryptedDekIsNull();
     }
 }

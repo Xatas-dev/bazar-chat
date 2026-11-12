@@ -4,7 +4,6 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.bazar.chat.app.api.SettingProperties;
 import org.bazar.chat.app.impl.service.encryption.data.EncryptedData;
-import org.bazar.chat.app.impl.service.encryption.data.EncryptedMessage;
 import org.bazar.chat.app.impl.service.encryption.data.MessageEncryptionFormat;
 import org.bazar.chat.domain.chat.Chat;
 import org.bazar.chat.domain.message.Message;
@@ -26,7 +25,7 @@ public class ChatEncryptionServiceImpl implements ChatEncryptionService {
     }
 
     @Override
-    public EncryptedMessage encrypt(Message message, String content) {
+    public void encrypt(Message message, String content) {
         if (content == null) {
             throw new IllegalArgumentException("Message content cannot be null");
         }
@@ -38,25 +37,27 @@ public class ChatEncryptionServiceImpl implements ChatEncryptionService {
 
         byte[] aad = format.createAad(chat.getId(), message.getId());
         EncryptedData encryptedData = aesGcmEncryptionService.encrypt(content.getBytes(StandardCharsets.UTF_8), dek, aad);
-        return new EncryptedMessage(encryptedData.ciphertext(), encryptedData.iv(), format.getVersion());
+        message.setEncryptedContent(encryptedData.ciphertext());
+        message.setIv(encryptedData.iv());
+        message.setEncryptionVersion(format.getVersion());
     }
 
     @Override
-    public String decrypt(Message message, EncryptedMessage encryptedMessage) {
+    public String decrypt(Message message, SecretKey dek) {
         Chat chat = message.getChat();
         MessageEncryptionFormat format = MessageEncryptionFormat.fromVersion(message.getEncryptionVersion());
         byte[] aad = format.createAad(chat.getId(), message.getId());
-        SecretKey dek = getDek(chat);
-        byte[] content = aesGcmEncryptionService.decrypt(encryptedMessage.toEncryptedData(), dek, aad);
+        byte[] content = aesGcmEncryptionService.decrypt(
+                new EncryptedData(message.getEncryptedContent(), message.getIv()),
+                dek,
+                aad
+        );
 
         return new String(content, StandardCharsets.UTF_8);
     }
 
-    // =================================================================================================================
-    // = Implementation
-    // =================================================================================================================
-
-    private SecretKey getDek(Chat chat) {
+    @Override
+    public SecretKey getDek(Chat chat) {
         return chatKeyService.decryptDek(chat.getId(), chat.getEncryptedDek(), chat.getDekIv(), chat.getKekVersion());
     }
 }

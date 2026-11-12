@@ -1,10 +1,14 @@
 package org.bazar.chat.app.impl.service.encryption;
 
-import org.bazar.chat.app.impl.service.encryption.data.EncryptedMessage;
+import org.bazar.chat.domain.chat.Chat;
 import org.bazar.chat.domain.message.Message;
 
-public interface ChatEncryptionService {
-    EncryptedMessage encrypt(Message message, String content);
+import javax.crypto.SecretKey;
 
-    String decrypt(Message message, EncryptedMessage encryptedMessage);
+public interface ChatEncryptionService {
+    void encrypt(Message message, String content);
+
+    String decrypt(Message message, SecretKey dek);
+
+    SecretKey getDek(Chat chat);
 }

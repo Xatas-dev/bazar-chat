@@ -76,4 +76,6 @@ public interface MessageRepository {
      * @return Прокси-объект сообщения
      */
     Message getReference(Long messageId);
+
+    List<Message> findByChatId(Long chatId);
 }

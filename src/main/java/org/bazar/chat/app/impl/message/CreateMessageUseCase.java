@@ -16,7 +16,6 @@ import org.bazar.chat.app.api.persona.model.UserDto;
 import org.bazar.chat.app.api.space.SpaceService;
 import org.bazar.chat.app.api.space.dto.SpaceUserDto;
 import org.bazar.chat.app.impl.service.encryption.ChatEncryptionService;
-import org.bazar.chat.app.impl.service.encryption.data.EncryptedMessage;
 import org.bazar.chat.app.impl.service.message.MessageAllowedActionsResolver;
 import org.bazar.chat.app.impl.service.message.ReplyMessageCollector;
 import org.bazar.chat.app.impl.service.user.UserLoader;
@@ -54,13 +53,14 @@ public class CreateMessageUseCase implements CreateMessageInbound {
         Chat chat = chatRepository.findByChatId(dto.chatId()).orElseThrow(() -> new BusinessException(ErrorCode.CHAT_BY_ID_NOT_FOUND, dto.chatId()));
         UUID userId = authenticationService.getAuthenticatedUserId();
         Message message = messageMapper.toMessage(dto, getReplyMessageIfExists(dto.chatId(), dto.replyMessageId()), chat, userId);
-        saveMessageWithEncryption(message);
+        encryptMessage(message, dto.content());
         Map<UUID, UserDto> usersMap = userLoader.loadUsersForMessages(List.of(message));
         UserDto user = usersMap.get(message.getUserId());
         AuthorStatus authorStatus = AuthorStatus.from(user);
-        ReplyMessageDto reply = replyMessageCollector.getReplyMessageDto(message, usersMap);
+        ReplyMessageDto reply = replyMessageCollector.getReplyMessageDto(message, usersMap, chatEncryptionService.getDek(chat));
         MessageCreatedEvent messageCreatedEvent = messageMapper.toMessageCreatedEvent(
                 message,
+                dto.content(),
                 user,
                 authorStatus,
                 reply,
@@ -82,8 +82,10 @@ public class CreateMessageUseCase implements CreateMessageInbound {
                 .orElseThrow(() -> new BusinessException(ErrorCode.MESSAGE_NOT_FOUND, replyMessageId));
     }
 
-    // Как будто имеет смысл всё-таки хранить ещё и на стороне bazar-chat пользователей. Вдруг в будущем захотим сделать несколько чатов в рамках спейса
-    // Ну и каждый раз ходить за пользователями чата в bazar-space не очень круто, как по мне
+    /**
+     * Как будто имеет смысл всё-таки хранить ещё и на стороне bazar-chat пользователей. Вдруг в будущем захотим сделать несколько чатов в рамках спейса
+     * Ну и каждый раз ходить за пользователями чата в bazar-space не очень круто, как по мне
+     */
     private Set<UUID> getChatMembersUuids(Chat chat) {
         Set<UUID> chatUserIds = spaceService.getUsersBySpaceId(chat.getSpaceId()).stream()
                 .map(SpaceUserDto::userId)
@@ -93,14 +95,9 @@ public class CreateMessageUseCase implements CreateMessageInbound {
         return chatUserIds;
     }
 
-    private void saveMessageWithEncryption(Message message) {
-        String content = message.getContent();
+    private void encryptMessage(Message message, String content) {
         message.setContent(null);
         Message savedMessage = messageRepository.saveAndFlush(message);
-        EncryptedMessage encryptedMessage = chatEncryptionService.encrypt(savedMessage, content);
-
-        savedMessage.setEncryptedContent(encryptedMessage.ciphertext());
-        savedMessage.setIv(encryptedMessage.iv());
-        savedMessage.setEncryptionVersion(encryptedMessage.encryptionVersion());
+        chatEncryptionService.encrypt(savedMessage, content);
     }
 }

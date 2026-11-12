@@ -2,6 +2,7 @@ package org.bazar.chat.app.api.chat;
 
 import org.bazar.chat.domain.chat.Chat;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -38,4 +39,6 @@ public interface ChatRepository {
      * @param chat Чат для удаления
      */
     void delete(Chat chat);
+
+    List<Chat> findChatsForMigration();
 }

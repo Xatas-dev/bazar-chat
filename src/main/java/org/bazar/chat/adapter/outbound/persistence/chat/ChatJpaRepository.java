@@ -3,6 +3,7 @@ package org.bazar.chat.adapter.outbound.persistence.chat;
 import org.bazar.chat.domain.chat.Chat;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -16,4 +17,6 @@ public interface ChatJpaRepository extends JpaRepository<Chat, Long> {
      * @return Optional чата
      */
     Optional<Chat> findBySpaceId(Long spaceId);
+
+    List<Chat> findAllByEncryptedDekIsNull();
 }

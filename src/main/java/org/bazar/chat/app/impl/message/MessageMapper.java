@@ -25,7 +25,8 @@ public interface MessageMapper {
     @Mapping(target = "chatId", source = "message.chat.id")
     @Mapping(target = "author", expression = "java(toAuthorDto(userDto, status, message))")
     @Mapping(target = "id", source = "message.id")
-    GetMessageDto toGetMessageDto(Message message, List<AllowedActions> allowedActions,
+    @Mapping(target = "content", source = "content")
+    GetMessageDto toGetMessageDto(Message message, String content, List<AllowedActions> allowedActions,
                                   UserDto userDto, AuthorStatus status, ReplyMessageDto reply,
                                   List<MessageReactionDto> reactions);
 
@@ -51,7 +52,8 @@ public interface MessageMapper {
     @Mapping(target = "author", expression = "java(toAuthorDto(userDto, status, message))")
     @Mapping(target = "id", source = "message.id")
     @Mapping(target = "spaceId", source = "message.chat.spaceId")
-    MessageCreatedEvent toMessageCreatedEvent(Message message, UserDto userDto, AuthorStatus status, ReplyMessageDto reply, List<AllowedActions> allowedActions, Set<UUID> chatMembersUuids);
+    @Mapping(target = "content", source = "content")
+    MessageCreatedEvent toMessageCreatedEvent(Message message, String content, UserDto userDto, AuthorStatus status, ReplyMessageDto reply, List<AllowedActions> allowedActions, Set<UUID> chatMembersUuids);
 
     default MessageDeletedEvent toMessageDeletedEvent(Long chatId, List<Long> messageIds) {
         return new MessageDeletedEvent(chatId, messageIds);
