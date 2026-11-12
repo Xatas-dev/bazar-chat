@@ -20,4 +20,22 @@ public class Chat extends DomainObject {
      */
     @Column(name = "space_id")
     private Long spaceId;
+
+    /**
+     * Ключ шифрования DEK
+     */
+    @Column(name = "encrypted_dek")
+    private byte[] encryptedDek;
+
+    /**
+     * Вектор инициализации
+     */
+    @Column(name = "dek_iv")
+    private byte[] dekIv;
+
+    /**
+     * Версия ключа шифрования KEK
+     */
+    @Column(name = "kek_version")
+    private String kekVersion;
 }

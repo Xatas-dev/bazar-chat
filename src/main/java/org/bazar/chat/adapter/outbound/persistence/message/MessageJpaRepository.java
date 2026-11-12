@@ -39,6 +39,7 @@ public interface MessageJpaRepository extends JpaRepository<Message, Long> {
      * @param visible Признак видимости
      * @return Список найденных сообщений
      */
+    @EntityGraph(attributePaths = "chat")
     List<Message> findAllByChatIdAndIdInAndVisible(Long chatId, List<Long> messageIds, boolean visible);
 
     /**
@@ -47,4 +48,6 @@ public interface MessageJpaRepository extends JpaRepository<Message, Long> {
      * @param updatedAt Дата обновления
      */
     void deleteAllByVisibleFalseAndUpdatedAtLessThan(Instant updatedAt);
+
+    List<Message> findAllByChatId(Long chatId);
 }

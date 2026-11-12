@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: 20261108-00-1-add-encryption-columns-to-chat.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 20261108-00-2-add-encryption-columns-to-message.sql
+      relativeToChangelogFile: true

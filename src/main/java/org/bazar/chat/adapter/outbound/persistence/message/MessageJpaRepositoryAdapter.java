@@ -31,8 +31,8 @@ public class MessageJpaRepositoryAdapter implements MessageRepository {
     }
 
     @Override
-    public void save(Message message) {
-        messageJpaRepository.save(message);
+    public Message saveAndFlush(Message message) {
+        return messageJpaRepository.saveAndFlush(message);
     }
 
     @Override
@@ -58,5 +58,10 @@ public class MessageJpaRepositoryAdapter implements MessageRepository {
     @Override
     public Message getReference(Long messageId) {
         return messageJpaRepository.getReferenceById(messageId);
+    }
+
+    @Override
+    public List<Message> findByChatId(Long chatId) {
+        return messageJpaRepository.findAllByChatId(chatId);
     }
 }

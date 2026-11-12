@@ -14,6 +14,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(InternalException.class)
     public ResponseEntity<Object> handleInternalException(InternalException e) {
+        log.error("InternalException: {}", e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(e.getMessage());
@@ -21,6 +22,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Object> handleBusinessException(BusinessException e) {
+        log.error("BusinessException: {}", e.getMessage(), e);
         return ResponseEntity
                 .status(e.getErrorCode().getStatus())
                 .body(e.getMessage());
@@ -28,7 +30,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleDefaultException(Exception e) {
-        log.error("Internal error: {}", e.getMessage(), e);
+        log.error("Exception: {}", e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .build();
