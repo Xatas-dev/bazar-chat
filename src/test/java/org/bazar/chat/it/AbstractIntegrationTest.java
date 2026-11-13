@@ -6,6 +6,7 @@ import org.bazar.chat.adapter.outbound.persistence.chat.ChatJpaRepository;
 import org.bazar.chat.adapter.outbound.persistence.message.MessageJpaRepository;
 import org.bazar.chat.adapter.outbound.persistence.reaction.MessageReactionJpaRepository;
 import org.bazar.chat.adapter.outbound.persistence.reaction.ReactionJpaRepository;
+import org.bazar.chat.app.impl.service.encryption.ChatEncryptionService;
 import org.bazar.chat.fw.BazarChatApplication;
 import org.bazar.chat.it.testutil.TestDataHelper;
 import org.bazar.chat.it.testutil.WireMockTestHelper;
@@ -46,6 +47,8 @@ public abstract class AbstractIntegrationTest extends AbstractTest {
     protected WireMockTestHelper wireMockTestHelper;
     @Autowired
     protected CacheManager cacheManager;
+    @Autowired
+    protected ChatEncryptionService chatEncryptionService;
     @MockitoBean
     protected BazarAuthorizationClient bazarAuthorizationClient;
 

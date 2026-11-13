@@ -40,3 +40,12 @@ settings:
     public-key: "BD7Ly3KFruY0cndkBkmJ8pjeThxCKVrD3h6krbEqRTeLjDwi0XBa9t4BLXmZ6xvjrxaR5z2u2RDUEI4ru05CXsA"
     private-key: "ynLO-fKZ-3p8zO3XLFHMf_PW03Y-BjR2n2ginAJXl_M"
     subject: mailto:bazar@bazar.mail.ru
+  feature-toggle:
+    encryption-migration-enabled: false
+  encryption:
+    chat:
+      current-version: v1
+      keys:
+        v1: 97n1jsBS7bkaFkAYg6T/uSw2lNMn1cvBk0ZDJIQs1hs=
+    message:
+      current-version: 1

@@ -23,6 +23,8 @@ import static org.bazar.chat.app.api.message.dto.AuthorStatus.EXIST;
 import static org.bazar.chat.app.api.message.dto.AuthorStatus.UNKNOWN;
 
 public class MessageMapperTest extends AbstractTest {
+    private static final String CONTENT = "content";
+
     private final MessageMapper messageMapper = Mappers.getMapper(MessageMapper.class);
 
     @Test
@@ -36,6 +38,7 @@ public class MessageMapperTest extends AbstractTest {
 
         GetMessageDto result = messageMapper.toGetMessageDto(
                 message,
+                CONTENT,
                 List.of(DELETE, EDIT),
                 userDto,
                 EXIST,
@@ -96,7 +99,7 @@ public class MessageMapperTest extends AbstractTest {
                 readObjectFromFile("/MessageMapperTest/ReplyMessageDto.json", ReplyMessageDto.class);
 
         MessageCreatedEvent result = messageMapper.toMessageCreatedEvent(
-                message, userDto, EXIST, replyMessageDto,
+                message, CONTENT, userDto, EXIST, replyMessageDto,
                 List.of(DELETE), Set.of(UUID.fromString("8885c424-e6e4-49cc-b2e7-71a4acfa9cfd"))
         );
 

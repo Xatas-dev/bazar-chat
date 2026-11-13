@@ -14,4 +14,12 @@ public class V1CreateMessageRequestBuilder {
     public static V1CreateMessageRequest buildWith(Long replyMessageId) {
         return new V1CreateMessageRequest(DEFAULT_CONTENT, replyMessageId);
     }
+
+    public static V1CreateMessageRequest buildWith(String content) {
+        return new V1CreateMessageRequest(content, null);
+    }
+
+    public static V1CreateMessageRequest buildWith(String content, Long replyMessageId) {
+        return new V1CreateMessageRequest(content, replyMessageId);
+    }
 }

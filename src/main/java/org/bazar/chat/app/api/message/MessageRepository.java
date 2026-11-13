@@ -34,7 +34,7 @@ public interface MessageRepository {
      *
      * @param message Сообщение для сохранения
      */
-    void save(Message message);
+    Message saveAndFlush(Message message);
 
     /**
      * Удалить все невидимые сообщения по их последней дате обновления
@@ -76,4 +76,6 @@ public interface MessageRepository {
      * @return Прокси-объект сообщения
      */
     Message getReference(Long messageId);
+
+    List<Message> findByChatId(Long chatId);
 }
