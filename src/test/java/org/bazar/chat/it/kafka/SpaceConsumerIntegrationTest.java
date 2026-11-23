@@ -28,7 +28,7 @@ public class SpaceConsumerIntegrationTest extends AbstractKafkaIntegrationTest {
         Consumer<String, String> kafkaConsumer = getKafkaConsumer(embeddedKafka, SPACE_DELETE_TOPIC);
         Producer<String, String> kafkaProducer = getKafkaProducer(embeddedKafka);
         Chat chat = testDataHelper.createChatWith(SpaceDeletingDtoBuilder.SPACE_ID);
-        testDataHelper.createMessageWith(chat, "content", UUID.randomUUID());
+        testDataHelper.createMessageWith(chat, UUID.randomUUID());
 
         sendMessage(kafkaConsumer, kafkaProducer, SPACE_DELETE_TOPIC, "", SpaceDeletingDtoBuilder.buildDefault());
 

@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: 20261123-00-1-drop-content-column.sql
+      relativeToChangelogFile: true

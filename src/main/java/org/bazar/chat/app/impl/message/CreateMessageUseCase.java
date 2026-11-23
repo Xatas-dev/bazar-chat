@@ -96,7 +96,6 @@ public class CreateMessageUseCase implements CreateMessageInbound {
     }
 
     private void encryptMessage(Message message, String content) {
-        message.setContent(null);
         Message savedMessage = messageRepository.saveAndFlush(message);
         chatEncryptionService.encrypt(savedMessage, content);
     }
