@@ -3,8 +3,8 @@
     "DELETE"
   ],
   "author": {
-    "firstName": "SENY",
-    "lastName": "ARSIKOV",
+    "displayName": "SENY ARSIKOV",
+    "avatarUrl": "https://storage.example.com/avatars/7698786967.jpg",
     "status": "EXIST",
     "userId": "e84351fa-4024-44bc-9e93-c968284db9fa"
   },
@@ -16,8 +16,8 @@
   "id": 1,
   "reply": {
     "author": {
-      "firstName": "Test",
-      "lastName": "Testov",
+      "displayName": "Test Testov",
+      "avatarUrl": "https://storage.example.com/avatars/1111111.jpg",
       "status": "EXIST",
       "userId": "6e82eb7b-a6fe-492b-9072-9f9b331be9ed"
     },

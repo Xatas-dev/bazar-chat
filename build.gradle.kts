@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "org.bazar"
-version = "1.0.8"
+version = "1.0.9"
 description = "bazar-chat"
 
 java {

@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ReactionControllerIntegrationTest extends AbstractControllerIntegrationTest {
-    private static final String TEST_CONTENT = "test";
     private static final Long REACTION_1ID = 1L;
     private static final Long REACTION_2ID = 2L;
     private static final Long REACTION_3ID = 3L;
@@ -37,8 +36,8 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         wireMockTestHelper.startMockBazarPersonaServer();
         wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
-        Message message = testDataHelper.createMessageWith(chat, TEST_CONTENT, JwtBuilder.TEST_USER_ID, true);
-        Reaction reaction = reactionJpaRepository.findById(REACTION_1ID).get();
+        Message message = testDataHelper.createMessageWith(chat, JwtBuilder.TEST_USER_ID, true);
+        Reaction reaction = reactionJpaRepository.findById(REACTION_1ID).orElseThrow();
         testDataHelper.createMessageReactionWith(message, reaction, JwtBuilder.TEST_USER_ID);
 
         V1MessageReactionListResponse response = restTestUtil.getPerform(
@@ -57,7 +56,7 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         assertEquals(1, reactionEntry.users().size());
         V1MessageReactionListResponse.V1ReactionUserEntry user = reactionEntry.users().getFirst();
         assertEquals(JwtBuilder.TEST_USER_ID, user.userId());
-        assertEquals("Jane", user.firstName());
+        assertEquals("Jane Doe", user.displayName());
         assertEquals(UserStatus.EXIST.name(), user.status());
     }
 
@@ -67,8 +66,8 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         wireMockTestHelper.startMockBazarPersonaServer();
         wireMockTestHelper.stubBazarPersonaGetUsers_notFound(List.of(JwtBuilder.TEST_USER_ID));
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
-        Message message = testDataHelper.createMessageWith(chat, TEST_CONTENT, JwtBuilder.TEST_USER_ID, true);
-        Reaction reaction = reactionJpaRepository.findById(REACTION_1ID).get();
+        Message message = testDataHelper.createMessageWith(chat, JwtBuilder.TEST_USER_ID, true);
+        Reaction reaction = reactionJpaRepository.findById(REACTION_1ID).orElseThrow();
         testDataHelper.createMessageReactionWith(message, reaction, JwtBuilder.TEST_USER_ID);
 
         V1MessageReactionListResponse response = restTestUtil.getPerform(
@@ -88,8 +87,7 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         V1MessageReactionListResponse.V1ReactionUserEntry user = reactionEntry.users().getFirst();
         assertEquals(JwtBuilder.TEST_USER_ID, user.userId());
         assertEquals(UserStatus.UNKNOWN.name(), user.status());
-        assertNull(user.firstName());
-        assertNull(user.lastName());
+        assertNull(user.displayName());
     }
 
     @Test
@@ -98,7 +96,7 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         wireMockTestHelper.startMockBazarPersonaServer();
         wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
-        Message message = testDataHelper.createMessageWith(chat, TEST_CONTENT, JwtBuilder.TEST_USER_ID, true);
+        Message message = testDataHelper.createMessageWith(chat, JwtBuilder.TEST_USER_ID, true);
 
         V1ReactionUpdateResponse reactionUpdateResponse = restTestUtil.putPerform(
                 String.format(UPDATE_REACTION_API_URL, DEFAULT_SPACE_ID, chat.getId(), message.getId(), REACTION_1ID),
@@ -128,8 +126,8 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         wireMockTestHelper.startMockBazarPersonaServer();
         wireMockTestHelper.stubBazarPersonaGetUsers_200(List.of(JwtBuilder.TEST_USER_ID), "/MessageControllerIntegrationTest/PersonaGetUsersResponse.json");
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
-        Message message = testDataHelper.createMessageWith(chat, TEST_CONTENT, JwtBuilder.TEST_USER_ID, true);
-        Reaction reaction = reactionJpaRepository.findById(REACTION_1ID).get();
+        Message message = testDataHelper.createMessageWith(chat, JwtBuilder.TEST_USER_ID, true);
+        Reaction reaction = reactionJpaRepository.findById(REACTION_1ID).orElseThrow();
         testDataHelper.createMessageReactionWith(message, reaction, JwtBuilder.TEST_USER_ID);
 
         V1ReactionUpdateResponse reactionUpdateResponse = restTestUtil.putPerform(
@@ -153,10 +151,10 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
     @DisplayName("Удаление самой старой реакции при добавлении четвертой")
     void addMessageReaction_failure_maxReactionsPerUser() throws Exception {
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
-        Message message = testDataHelper.createMessageWith(chat, TEST_CONTENT, JwtBuilder.TEST_USER_ID, true);
-        Reaction reaction1 = reactionJpaRepository.findById(REACTION_1ID).get();
-        Reaction reaction2 = reactionJpaRepository.findById(REACTION_2ID).get();
-        Reaction reaction3 = reactionJpaRepository.findById(REACTION_3ID).get();
+        Message message = testDataHelper.createMessageWith(chat, JwtBuilder.TEST_USER_ID, true);
+        Reaction reaction1 = reactionJpaRepository.findById(REACTION_1ID).orElseThrow();
+        Reaction reaction2 = reactionJpaRepository.findById(REACTION_2ID).orElseThrow();
+        Reaction reaction3 = reactionJpaRepository.findById(REACTION_3ID).orElseThrow();
         testDataHelper.createMessageReactionWith(message, reaction1, JwtBuilder.TEST_USER_ID);
         testDataHelper.createMessageReactionWith(message, reaction2, JwtBuilder.TEST_USER_ID);
         testDataHelper.createMessageReactionWith(message, reaction3, JwtBuilder.TEST_USER_ID);

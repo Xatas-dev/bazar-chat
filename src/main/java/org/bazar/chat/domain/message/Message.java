@@ -29,12 +29,6 @@ public class Message extends DomainObject {
     private Chat chat;
 
     /**
-     * Текст сообщения
-     */
-    @Column(name = "content")
-    private String content;
-
-    /**
      * Зашифрованный текст сообщения
      */
     @Column(name = "encrypted_content")

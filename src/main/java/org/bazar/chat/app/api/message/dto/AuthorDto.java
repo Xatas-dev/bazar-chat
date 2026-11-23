@@ -6,14 +6,14 @@ import java.util.UUID;
  * DTO автора сообщения
  *
  * @param userId Идентификатор автора
- * @param firstName Имя автора
- * @param lastName Фамилия автора
+ * @param displayName Отображаемое имя автора
+ * @param avatarUrl URL аватарки автора
  * @param status Статус автора
  */
 public record AuthorDto(
         UUID userId,
-        String firstName,
-        String lastName,
+        String displayName,
+        String avatarUrl,
         AuthorStatus status
 ) {
 }

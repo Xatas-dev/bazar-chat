@@ -3,8 +3,8 @@
     "DELETE"
   ],
   "author": {
-    "firstName": "SENY",
-    "lastName": "ARSIKOV",
+    "avatarUrl": "https://storage.example.com/avatars/550e8400-e29b-41d4-a716-446655440000.jpg",
+    "displayName": "SENY ARSIKOV",
     "status": "EXIST",
     "userId": "e84351fa-4024-44bc-9e93-c968284db9fa"
   },
@@ -16,8 +16,8 @@
   "id": 1,
   "reply": {
     "author": {
-      "firstName": "Test",
-      "lastName": "Testov",
+      "avatarUrl": "https://storage.example.com/avatars/12121212.jpg",
+      "displayName": "Test Testov",
       "status": "EXIST",
       "userId": "6e82eb7b-a6fe-492b-9072-9f9b331be9ed"
     },

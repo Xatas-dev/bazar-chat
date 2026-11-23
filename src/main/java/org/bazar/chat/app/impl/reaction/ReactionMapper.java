@@ -18,8 +18,7 @@ public interface ReactionMapper {
     List<GetReactionDto> toGetReactionDtoList(List<Reaction> reaction);
 
     @Mapping(target = "userId", source = "userDto.userId")
-    @Mapping(target = "firstName", source = "userDto.firstName")
-    @Mapping(target = "lastName", source = "userDto.lastName")
+    @Mapping(target = "displayName", source = "userDto.displayName")
     @Mapping(target = "status", source = "status")
     ReactionUserDto toReactionUserDto(UserDto userDto, UserStatus status);
 }
