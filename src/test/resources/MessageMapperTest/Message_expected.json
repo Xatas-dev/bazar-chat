@@ -2,13 +2,11 @@
   "chat": {
     "id": 1
   },
-  "content": "content",
   "replyMessage": {
     "chat": {
       "id": 2,
       "spaceId": 2
     },
-    "content": "content",
     "id": 1,
     "userId": "e84351fa-4024-44bc-9e93-c968284db9fa",
     "visible": false

@@ -68,10 +68,8 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
         Message resultMessage = messages.stream().filter(message -> !message.getId().equals(messageToReply.getId())).findFirst().orElseThrow();
         assertEquals(2, messages.size());
         assertEquals(chat.getId(), resultMessage.getChat().getId());
-        assertNull(resultMessage.getContent());
         assertNotNull(resultMessage.getReplyMessage());
         assertEquals(chatId, resultMessage.getChat().getId());
-        assertNull(resultMessage.getContent());
         assertNotNull(resultMessage.getEncryptedContent());
         assertEquals(12, resultMessage.getIv().length);
         assertNotNull(resultMessage.getEncryptionVersion());
@@ -95,7 +93,6 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
         Message resultMessage = messages.getFirst();
         assertEquals(1, messages.size());
         assertEquals(chatId, resultMessage.getChat().getId());
-        assertNull(resultMessage.getContent());
         assertNotNull(resultMessage.getEncryptedContent());
         assertEquals(12, resultMessage.getIv().length);
         assertNotNull(resultMessage.getEncryptionVersion());
@@ -212,8 +209,8 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     @DisplayName("Успешное удаление сообщений")
     void deleteMessages_success() throws Exception {
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
-        Message message1 = testDataHelper.createMessageWith(chat, CONTENT1, JwtBuilder.TEST_USER_ID, true);
-        Message message2 = testDataHelper.createMessageWith(chat, CONTENT2, JwtBuilder.TEST_USER_ID, false);
+        Message message1 = testDataHelper.createMessageWith(chat, JwtBuilder.TEST_USER_ID, true);
+        Message message2 = testDataHelper.createMessageWith(chat, JwtBuilder.TEST_USER_ID, false);
         V1DeleteMessageRequest request = V1DeleteMessageRequestBuilder.buildWith(List.of(message1.getId(), message2.getId()));
 
         restTestUtil.deletePerform(
@@ -233,7 +230,7 @@ public class MessageControllerIntegrationTest extends AbstractControllerIntegrat
     @DisplayName("Неуспешное удаление сообщений - сообщение не принадлежит пользователю")
     void deleteMessage_forbidden() throws Exception {
         Chat chat = testDataHelper.createChatWith(DEFAULT_SPACE_ID);
-        Message message = testDataHelper.createMessageWith(chat, CONTENT1, UUID.randomUUID(), true);
+        Message message = testDataHelper.createMessageWith(chat, UUID.randomUUID(), true);
         V1DeleteMessageRequest request = V1DeleteMessageRequestBuilder.buildWith(List.of(message.getId()));
 
         restTestUtil.deletePerform(
