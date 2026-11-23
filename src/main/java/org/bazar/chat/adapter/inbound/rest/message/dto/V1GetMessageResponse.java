@@ -16,8 +16,8 @@ public record V1GetMessageResponse(
 ) {
     public record V1AuthorMessageResponse(
             UUID userId,
-            String firstName,
-            String lastName,
+            String displayName,
+            String avatarUrl,
             String status
     ) {}
 

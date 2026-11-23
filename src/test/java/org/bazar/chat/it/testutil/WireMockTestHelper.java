@@ -16,7 +16,7 @@ import static org.bazar.chat.TestDataTransformUtil.readFileWithoutThrow;
 
 @Component
 public class WireMockTestHelper {
-    private static final String GET_USERS_BAZAR_PERSONA = "/users";
+    private static final String GET_USERS_BAZAR_PERSONA = "/v2/users";
     private static final String GET_USERS_BAZAR_SPACE = "/spaces/%s/users";
 
     @Autowired

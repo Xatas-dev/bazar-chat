@@ -43,6 +43,7 @@ public class ChatEncryptionServiceImpl implements ChatEncryptionService {
     }
 
     @Override
+    // TODO: тут мы каждый раз берём чат из сообщения, что может приводить к N+1. Поправить
     public String decrypt(Message message, SecretKey dek) {
         Chat chat = message.getChat();
         MessageEncryptionFormat format = MessageEncryptionFormat.fromVersion(message.getEncryptionVersion());
