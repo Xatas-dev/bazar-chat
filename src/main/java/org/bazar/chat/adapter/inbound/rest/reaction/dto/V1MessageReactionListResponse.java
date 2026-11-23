@@ -14,8 +14,8 @@ public record V1MessageReactionListResponse(
 
     public record V1ReactionUserEntry(
             UUID userId,
-            String firstName,
-            String lastName,
+            String displayName,
+            String avatarUrl,
             String status
     ) {
     }

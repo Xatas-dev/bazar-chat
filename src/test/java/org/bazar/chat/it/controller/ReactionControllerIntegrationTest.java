@@ -56,7 +56,7 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         assertEquals(1, reactionEntry.users().size());
         V1MessageReactionListResponse.V1ReactionUserEntry user = reactionEntry.users().getFirst();
         assertEquals(JwtBuilder.TEST_USER_ID, user.userId());
-        assertEquals("Jane", user.firstName());
+        assertEquals("Jane Doe", user.displayName());
         assertEquals(UserStatus.EXIST.name(), user.status());
     }
 
@@ -87,8 +87,7 @@ public class ReactionControllerIntegrationTest extends AbstractControllerIntegra
         V1MessageReactionListResponse.V1ReactionUserEntry user = reactionEntry.users().getFirst();
         assertEquals(JwtBuilder.TEST_USER_ID, user.userId());
         assertEquals(UserStatus.UNKNOWN.name(), user.status());
-        assertNull(user.firstName());
-        assertNull(user.lastName());
+        assertNull(user.displayName());
     }
 
     @Test

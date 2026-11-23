@@ -1,12 +1,13 @@
 [
   {
     "id": "baed9d65-046e-4616-9515-1e4237134f31",
-    "firstName": "John",
-    "lastName": "Doe"
+    "username": "USERNAME1",
+    "displayName": "John Doe",
+    "avatarUrl": "https://storage.example.com/avatars/7698786967.jpg"
   },
   {
     "id": "550e8400-e29b-41d4-a716-446655440000",
-    "firstName": "Jane",
-    "lastName": "Doe"
+    "username": "USERNAME2",
+    "displayName": "Jane Doe"
   }
 ]

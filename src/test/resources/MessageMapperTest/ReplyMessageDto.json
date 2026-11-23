@@ -2,8 +2,8 @@
   "id": 5,
   "author": {
     "userId": "6e82eb7b-a6fe-492b-9072-9f9b331be9ed",
-    "firstName": "Test",
-    "lastName": "Testov",
+    "displayName": "Test Testov",
+    "avatarUrl": "https://storage.example.com/avatars/12121212.jpg",
     "status": "EXIST"
   },
   "contentPreview": "contentPreview"

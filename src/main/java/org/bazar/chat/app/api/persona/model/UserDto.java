@@ -7,12 +7,11 @@ import java.util.UUID;
  * DTO для интеграции с bazar-space
  *
  * @param userId Идентификатор автора
- * @param firstName Имя автора
- * @param lastName Фамилия автора
+ * @param displayName Отображаемое имя пользователя
  */
 public record UserDto(
         UUID userId,
-        String firstName,
-        String lastName
+        String displayName,
+        String avatarUrl
 ) {
 }
