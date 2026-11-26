@@ -29,6 +29,16 @@ logging:
 management:
   server:
     port: 8090
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - metrics
+  endpoint:
+    metrics:
+      enabled: true
 
 kafka:
   space-delete:
