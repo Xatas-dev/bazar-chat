@@ -24,13 +24,13 @@ RUN java -Djarmode=tools -jar application.jar extract --layers --destination ext
 # ==========================================
 # Stage 2: Create the Runtime Image
 # ==========================================
-FROM eclipse-temurin:25-jdk-alpine
+FROM eclipse-temurin:25-jre-alpine
 
 WORKDIR /application
 
 # Optimize Java memory usage for containers
 # MaxRAMPercentage=75.0 means the JVM will use 75% of the container's available memory limit (e.g., 384MB of a 512MB container)
-ENV JDK_JAVA_OPTIONS="-XX:MaxRAMPercentage=80.0 -XX:+UseStringDeduplication -XX:MaxHeapFreeRatio=10 -XX:MinHeapFreeRatio=5 -Xss512k -XX:NativeMemoryTracking=summary"
+ENV JDK_JAVA_OPTIONS="-XX:MaxRAMPercentage=50.0 -XX:+UseStringDeduplication -XX:MaxHeapFreeRatio=10 -XX:MinHeapFreeRatio=5 -Xss512k"
 
 # Create a non-root user for security (best practice)
 #RUN addgroup -S spring && adduser -S spring -G spring && chown -R spring:spring /application
